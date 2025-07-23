@@ -1,0 +1,40 @@
+:root {
+  --primary-color: rgba(20, 27, 52, 0.47);
+  --primary-darker-color: rgba(20, 27, 52, 0.6);
+  --primary-light-color: rgba(20, 27, 52, 0.03);
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+
+  scroll-behavior: smooth;
+  margin: 0 !important;
+  background-color: var(--primary-light-color);
+}
+
+/* ========= Ant Design Overrides ========= */
+
+h1.ant-typography {
+  font-size: 43px;
+}
+
+.ant-form .ant-form-item {
+    margin-bottom: 14px;
+}
+
+.ant-btn-color-primary {
+  box-shadow: 0 2px 2px rgba(2, 7, 14, 0.288);
+}
+
+.ant-btn-variant-solid:hover {
+  background: var(--primary-darker-color) !important;
+}
+
+/* ========= Custom Styles ========= */
+
+.text-primary {
+  color: var(--primary-color);
+}

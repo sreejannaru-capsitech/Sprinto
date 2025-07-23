@@ -1,0 +1,46 @@
+Search Bar - 
+
+Can be used to search both User, Task and Project
+
+Deadlines Page - 
+
+	A Page which shows two sections.
+	One section for upcoming deadline projects
+	Another section for upcoming deadline Tasks
+
+Projects Page - 
+
+	No. of Total Projects
+	No. of Active Projects
+	No. of Inactive projects
+	Table for top active projects
+	Table for projects at risk (Active but no activity)
+	All projects list table
+
+
+Tasks Page - 
+
+	Shows Total Tasks in the system
+	A Pie Chart categorizing by task status
+	An Insight which projects contains most tasks
+	An insight which users ( TL / Employee ) have completed most tasks
+	A Task Table with ability to sort and filter
+
+Team Leads Page - 
+
+	Shows Table of Team Leads in the page which contains all the information
+	An Insight of Most active Team Leads
+	A chart of top team leads and their no. of completed projects
+
+Employees Page - 
+
+	Shows An insight of top active employees ( based on completed tasks )
+	An insight of last activity employees
+	Table of all employees
+	
+Admins Page - 
+
+	Table of all admins
+	Admins who created most no. of projects
+	Most active admins
+	
