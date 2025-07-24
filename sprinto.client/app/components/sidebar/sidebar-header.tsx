@@ -42,11 +42,11 @@ const SidebarHeader = (): ReactNode => {
           {getInitials(data?.result?.user.name ?? "")}
         </Avatar>
         <Dropdown trigger={["click"]} menu={{ items }} placement="bottomLeft">
-          <span style={{ cursor: "pointer" }}>
-            {data?.result?.user.name}
+          <Flex align="center" style={{ cursor: "pointer" }}>
+            <span>{data?.result?.user.name}</span>
 
             <DownArrow size={16} />
-          </span>
+          </Flex>
         </Dropdown>
       </Space>
       {data?.result?.user.role !== "admin" && (

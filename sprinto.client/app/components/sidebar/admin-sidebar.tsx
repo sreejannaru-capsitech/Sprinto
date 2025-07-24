@@ -5,16 +5,18 @@ import { ADMIN_ROUTES } from "~/lib/const";
 import {
   AdminIcon,
   CalenderIcon,
+  PlusIcon,
   ProjectIcon,
   SearchIcon,
   TaskIcon,
   TeamLeadIcon,
+  UserIcon,
   UsersIcon
 } from "~/lib/icons";
 import SidebarHeader from "./sidebar-header";
 
 import "~/styles/sidebar.css";
-import { isCurrentPath } from ".";
+import { isCurrentPath, menuItemStyle } from ".";
 
 /**
  * This component renders admin-sidebar section
@@ -24,7 +26,7 @@ const AdminSidebar = (): ReactNode => {
   const upperMenuItems: MenuProps["items"] = [
     {
       icon: <SearchIcon size={22} />,
-      label: <span style={{ marginLeft: "10px" }}>Search</span>,
+      label: <span style={menuItemStyle}>Search</span>,
       key: "0",
     },
     {
@@ -32,7 +34,7 @@ const AdminSidebar = (): ReactNode => {
       label: (
         <NavLink
           to={"/" + ADMIN_ROUTES[0].toLowerCase()}
-          style={{ marginLeft: "10px" }}
+          style={menuItemStyle}
         >
           {ADMIN_ROUTES[0]}
         </NavLink>
@@ -40,6 +42,24 @@ const AdminSidebar = (): ReactNode => {
       className: isCurrentPath(ADMIN_ROUTES[0].toLowerCase()),
       key: "1",
     },
+    {
+      icon: <PlusIcon size={22} />,
+      popupClassName: "menu-popup",
+      label: <span style={menuItemStyle}>Create</span>,
+      children: [
+        {
+          icon: <UserIcon size={22} />,
+          label: <span style={menuItemStyle}>User</span>,
+          key: "1.1",
+        },
+        {
+          icon: <ProjectIcon size={22} />,
+          label: <span style={menuItemStyle}>Project</span>,
+          key: "1.2",
+        }
+      ],
+      key: "2",
+    }
   ];
 
   const lowerMenuItems: MenuProps["items"] = [
@@ -48,7 +68,7 @@ const AdminSidebar = (): ReactNode => {
       label: (
         <NavLink
           to={"/" + ADMIN_ROUTES[1].toLowerCase()}
-          style={{ marginLeft: "10px" }}
+          style={menuItemStyle}
         >
           {ADMIN_ROUTES[1]}
         </NavLink>
@@ -61,7 +81,7 @@ const AdminSidebar = (): ReactNode => {
       label: (
         <NavLink
           to={"/" + ADMIN_ROUTES[2].toLowerCase()}
-          style={{ marginLeft: "10px" }}
+          style={menuItemStyle}
         >
           {ADMIN_ROUTES[2]}
         </NavLink>
@@ -74,7 +94,7 @@ const AdminSidebar = (): ReactNode => {
       label: (
         <NavLink
           to={"/" + ADMIN_ROUTES[3].toLowerCase()}
-          style={{ marginLeft: "10px" }}
+          style={menuItemStyle}
         >
           {ADMIN_ROUTES[3]}
         </NavLink>
@@ -87,7 +107,7 @@ const AdminSidebar = (): ReactNode => {
       label: (
         <NavLink
           to={"/" + ADMIN_ROUTES[4].toLowerCase()}
-          style={{ marginLeft: "10px" }}
+          style={menuItemStyle}
         >
           Team Leaders
         </NavLink>
@@ -100,7 +120,7 @@ const AdminSidebar = (): ReactNode => {
       label: (
         <NavLink
           to={"/" + ADMIN_ROUTES[5].toLowerCase()}
-          style={{ marginLeft: "10px" }}
+          style={menuItemStyle}
         >
           {ADMIN_ROUTES[5]}
         </NavLink>
@@ -114,9 +134,10 @@ const AdminSidebar = (): ReactNode => {
     <>
       <SidebarHeader />
       <Menu
-        mode="inline"
+        mode="vertical"
         style={{ marginTop: "80px", background: "none" }}
         items={upperMenuItems}
+        
       />
 
       <Menu

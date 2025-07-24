@@ -1,4 +1,3 @@
-
 /**
  * The isCurrentPath function checks if the current path matches the given path.
  * @param {string} path - The path to check against.
@@ -9,4 +8,8 @@ export const isCurrentPath = (path: string): string => {
     return "ant-menu-item-selected";
   }
   return "";
+};
+
+export const menuItemStyle = {
+  marginLeft: "10px",
 };

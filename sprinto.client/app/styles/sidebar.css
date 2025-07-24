@@ -8,8 +8,25 @@
   &:active {
     background-color: white !important;
   }
-  margin-inline: 0 !important;
+
+  display: flex !important;
+  margin-inline: 0px !important;
   margin-block: 6px !important;
+  align-items: center !important;
+}
+
+.ant-menu-submenu-title {
+  display: flex !important;
+  align-items: center !important;
+  margin-inline: 0 !important;
+
+  &:active {
+    background-color: white !important;
+  }
+}
+
+.ant-menu-submenu-selected>.ant-menu-submenu-title {
+  color: var(--color-black) !important;
 }
 
 .header-button {
@@ -18,5 +35,18 @@
   &:hover {
     background-color: white !important;
     box-shadow: 0 2px 2px rgba(2, 7, 14, 0.185);
+  }
+}
+
+.menu-popup {
+  width: 100px;
+}
+
+.menu-popup .ant-menu-item {
+  margin-inline: 4px !important;
+  margin-block: 6px !important;
+
+  &:active {
+    background-color: white !important;
   }
 }

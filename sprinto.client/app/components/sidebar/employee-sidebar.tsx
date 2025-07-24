@@ -12,18 +12,17 @@ import {
 
 import "~/styles/sidebar.css";
 import SidebarHeader from "./sidebar-header";
-import { isCurrentPath } from ".";
+import { isCurrentPath, menuItemStyle } from ".";
 
 /**
  * This component renders sidebar section
  * @returns {ReactNode} The EmployeeSidebar component
  */
 const EmployeeSidebar = (): ReactNode => {
-
   const menuItems: MenuProps["items"] = [
     {
       icon: <SearchIcon size={22} />,
-      label: <span style={{ marginLeft: "10px" }}>Search</span>,
+      label: <span style={menuItemStyle}>Search</span>,
       key: "0",
     },
     {
@@ -31,7 +30,7 @@ const EmployeeSidebar = (): ReactNode => {
       label: (
         <NavLink
           to={"/" + SIDEBAR_ROUTES[0].toLowerCase()}
-          style={{ marginLeft: "10px" }}
+          style={menuItemStyle}
         >
           {SIDEBAR_ROUTES[0]}
         </NavLink>
@@ -44,7 +43,7 @@ const EmployeeSidebar = (): ReactNode => {
       label: (
         <NavLink
           to={"/" + SIDEBAR_ROUTES[1].toLowerCase()}
-          style={{ marginLeft: "10px" }}
+          style={menuItemStyle}
         >
           {SIDEBAR_ROUTES[1]}
         </NavLink>
@@ -57,7 +56,7 @@ const EmployeeSidebar = (): ReactNode => {
       label: (
         <NavLink
           to={"/" + SIDEBAR_ROUTES[2].toLowerCase()}
-          style={{ marginLeft: "10px" }}
+          style={menuItemStyle}
         >
           {SIDEBAR_ROUTES[2]}
         </NavLink>
@@ -70,7 +69,7 @@ const EmployeeSidebar = (): ReactNode => {
       label: (
         <NavLink
           to={"/" + SIDEBAR_ROUTES[3].toLowerCase()}
-          style={{ marginLeft: "10px" }}
+          style={menuItemStyle}
         >
           {SIDEBAR_ROUTES[3]}
         </NavLink>
