@@ -2,7 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Breadcrumb, Layout, Space, Spin } from "antd";
 import { type ReactNode } from "react";
 import { Outlet } from "react-router";
-import EmployeeSidebar from "~/components/employee-sidebar";
+import AdminSidebar from "~/components/sidebar/admin-sidebar";
+import EmployeeSidebar from "~/components/sidebar/employee-sidebar";
 import { PROFILE_KEY } from "~/lib/const";
 import { getMe } from "~/lib/server/auth.api";
 
@@ -14,7 +15,7 @@ const { Header, Content, Sider } = Layout;
  */
 const MainLayout = (): ReactNode => {
   // Fetch the profile and access token from the server
-  const { isPending } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: [PROFILE_KEY],
     queryFn: getMe,
     staleTime: 55 * 60 * 1000, // 55 minutes
@@ -33,7 +34,11 @@ const MainLayout = (): ReactNode => {
           padding: "20px 15px",
         }}
       >
-        <EmployeeSidebar />
+        {data?.result?.user.role === "admin" ? (
+          <AdminSidebar />
+        ) : (
+          <EmployeeSidebar />
+        )}
       </Sider>
       <Layout>
         <Header>
@@ -45,7 +50,7 @@ const MainLayout = (): ReactNode => {
                 },
                 {
                   title: <a href="/today">Today</a>,
-                }
+                },
               ]}
             />
           </Space>
