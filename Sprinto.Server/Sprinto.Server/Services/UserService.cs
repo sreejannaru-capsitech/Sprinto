@@ -207,6 +207,13 @@ namespace Sprinto.Server.Services
 
                         throw new UnauthorizedAccessException(Constants.Messages.InvalidToken);
                     }
+
+                    // Valid session — remove old token before adding new one
+                    var cleanupFilter = Builders<User>.Filter.Eq(u => u.Id, user.Id);
+                    var cleanupUpdate = Builders<User>.Update.PullFilter(u => u.Sessions,
+                        Builders<Session>.Filter.Eq(s => s.Token, refreshToken));
+
+                    await _users.UpdateOneAsync(cleanupFilter, cleanupUpdate);
                 }
 
                 // Generate new tokens
@@ -220,15 +227,10 @@ namespace Sprinto.Server.Services
                     Token = newRefreshToken.Token
                 };
 
-                // Single atomic update: remove old session and insert new one
-                var filter = Builders<User>.Filter.Eq(u => u.Id, user.Id);
-                var combinedUpdate = Builders<User>.Update.Combine(
-                    Builders<User>.Update.PullFilter(u => u.Sessions,
-                        Builders<Session>.Filter.Eq(s => s.Token, refreshToken ?? string.Empty)),
-                    Builders<User>.Update.Push(u => u.Sessions, newSession)
-                );
+                var sessionFilter = Builders<User>.Filter.Eq(u => u.Id, user.Id);
+                var sessionUpdate = Builders<User>.Update.Push(u => u.Sessions, newSession);
 
-                await _users.UpdateOneAsync(filter, combinedUpdate);
+                await _users.UpdateOneAsync(sessionFilter, sessionUpdate);
 
                 return new SessionTokens
                 {
