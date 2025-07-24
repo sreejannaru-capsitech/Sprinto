@@ -17,6 +17,7 @@ namespace Sprinto.Server.Controllers
         private readonly JwtService _jwtService = jwtService;
         private readonly IWebHostEnvironment _env = env;
 
+
         // Create / Register new users ( Admin Only )
         [HttpPost]
         [Authorize(Roles = "admin")]
@@ -63,7 +64,7 @@ namespace Sprinto.Server.Controllers
         }
 
         // Login Route which generates access and refresh token
-        [HttpPost("/auth/login")]
+        [HttpPost("/api/auth/login")]
         public async Task<ApiResponse<LoginResponse>> Login([FromBody] UserLoginRequest request)
         {
             var response = new ApiResponse<LoginResponse>();
@@ -82,16 +83,16 @@ namespace Sprinto.Server.Controllers
                 response.Message = Constants.Messages.Success;
                 response.Result = new LoginResponse
                 {
-                    AccessToken = sessions.AccessToken,
+                    AccessToken = sessions.AccessToken
                 };
 
                 var cookieOptions = new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = _env.IsDevelopment(),
+                    Secure = !_env.IsDevelopment(),
                     SameSite = SameSiteMode.Strict,
                     Expires = DateTime.UtcNow.AddDays(15),
-                    Path = "/api/users/refresh"
+                    Path = "/api/auth/me"
                 };
 
                 Response.Cookies.Append(Constants.Config.COOKIE_NAME, sessions.RefreshToken, cookieOptions);
@@ -104,8 +105,8 @@ namespace Sprinto.Server.Controllers
         }
 
 
-        // Access Token Refresh route
-        [HttpGet("/auth/refresh")]
+        // Access Token Refresh route and used to get profile information
+        [HttpGet("/api/auth/me")]
         public async Task<ApiResponse<LoginResponse>> RefreshAccessToken()
         {
             var response = new ApiResponse<LoginResponse>();
@@ -135,18 +136,20 @@ namespace Sprinto.Server.Controllers
                 var sessions = await _userService.CheckAndCreateSession(user, ipAddress, refreshToken);
 
                 response.Message = Constants.Messages.Success;
+                // Include the accesstoken and user object in the response
                 response.Result = new LoginResponse
                 {
                     AccessToken = sessions.AccessToken,
+                    User = user.ToUserResponse(),
                 };
 
                 var cookieOptions = new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = _env.IsDevelopment(),
+                    Secure = !_env.IsDevelopment(),
                     SameSite = SameSiteMode.Strict,
                     Expires = DateTime.UtcNow.AddDays(15),
-                    Path = "/api/users/refresh"
+                    Path = "/api/auth/me"
                 };
 
                 Response.Cookies.Append(Constants.Config.COOKIE_NAME, sessions.RefreshToken, cookieOptions);
@@ -160,7 +163,7 @@ namespace Sprinto.Server.Controllers
 
 
         // When user wants to change password
-        [HttpPost("/auth/change-password")]
+        [HttpPost("/api/auth/change-password")]
         public async Task<ApiResponse<string>> ChangePassword([FromBody] UserPasswordChangeRequest request)
         {
             var response = new ApiResponse<string>();

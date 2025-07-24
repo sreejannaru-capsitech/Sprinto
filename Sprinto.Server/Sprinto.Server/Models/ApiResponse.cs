@@ -1,4 +1,6 @@
-﻿namespace Sprinto.Server.Models
+﻿using Sprinto.Server.DTOs;
+
+namespace Sprinto.Server.Models
 {
     public class ApiResponse<T>
     {
@@ -24,6 +26,7 @@
     public class LoginResponse
     {
         public string AccessToken { get; set; } = null!;
+        public UserResponse? User { get; set; }
     }
 
     public class TokenResponse
