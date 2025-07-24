@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BASE_URL } from "../const";
+import { BASE_URL, PROFILE_KEY } from "../const";
 import { queryClient } from "./queryClient";
 
 const axiosApi = axios.create({
@@ -9,7 +9,9 @@ const axiosApi = axios.create({
 
 axiosApi.interceptors.request.use((config) => {
   // Include the token in the Authorization header if it exists
-  const store = queryClient.getQueryData<ApiResponse<LoginResponse>>(["me"]);
+  const store = queryClient.getQueryData<ApiResponse<LoginResponse>>([
+    PROFILE_KEY,
+  ]);
   if (store && store.result) {
     config.headers.Authorization = `Bearer ${store.result.accessToken}`;
   }
