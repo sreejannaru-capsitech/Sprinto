@@ -2,6 +2,7 @@
   --primary-color: rgba(20, 27, 52, 0.47);
   --primary-darker-color: rgba(20, 27, 52, 0.6);
   --primary-light-color: rgba(20, 27, 52, 0.03);
+  --color-black: rgba(0, 0, 0, 0.88);
 }
 
 body {
@@ -22,7 +23,17 @@ h1.ant-typography {
 }
 
 .ant-form .ant-form-item {
-    margin-bottom: 14px;
+  margin-bottom: 14px;
+}
+
+.ant-layout {
+  background: var(--primary-light-color) !important;
+}
+
+.ant-layout-content {
+  background: white;
+  border-top-left-radius: 25px;
+  padding: 20px;
 }
 
 .ant-btn-color-primary {
@@ -32,6 +43,18 @@ h1.ant-typography {
 .ant-btn-variant-solid:hover {
   background: var(--primary-darker-color) !important;
 }
+
+.ant-layout-header {
+  background: none;
+}
+
+/* .ant-notification-notice {
+  padding: 14px 20px !important;
+}
+
+.ant-notification-notice-message {
+  font-size: medium !important;
+} */
 
 /* ========= Custom Styles ========= */
 

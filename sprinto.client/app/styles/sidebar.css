@@ -1,0 +1,22 @@
+.ant-menu-item-selected {
+  background-color: white !important;
+  color: var(--color-black) !important;
+  box-shadow: 0 2px 2px rgba(2, 7, 14, 0.185);
+}
+
+.ant-menu-item {
+  &:active {
+    background-color: white !important;
+  }
+  margin-inline: 0 !important;
+  margin-block: 6px !important;
+}
+
+.header-button {
+  padding: 10px;
+
+  &:hover {
+    background-color: white !important;
+    box-shadow: 0 2px 2px rgba(2, 7, 14, 0.185);
+  }
+}
