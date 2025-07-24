@@ -7,4 +7,5 @@ interface ApiResponse<T> {
 
 interface LoginResponse {
     accessToken: string;
+    user: User;
 }
