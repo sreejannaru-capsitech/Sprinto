@@ -7,9 +7,18 @@ import {
   ScrollRestoration,
 } from "react-router";
 
-import type { Route } from "./+types/root";
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery
+} from "@tanstack/react-query";
+
+import { ConfigProvider, Spin } from "antd";
 import "~/styles/main.css";
-import { ConfigProvider } from "antd";
+import type { Route } from "./+types/root";
+import { getMe } from "./lib/server/auth.api";
+
+const queryClient = new QueryClient();
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -43,6 +52,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  // Fetch the profile and access token from the server
+  const { isPending } = useQuery({
+    queryKey: ["me"],
+    queryFn: getMe,
+    staleTime: 55 * 60 * 1000, // 55 minutes
+  });
+
   return (
     <ConfigProvider
       theme={{
@@ -53,7 +69,9 @@ export default function App() {
         },
       }}
     >
-      <Outlet />
+      <QueryClientProvider client={queryClient}>
+        {isPending ? <Spin fullscreen /> : <Outlet />}
+      </QueryClientProvider>
     </ConfigProvider>
   );
 }
