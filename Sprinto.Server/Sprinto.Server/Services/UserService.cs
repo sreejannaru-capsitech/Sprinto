@@ -185,7 +185,7 @@ namespace Sprinto.Server.Services
         /// <exception cref="Exception">
         /// Thrown when the session is invalid, expired, or the database update cannot be completed.
         /// </exception>
-        public async Task<SessionTokens> ManageSession(User user, string? ip, string? refreshToken = null)
+        public async Task<SessionTokens> CheckAndCreateSession(User user, string? ip, string? refreshToken = null)
         {
             try
             {

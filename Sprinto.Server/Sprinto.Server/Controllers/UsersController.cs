@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver;
 using Sprinto.Server.Common;
 using Sprinto.Server.DTOs;
 using Sprinto.Server.Extensions;
@@ -78,7 +77,7 @@ namespace Sprinto.Server.Controllers
 
                 // Get the IP Address from HTTP Context
                 var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-                var sessions = await _userService.ManageSession(user, ipAddress);
+                var sessions = await _userService.CheckAndCreateSession(user, ipAddress);
 
                 response.Message = Constants.Messages.Success;
                 response.Result = new LoginResponse
@@ -133,7 +132,7 @@ namespace Sprinto.Server.Controllers
 
                 // Get the IP Address from HTTP Context
                 var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-                var sessions = await _userService.ManageSession(user, ipAddress, refreshToken);
+                var sessions = await _userService.CheckAndCreateSession(user, ipAddress, refreshToken);
 
                 response.Message = Constants.Messages.Success;
                 response.Result = new LoginResponse
