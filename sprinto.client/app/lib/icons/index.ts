@@ -6,3 +6,7 @@ export { default as CalenderIcon } from "./calender.icon";
 export { default as TodayIcon } from "./today.icon";
 export { default as InboxIcon } from "./inbox.icon";
 export { default as ProjectIcon } from "./project.icon";
+export { default as TaskIcon } from "./task.icon";
+export { default as UsersIcon } from "./users.icon";
+export { default as AdminIcon } from "./admin.icon";
+export { default as TeamLeadIcon } from "./teamLead.icon";
