@@ -1,7 +1,11 @@
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using Sprinto.Server.Common;
+using Sprinto.Server.Extensions;
 using Sprinto.Server.Models;
-using System.Runtime;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +24,11 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddControllers().AddJsonOptions(
-        options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
+        options =>
+        {
+            options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            //options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        });
 
 builder.Services.AddSingleton<IMongoClient>(sp =>
 {
@@ -28,6 +36,7 @@ builder.Services.AddSingleton<IMongoClient>(sp =>
     return new MongoClient(settings.ConnectionString);
 });
 
+builder.Services.AddSprintoServices();
 
 builder.Services.AddControllers();
 
@@ -39,12 +48,30 @@ builder.Services.Configure<DatabaseSettings>(
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "application/json";
+
+        var errorFeature = context.Features.Get<IExceptionHandlerFeature>();
+        var exception = errorFeature?.Error;
+
+        var response = new
+        {
+            Message = Constants.Messages.InternalServerError,
+            Details = exception?.Message
+        };
+        await context.Response.WriteAsJsonAsync(response);
+    });
+});
 
 app.UseCors("AllowSpecificOrigins");
 

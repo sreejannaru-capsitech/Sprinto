@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using Sprinto.Server.DTOs;
 using System.ComponentModel.DataAnnotations;
 
 namespace Sprinto.Server.Models
@@ -26,5 +27,24 @@ namespace Sprinto.Server.Models
 
         [BsonElement("created_by")]
         public Creation CreatedBy { get; set; } = null!;
+
+        [BsonElement("sessions")]
+        public List<Session> Sessions { get; set; } = [];
+
+        public User(UserDTO dto)
+        {
+            Name = dto.Name;
+            Email = dto.Email;
+            // Auto set default password for new users as "welcome"
+            Password = BCrypt.Net.BCrypt.EnhancedHashPassword("welcome", workFactor: 15);
+            Role = dto.Role;
+            CreatedBy = new Creation 
+            { 
+                UserId = dto.CreatedBy.UserId,
+                UserName = dto.CreatedBy.UserName
+            };
+        }
+
+        public User() { }
     }
 }
