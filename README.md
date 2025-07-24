@@ -278,6 +278,13 @@ A task management system that allows users to create, edit, and delete tasks. Th
 
 #### BASE_URL = http://<>/api/v1
 
+
+#### Super Admin Credentials
+
+email: `admin@capsitech.com`
+password: `superadmin`
+
+
 ### Projects
 
 #### GET /projects
