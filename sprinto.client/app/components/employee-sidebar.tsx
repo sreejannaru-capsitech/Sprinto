@@ -27,9 +27,9 @@ import "~/styles/sidebar.css";
 
 /**
  * This component renders sidebar section
- * @returns {ReactNode} The Sidebar component
+ * @returns {ReactNode} The EmployeeSidebar component
  */
-const Sidebar = (): ReactNode => {
+const EmployeeSidebar = (): ReactNode => {
   const { data } = useQuery({
     queryKey: [PROFILE_KEY],
     queryFn: getMe,
@@ -157,4 +157,4 @@ const Sidebar = (): ReactNode => {
   );
 };
 
-export default Sidebar;
+export default EmployeeSidebar;

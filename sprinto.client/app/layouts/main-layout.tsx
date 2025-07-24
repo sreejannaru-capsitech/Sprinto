@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Breadcrumb, Layout, Space, Spin } from "antd";
 import { type ReactNode } from "react";
 import { Outlet } from "react-router";
-import Sidebar from "~/components/sidebar";
+import EmployeeSidebar from "~/components/employee-sidebar";
 import { PROFILE_KEY } from "~/lib/const";
 import { getMe } from "~/lib/server/auth.api";
 
@@ -33,7 +33,7 @@ const MainLayout = (): ReactNode => {
           padding: "20px 15px",
         }}
       >
-        <Sidebar />
+        <EmployeeSidebar />
       </Sider>
       <Layout>
         <Header>
