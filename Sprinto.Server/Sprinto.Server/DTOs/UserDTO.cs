@@ -38,10 +38,6 @@ namespace Sprinto.Server.DTOs
             get => _role;
             set => _role = value?.Trim() ?? string.Empty;
         }
-
-        [Required(ErrorMessage = "CreatedBy info is required")]
-        [BsonElement("created_by")]
-        public CreationDTO CreatedBy { get; set; } = null!;
     }
 
     public class UserResponse

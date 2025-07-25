@@ -31,7 +31,7 @@ namespace Sprinto.Server.Models
         [BsonElement("sessions")]
         public List<Session> Sessions { get; set; } = [];
 
-        public User(UserDTO dto)
+        public User(UserDTO dto, string id, string name)
         {
             Name = dto.Name;
             Email = dto.Email;
@@ -40,8 +40,8 @@ namespace Sprinto.Server.Models
             Role = dto.Role;
             CreatedBy = new Creation 
             { 
-                UserId = dto.CreatedBy.UserId,
-                UserName = dto.CreatedBy.UserName
+                UserId = id,
+                UserName = name
             };
         }
 

@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using Sprinto.Server.DTOs;
 using System.ComponentModel.DataAnnotations;
 
 
@@ -36,5 +37,21 @@ namespace Sprinto.Server.Models
 
         [BsonElement("created_by")]
         public Creation CreatedBy { get; set; } = null!;
+
+        public Project(ProjectDTO dto, string id, string name)
+        {
+            Title = dto.Title;
+            Description = dto.Description;
+            IsCompleted = false;
+            TeamLead = dto.TeamLead;
+            Assignees = dto.Assignees;
+            CreatedBy = new Creation
+            {
+                UserId = id,
+                UserName = name
+            };
+        }
+
+        public Project() { }
     }
 }

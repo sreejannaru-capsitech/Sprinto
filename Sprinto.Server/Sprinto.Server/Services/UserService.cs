@@ -26,20 +26,26 @@ namespace Sprinto.Server.Services
         }
 
         /// <summary>
-        /// Creates a new user record in the database based on the provided user DTO.
+        /// Asynchronously creates a new user record in the database using the provided user DTO,
+        /// along with the creator's unique identifier and name.
         /// </summary>
-        /// <param name="dto">The data transfer object containing user creation details.</param>
-        /// <returns>
-        /// A <see cref="User"/> object representing the newly created user.
-        /// </returns>
+        /// <param name="dto">The data transfer object containing details for user creation.</param>
+        /// <param name="userId">The unique identifier of the user initiating the creation.</param>
+        /// <param name="userName">The name of the user initiating the creation.</param>
+        /// <returns>A <see cref="User"/> representing the newly created database record.</returns>
         /// <exception cref="Exception">
-        /// Thrown when the user creation fails due to a database or internal error.
+        /// Thrown when the creation process fails due to a database or unexpected internal error.
         /// </exception>
-        public async Task<User> CreateAsync(UserDTO dto)
+        /// <remarks>
+        /// This method logs the original exception and wraps it in a generic exception for controlled propagation.
+        /// Consider validating <paramref name="dto"/> before invoking this method. For better context,
+        /// replacing the generic <c>Exception</c> with a domain-specific type is recommended.
+        /// </remarks>
+        public async Task<User> CreateAsync(UserDTO dto, string userId, string userName)
         {
             try
             {
-                var user = new User(dto);
+                var user = new User(dto, userId, userName);
                 await _users.InsertOneAsync(user);
 
                 return user;

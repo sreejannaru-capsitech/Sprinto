@@ -31,7 +31,14 @@ namespace Sprinto.Server.Controllers
 
             try
             {
-                var createdEmployee = await _userService.CreateAsync(newUser);
+                // Extract ID and Name of current admin
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userName = User.FindFirstValue(ClaimTypes.Name);
+
+                if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(userName))
+                    throw new Exception(Constants.Messages.InvalidToken);
+
+                var createdEmployee = await _userService.CreateAsync(newUser, userId, userName);
 
                 response.Message = Constants.Messages.Created;
                 response.Result = createdEmployee.ToUserResponse();
