@@ -1,5 +1,7 @@
 import { notification } from "antd";
+import { TickRoundedIcon, CloseRoundedIcon } from "~/lib/icons";
 import type { NotificationPlacement } from "antd/es/notification/interface";
+import type { ReactNode } from "react";
 
 type NotificationOptions = {
   message: string;
@@ -11,6 +13,17 @@ type NotificationOptions = {
 
 export const useAntNotification = () => {
   const [api, contextHolder] = notification.useNotification();
+
+  const getCustomIcon = (type: string): ReactNode | undefined => {
+    switch (type) {
+      case "success":
+        return <TickRoundedIcon />;
+      case "error":
+        return <CloseRoundedIcon />;
+      default:
+        return undefined; // fallback to Ant Design's default
+    }
+  };
 
   const _api = ({
     message,
@@ -24,6 +37,7 @@ export const useAntNotification = () => {
       description,
       placement,
       duration,
+      icon: getCustomIcon(type),
     });
   };
 
