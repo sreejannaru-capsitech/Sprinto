@@ -1,0 +1,27 @@
+meta {
+  name: Create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{URL}}/projects
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "title": "string",
+    "description": "string",
+    "deadline": "2025-07-25",
+    "teamLead": "686df99b676b961e54a3c223",
+    "assignees": [
+      "686df99b676b961e54a3c223"
+    ]
+  }
+}
+
+settings {
+  encodeUrl: true
+}

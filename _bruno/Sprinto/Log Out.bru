@@ -1,0 +1,15 @@
+meta {
+  name: Log Out
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{URL}}/auth/me
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}
