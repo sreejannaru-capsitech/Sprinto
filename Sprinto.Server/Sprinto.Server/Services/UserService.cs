@@ -45,10 +45,21 @@ namespace Sprinto.Server.Services
         {
             try
             {
+                // check if any user exists with the email
+                var existing = await _users.Find(x => x.Email == dto.Email).FirstOrDefaultAsync();
+                if (existing != null)
+                {
+                    throw new DuplicateNameException("User email already exists");
+                }
+
                 var user = new User(dto, userId, userName);
                 await _users.InsertOneAsync(user);
 
                 return user;
+            }
+            catch (DuplicateNameException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
