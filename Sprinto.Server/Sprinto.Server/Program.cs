@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using Sprinto.Server.Common;
 using Sprinto.Server.Extensions;
 using Sprinto.Server.Models;
+using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +47,27 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<DatabaseSettings>(
     builder.Configuration.GetSection("Database"));
+
+builder.Services.AddAuthentication()
+.AddJwtBearer("auth-scheme", jwtOptions =>
+{
+    // jwtOptions.MetadataAddress = builder.Configuration["Api:MetadataAddress"];
+    // Optional if the MetadataAddress is specified
+    jwtOptions.Authority = builder.Configuration[Constants.Config.Authority];
+    jwtOptions.Audience = builder.Configuration[Constants.Config.Audience];
+    jwtOptions.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8
+            .GetBytes(builder.Configuration[Constants.Config.AccessSecret]!)
+        ),
+    };
+
+    jwtOptions.MapInboundClaims = true;
+});
 
 var app = builder.Build();
 
