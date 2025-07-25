@@ -25,7 +25,7 @@ namespace Sprinto.Server.Models
         public bool IsCompleted { get; set; }
 
         [BsonElement("deadline")]
-        public DateOnly Deadline { get; set; }
+        public DateTime Deadline { get; set; }
 
         [BsonElement("maintainer_id")]
         [BsonRepresentation(BsonType.ObjectId)]

@@ -35,7 +35,7 @@ namespace Sprinto.Server.DTOs
 
         [Required(ErrorMessage = "Deadline is required")]
         [BsonElement("deadline")]
-        public DateOnly Deadline { get; set; }
+        public DateTime Deadline { get; set; }
 
         [ValidObjectId(ErrorMessage = "maintainerId must be a valid MongoDB ObjectId")]
         [BsonElement("maintainer_id")]
