@@ -12,3 +12,5 @@ export {default as UserIcon} from "./user.icon";
 export { default as AdminIcon } from "./admin.icon";
 export { default as TeamLeadIcon } from "./teamLead.icon";
 export { default as PlusIcon } from "./plus.icon";
+export { default as TickRoundedIcon } from "./tick.rounded.icon";
+export { default as CloseRoundedIcon } from "./close.rounded.icon";
