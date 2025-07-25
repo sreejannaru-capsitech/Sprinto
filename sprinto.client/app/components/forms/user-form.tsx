@@ -53,9 +53,10 @@ const UserForm: FC<UserFormProps> = ({
           message: "User created successfully",
           type: "success",
         });
+        form.resetFields();
         onClose();
       } else {
-        throw new Error("Could not create user");
+        _api({ message: res.message, type: "error" });
       }
     } catch (error) {
       _api({ message: "Could not create user", type: "error" });
