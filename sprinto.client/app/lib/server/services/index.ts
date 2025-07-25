@@ -1,0 +1,1 @@
+export { useProfileQuery } from "./user.service";

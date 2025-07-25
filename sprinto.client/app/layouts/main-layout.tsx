@@ -1,11 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
 import { Breadcrumb, Layout, Space, Spin } from "antd";
 import { type ReactNode } from "react";
 import { Outlet } from "react-router";
 import AdminSidebar from "~/components/sidebar/admin-sidebar";
 import EmployeeSidebar from "~/components/sidebar/employee-sidebar";
-import { PROFILE_KEY } from "~/lib/const";
-import { getMe } from "~/lib/server/auth.api";
+import { useProfileQuery } from "~/lib/server/services";
 
 const { Header, Content, Sider } = Layout;
 
@@ -15,11 +13,7 @@ const { Header, Content, Sider } = Layout;
  */
 const MainLayout = (): ReactNode => {
   // Fetch the profile and access token from the server
-  const { data, isPending } = useQuery({
-    queryKey: [PROFILE_KEY],
-    queryFn: getMe,
-    staleTime: 55 * 60 * 1000, // 55 minutes
-  });
+  const { data, isPending } = useProfileQuery();
 
   if (isPending) {
     return <Spin fullscreen />;

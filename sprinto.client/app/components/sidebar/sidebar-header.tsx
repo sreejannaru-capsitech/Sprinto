@@ -1,11 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
-import { Flex, Space, Avatar, Dropdown, Button, type MenuProps } from "antd";
+import { Avatar, Button, Dropdown, Flex, Space, type MenuProps } from "antd";
 import { isAxiosError } from "axios";
 import type { ReactNode } from "react";
 import { useAntNotification } from "~/hooks";
-import { PROFILE_KEY } from "~/lib/const";
 import { DownArrow, PencilIcon } from "~/lib/icons";
-import { getMe, logOut } from "~/lib/server/auth.api";
+import { logOut } from "~/lib/server/auth.api";
+import { useProfileQuery } from "~/lib/server/services";
 import { getInitials } from "~/lib/utils";
 
 /**
@@ -13,11 +12,7 @@ import { getInitials } from "~/lib/utils";
  * @returns {ReactNode} The SidebarHeader component
  */
 const SidebarHeader = (): ReactNode => {
-  const { data } = useQuery({
-    queryKey: [PROFILE_KEY],
-    queryFn: getMe,
-    staleTime: 55 * 60 * 1000, // 55 minutes
-  });
+  const { data } = useProfileQuery();
 
   const { _api, contextHolder } = useAntNotification();
 
