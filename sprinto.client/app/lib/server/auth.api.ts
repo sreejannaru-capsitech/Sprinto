@@ -18,3 +18,11 @@ export const getMe = async () => {
 export const logOut = async () => {
   return (await axiosApi.post<ApiResponse<null>>("/auth/me")).data;
 };
+
+export const changePassword = async (request: PasswordChangeRequest) => {
+  const { data } = await axiosApi.post<ApiResponse<string>>(
+    "/auth/change-password",
+    request
+  );
+  return data;
+};

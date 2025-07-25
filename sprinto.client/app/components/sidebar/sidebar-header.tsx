@@ -14,6 +14,7 @@ import { DownArrow, PencilIcon } from "~/lib/icons";
 import { logOut } from "~/lib/server/auth.api";
 import { useProfileQuery } from "~/lib/server/services";
 import { getInitials } from "~/lib/utils";
+import PasswordForm from "../forms/password-form";
 
 /**
  * This component renders sidebar-header section
@@ -22,6 +23,7 @@ import { getInitials } from "~/lib/utils";
 const SidebarHeader = (): ReactNode => {
   const { data } = useProfileQuery();
   const [visible, setVisible] = useState<boolean>(false);
+  const [passwordOpen, setPasswordOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const { _api, contextHolder } = useAntNotification();
 
@@ -60,7 +62,7 @@ const SidebarHeader = (): ReactNode => {
     },
     {
       label: "Change Password",
-      onClick: () => window.location.reload(),
+      onClick: () => setPasswordOpen(true),
       style: { width: "150px" },
       key: "1",
     },
@@ -96,6 +98,10 @@ const SidebarHeader = (): ReactNode => {
           onCancel={() => setVisible(false)}
           confirmLoading={loading}
           onOk={handleLogout}
+        />
+        <PasswordForm
+          open={passwordOpen}
+          onClose={() => setPasswordOpen(false)}
         />
       </Space>
       {data?.result?.user.role !== "admin" && (

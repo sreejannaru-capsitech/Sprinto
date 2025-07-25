@@ -13,3 +13,9 @@ interface UserRequest {
   email: string;
   role: UserRole;
 }
+
+interface PasswordChangeRequest {
+  email?: string;
+  oldPassword?: string;
+  newPassword?: string;
+}
