@@ -9,6 +9,7 @@
             public const string Updated = "Resource was updated";
             public const string Deleted = "Resource was deleted";
             public const string NotFound = "Resource not found";
+            public const string LogOut = "Logged out from session successfully";
             public const string BadRequest = "Bad request payload";
             public const string Unauthorized = "You are not authorized";
             public const string InvalidToken = "Invalid or expired token";

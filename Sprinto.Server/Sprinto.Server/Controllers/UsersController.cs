@@ -52,16 +52,26 @@ namespace Sprinto.Server.Controllers
 
 
         [HttpGet]
-        public async Task<ApiResponse<PagedResult<UserResponse>>>
-        GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        [Authorize]
+        public async Task<ApiResponse<PagedResult<UserResponse>>> GetAll(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? role = "employee")
         {
+            var allowedRoles = new[] { "employee", "admin", "teamLead" };
             var response = new ApiResponse<PagedResult<UserResponse>>();
             try
             {
-                var students = await _userService.GetAsync(page, pageSize);
+                // Validate query value
+                if (!allowedRoles.Contains(role))
+                {
+                    throw new Exception("Invalid role specified. Allowed values are: employee, admin, teamLead.");
+                }
+
+                var users = await _userService.GetAsync(page, pageSize, role);
 
                 response.Message = Constants.Messages.Success;
-                response.Result = students;
+                response.Result = users;
             }
             catch (Exception ex)
             {
@@ -80,7 +90,7 @@ namespace Sprinto.Server.Controllers
 
             try
             {
-                var user = await _userService.CheckCredentials(request) 
+                var user = await _userService.CheckCredentials(request)
                     ?? throw new Exception(Constants.Messages.InvalidCredentials);
 
                 // Get the IP Address from HTTP Context
@@ -160,6 +170,53 @@ namespace Sprinto.Server.Controllers
                 };
 
                 Response.Cookies.Append(Constants.Config.COOKIE_NAME, sessions.RefreshToken, cookieOptions);
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
+        // Log Out Route
+        [HttpPost("/api/auth/me")]
+        public async Task<ApiResponse<object>> LogOut()
+        {
+            var response = new ApiResponse<object>();
+            try
+            {
+                // Check if request contains the refresh token cookie
+                if (!Request.Cookies.TryGetValue(Constants.Config.COOKIE_NAME, out var refreshToken))
+                {
+                    throw new UnauthorizedAccessException(Constants.Messages.Unauthorized);
+                }
+
+                // Verify the jwt token
+                var principal = _jwtService.ValidateJwtToken(refreshToken, isRefresh: true)
+                    ?? throw new UnauthorizedAccessException(Constants.Messages.InvalidToken);
+
+                var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+                // Check if the userId is null
+                if (string.IsNullOrEmpty(userId))
+                {
+                    throw new UnauthorizedAccessException(Constants.Messages.InvalidToken);
+                }
+
+                await _userService.DeleteSession(userId, refreshToken);
+
+                response.Message = Constants.Messages.LogOut;
+
+                // Delete the cookie from client's browser
+                var deleteCookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = !_env.IsDevelopment(),
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddDays(-1), // Expire it in the past
+                    Path = "/api/auth/me"
+                };
+
+                Response.Cookies.Append(Constants.Config.COOKIE_NAME, "", deleteCookieOptions);
             }
             catch (Exception ex)
             {

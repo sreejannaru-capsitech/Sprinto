@@ -4,6 +4,7 @@ using Sprinto.Server.Common;
 using Sprinto.Server.DTOs;
 using Sprinto.Server.Extensions;
 using Sprinto.Server.Models;
+using System.Data;
 
 namespace Sprinto.Server.Services
 {
@@ -69,29 +70,31 @@ namespace Sprinto.Server.Services
         }
 
         /// <summary>
-        /// Retrieves a paginated list of users from the database, excluding sensitive fields.
+        /// Retrieves a paginated list of users filtered by role from the database, excluding sensitive fields.
         /// </summary>
         /// <param name="pageNumber">The page index starting from 1.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
+        /// <param name="role">The role to filter users by. Defaults to "employee" if not specified.</param>
         /// <returns>
-        /// A <see cref="PagedResult{UserResponse}"/> containing the list of users, total count, and total pages.
+        /// A <see cref="PagedResult{UserResponse}"/> containing the filtered list of users, total count, and total pages.
         /// </returns>
         /// <exception cref="Exception">
         /// Thrown when user retrieval fails due to a database or internal error.
         /// </exception>
-        public async Task<PagedResult<UserResponse>> GetAsync(int pageNumber, int pageSize)
+        public async Task<PagedResult<UserResponse>> GetAsync(int pageNumber, int pageSize, string? role = "employee")
         {
             try
             {
-                var totalCount = await _users.CountDocumentsAsync(_ => true);
+                var roleFilter = Builders<User>.Filter.Eq(u => u.Role, role);
+
+                var totalCount = await _users.CountDocumentsAsync(roleFilter);
                 var users = await _users
-                    .Find(_ => true)
+                    .Find(roleFilter)
                     .Skip((pageNumber - 1) * pageSize)
                     .Limit(pageSize)
                     .ToListAsync();
 
                 var userResponses = users.Select(u => u.ToUserResponse()).ToList();
-
                 var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
                 return new PagedResult<UserResponse>
@@ -103,7 +106,7 @@ namespace Sprinto.Server.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving users");
+                _logger.LogError(ex, "Error retrieving users with role {Role}", role);
                 throw new Exception("Could not retrieve users from database");
             }
         }
@@ -263,6 +266,51 @@ namespace Sprinto.Server.Services
             {
                 _logger.LogError(ex, "Error managing session for {Email}", user.Email);
                 throw new Exception("Could not manage user session.");
+            }
+        }
+
+        /// <summary>
+        /// Deletes a specific session associated with a user by removing the matching refresh token from the user's session list.
+        /// </summary>
+        /// <param name="UserId">The ID of the user whose session is to be deleted.</param>
+        /// <param name="refreshToken">The refresh token identifying the session to be removed.</param>
+        /// <returns>
+        /// An asynchronous task that completes when the session is removed from the database.
+        /// </returns>
+        /// <exception cref="UnauthorizedAccessException">
+        /// Thrown when either the user or session token is invalid, missing, or expired.
+        /// </exception>
+        public async Task DeleteSession(string UserId, string refreshToken)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(refreshToken) || string.IsNullOrEmpty(UserId))
+                {
+                    throw new UnauthorizedAccessException(Constants.Messages.InvalidToken);
+                }
+
+                // Get user document from DB 
+                var user = await _users.Find(x => x.Id == UserId).FirstOrDefaultAsync() ??
+                    throw new UnauthorizedAccessException(Constants.Messages.NotFound);
+
+                var existingSession = user.Sessions.Find(s => s.Token == refreshToken)
+                        ?? throw new UnauthorizedAccessException(Constants.Messages.InvalidToken);
+
+                // Delete the session from DB
+                var removeExpiredSession = Builders<User>.Update.PullFilter(u => u.Sessions,
+                            Builders<Session>.Filter.Eq(s => s.Token, refreshToken));
+
+                await _users.UpdateOneAsync(
+                    Builders<User>.Filter.Eq(u => u.Id, UserId),
+                    removeExpiredSession);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to delete user session");
             }
         }
 
