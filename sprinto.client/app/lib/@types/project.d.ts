@@ -2,7 +2,7 @@ interface Project {
     id: string;
     title: string;
     description: string;
-    isCompleted: boolean;
+    isCompleted?: boolean;
     deadline: Date;
     teamLead: string;
     assignees: string[];

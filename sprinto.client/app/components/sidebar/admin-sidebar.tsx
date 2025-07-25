@@ -1,5 +1,5 @@
 import { Menu, type MenuProps } from "antd";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { NavLink } from "react-router";
 import { ADMIN_ROUTES } from "~/lib/const";
 import {
@@ -11,12 +11,14 @@ import {
   TaskIcon,
   TeamLeadIcon,
   UserIcon,
-  UsersIcon
+  UsersIcon,
 } from "~/lib/icons";
 import SidebarHeader from "./sidebar-header";
 
 import "~/styles/sidebar.css";
 import { isCurrentPath, menuItemStyle } from ".";
+import ProjectForm from "../forms/project-form";
+import UserForm from "../forms/user-form";
 
 /**
  * This component renders admin-sidebar section
@@ -32,10 +34,7 @@ const AdminSidebar = (): ReactNode => {
     {
       icon: <CalenderIcon size={22} />,
       label: (
-        <NavLink
-          to={"/" + ADMIN_ROUTES[0].toLowerCase()}
-          style={menuItemStyle}
-        >
+        <NavLink to={"/" + ADMIN_ROUTES[0].toLowerCase()} style={menuItemStyle}>
           {ADMIN_ROUTES[0]}
         </NavLink>
       ),
@@ -50,26 +49,25 @@ const AdminSidebar = (): ReactNode => {
         {
           icon: <UserIcon size={22} />,
           label: <span style={menuItemStyle}>User</span>,
+          onClick: () => setUserOpen(true),
           key: "1.1",
         },
         {
           icon: <ProjectIcon size={22} />,
           label: <span style={menuItemStyle}>Project</span>,
+          onClick: () => setProjectOpen(true),
           key: "1.2",
-        }
+        },
       ],
       key: "2",
-    }
+    },
   ];
 
   const lowerMenuItems: MenuProps["items"] = [
     {
       icon: <ProjectIcon size={22} />,
       label: (
-        <NavLink
-          to={"/" + ADMIN_ROUTES[1].toLowerCase()}
-          style={menuItemStyle}
-        >
+        <NavLink to={"/" + ADMIN_ROUTES[1].toLowerCase()} style={menuItemStyle}>
           {ADMIN_ROUTES[1]}
         </NavLink>
       ),
@@ -79,10 +77,7 @@ const AdminSidebar = (): ReactNode => {
     {
       icon: <TaskIcon size={22} />,
       label: (
-        <NavLink
-          to={"/" + ADMIN_ROUTES[2].toLowerCase()}
-          style={menuItemStyle}
-        >
+        <NavLink to={"/" + ADMIN_ROUTES[2].toLowerCase()} style={menuItemStyle}>
           {ADMIN_ROUTES[2]}
         </NavLink>
       ),
@@ -92,10 +87,7 @@ const AdminSidebar = (): ReactNode => {
     {
       icon: <UsersIcon size={22} />,
       label: (
-        <NavLink
-          to={"/" + ADMIN_ROUTES[3].toLowerCase()}
-          style={menuItemStyle}
-        >
+        <NavLink to={"/" + ADMIN_ROUTES[3].toLowerCase()} style={menuItemStyle}>
           {ADMIN_ROUTES[3]}
         </NavLink>
       ),
@@ -105,10 +97,7 @@ const AdminSidebar = (): ReactNode => {
     {
       icon: <TeamLeadIcon size={22} />,
       label: (
-        <NavLink
-          to={"/" + ADMIN_ROUTES[4].toLowerCase()}
-          style={menuItemStyle}
-        >
+        <NavLink to={"/" + ADMIN_ROUTES[4].toLowerCase()} style={menuItemStyle}>
           Team Leaders
         </NavLink>
       ),
@@ -118,10 +107,7 @@ const AdminSidebar = (): ReactNode => {
     {
       icon: <AdminIcon size={22} />,
       label: (
-        <NavLink
-          to={"/" + ADMIN_ROUTES[5].toLowerCase()}
-          style={menuItemStyle}
-        >
+        <NavLink to={"/" + ADMIN_ROUTES[5].toLowerCase()} style={menuItemStyle}>
           {ADMIN_ROUTES[5]}
         </NavLink>
       ),
@@ -130,6 +116,9 @@ const AdminSidebar = (): ReactNode => {
     },
   ];
 
+  const [userOpen, setUserOpen] = useState<boolean>(false);
+  const [projectOpen, setProjectOpen] = useState<boolean>(false);
+
   return (
     <>
       <SidebarHeader />
@@ -137,8 +126,14 @@ const AdminSidebar = (): ReactNode => {
         mode="vertical"
         style={{ marginTop: "80px", background: "none" }}
         items={upperMenuItems}
-        
       />
+
+      <ProjectForm
+        open={projectOpen}
+        onClose={() => setProjectOpen(false)}
+        isNew
+      />
+      <UserForm open={userOpen} onClose={() => setUserOpen(false)} />
 
       <Menu
         mode="inline"

@@ -5,6 +5,12 @@ interface ApiResponse<T> {
     result: null | T;
 }
 
+interface PagedResult<T> {
+    items: T[];
+    totalCount: number;
+    totalPages: number;
+}
+
 interface LoginResponse {
     accessToken: string;
     user: User;
