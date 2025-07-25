@@ -1,1 +1,1 @@
-export { useProfileQuery } from "./user.service";
+export  *  from "./user.service";

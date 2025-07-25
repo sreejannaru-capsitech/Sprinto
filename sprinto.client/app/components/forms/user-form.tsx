@@ -2,6 +2,12 @@ import { Col, Form, Input, Modal, Row, Select } from "antd";
 import { useState, type FC, type ReactNode } from "react";
 import { useAntNotification } from "~/hooks";
 import { createUser } from "~/lib/server";
+import {
+  getNonWhitespaceValidator,
+  getRequiredEmailRule,
+  getRequiredSelectRule,
+  getRequiredStringRule,
+} from "~/lib/validators";
 
 interface UserFormProps {
   open: boolean;
@@ -76,22 +82,14 @@ const UserForm: FC<UserFormProps> = ({
       }}
       onOk={handleSubmit}
       confirmLoading={loading}
-      okButtonProps={{ style: { minWidth: "100px" } }}
-      cancelButtonProps={{ style: { minWidth: "100px" } }}
     >
       {contextHolder}
       <Form layout="vertical" form={form} requiredMark="optional">
         {/* Email */}
-        <Form.Item
+        <Form.Item<UserRequest>
           label="Email"
           name="email"
-          rules={[
-            {
-              type: "email",
-              required: true,
-              message: "Please enter user email",
-            },
-          ]}
+          rules={[getRequiredEmailRule()]}
         >
           <Input placeholder="Email" />
         </Form.Item>
@@ -99,32 +97,12 @@ const UserForm: FC<UserFormProps> = ({
         <Row gutter={16}>
           <Col span={12}>
             {/* Name */}
-            <Form.Item
+            <Form.Item<UserRequest>
               label="Name"
               name="name"
               rules={[
-                {
-                  type: "string",
-                  required: true,
-                  message: "Please enter user name",
-                },
-                {
-                  validator(_, value) {
-                    if (!value) return Promise.resolve();
-                    const trimmed = value?.trim();
-                    if (!trimmed) {
-                      return Promise.reject(
-                        new Error("Name cannot be just whitespace")
-                      );
-                    }
-                    if (trimmed.length < 3) {
-                      return Promise.reject(
-                        new Error("Name should be at least 3 characters long")
-                      );
-                    }
-                    return Promise.resolve();
-                  },
-                },
+                getRequiredStringRule("name"),
+                getNonWhitespaceValidator("name"),
               ]}
             >
               <Input placeholder="Name" />
@@ -133,16 +111,10 @@ const UserForm: FC<UserFormProps> = ({
 
           <Col span={12}>
             {/* Role */}
-            <Form.Item
+            <Form.Item<UserRequest>
               label="Role"
               name="role"
-              rules={[
-                {
-                  type: "string",
-                  required: true,
-                  message: "Please select user role",
-                },
-              ]}
+              rules={[getRequiredSelectRule("user role")]}
             >
               <Select options={roleOptions} placeholder="Select a role" />
             </Form.Item>

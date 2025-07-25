@@ -1,11 +1,14 @@
 import { Col, DatePicker, Form, Input, Modal, Row, Select, Switch } from "antd";
-import { useMemo, useState, type FC, type ReactNode } from "react";
 import dayjs from "dayjs";
-import { useQuery } from "@tanstack/react-query";
-import { EMPLOYEES_KEY, TEAM_LEADS_KEY } from "~/lib/const";
-import { getEmployees, getTeamLeads } from "~/lib/server/user.api";
+import { useMemo, useState, type FC, type ReactNode } from "react";
 import { useAntNotification } from "~/hooks";
 import { createProject } from "~/lib/server/project.api";
+import { useEmployeesQuery, useTeamLeadsQuery } from "~/lib/server/services";
+import {
+  getNonWhitespaceValidator,
+  getRequiredSelectRule,
+  getRequiredStringRule,
+} from "~/lib/validators";
 
 interface ProjectFormProps {
   isNew?: boolean;
@@ -25,17 +28,9 @@ const ProjectForm: FC<ProjectFormProps> = ({
   const [form] = Form.useForm<ProjectRequest>();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { data: employees, isPending: employeesPending } = useQuery({
-    queryKey: [EMPLOYEES_KEY],
-    queryFn: getEmployees,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
+  const { data: employees, isPending: employeesPending } = useEmployeesQuery();
 
-  const { data: teamLeads, isPending: teamLeadsPending } = useQuery({
-    queryKey: [TEAM_LEADS_KEY],
-    queryFn: getTeamLeads,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
+  const { data: teamLeads, isPending: teamLeadsPending } = useTeamLeadsQuery();
 
   const assigneeOptions = useMemo(() => {
     return (
@@ -64,7 +59,6 @@ const ProjectForm: FC<ProjectFormProps> = ({
     } catch (error) {
       return error;
     }
-
     setLoading(true);
     try {
       const res = await createProject(values);
@@ -96,54 +90,26 @@ const ProjectForm: FC<ProjectFormProps> = ({
       }}
       onOk={handleSubmit}
       confirmLoading={loading}
-      okButtonProps={{ style: { minWidth: "100px" } }}
-      cancelButtonProps={{ style: { minWidth: "100px" } }}
     >
       {contextHolder}
       <Form layout="vertical" form={form} requiredMark="optional">
         {/* Title */}
-        <Form.Item
+        <Form.Item<ProjectRequest>
           label="Title"
           name="title"
           rules={[
-            {
-              type: "string",
-              required: true,
-              message: "Please enter title",
-            },
-            {
-              validator(_, value) {
-                if (!value) return Promise.resolve();
-                const trimmed = value?.trim();
-                if (!trimmed) {
-                  return Promise.reject(
-                    new Error("Title cannot be just whitespace")
-                  );
-                }
-                if (trimmed.length < 3) {
-                  return Promise.reject(
-                    new Error("Title should be at least 3 characters long")
-                  );
-                }
-                return Promise.resolve();
-              },
-            },
+            getRequiredStringRule("title"),
+            getNonWhitespaceValidator("title"),
           ]}
         >
           <Input placeholder="Project Title" />
         </Form.Item>
 
         {/* Description */}
-        <Form.Item
+        <Form.Item<ProjectRequest>
           label="Description"
           name="description"
-          rules={[
-            {
-              type: "string",
-              required: true,
-              message: "Please enter project description",
-            },
-          ]}
+          rules={[getRequiredStringRule("description")]}
         >
           <Input.TextArea placeholder="Project Description" rows={3} />
         </Form.Item>
@@ -151,7 +117,7 @@ const ProjectForm: FC<ProjectFormProps> = ({
         <Row gutter={16}>
           {!isNew && (
             <Col span={12}>
-              <Form.Item
+              <Form.Item<ProjectRequest>
                 label={"Completed?"}
                 name="isCompleted"
                 valuePropName="checked"
@@ -163,12 +129,10 @@ const ProjectForm: FC<ProjectFormProps> = ({
           )}
 
           <Col span={12}>
-            <Form.Item
+            <Form.Item<ProjectRequest>
               label="Deadline"
               name="deadline"
-              rules={[
-                { required: true, message: "Please select project deadline" },
-              ]}
+              rules={[getRequiredSelectRule("project deadline")]}
             >
               <DatePicker style={{ width: "100%" }} minDate={dayjs()} />
             </Form.Item>
@@ -176,16 +140,10 @@ const ProjectForm: FC<ProjectFormProps> = ({
 
           {isNew && (
             <Col span={12}>
-              <Form.Item
+              <Form.Item<ProjectRequest>
                 label="Team Lead"
                 name="teamLead"
-                rules={[
-                  {
-                    type: "string",
-                    required: true,
-                    message: "Please select Team Lead",
-                  },
-                ]}
+                rules={[getRequiredSelectRule("team lead")]}
               >
                 <Select
                   loading={teamLeadsPending}
@@ -201,7 +159,7 @@ const ProjectForm: FC<ProjectFormProps> = ({
           {!isNew && (
             <Col span={12}>
               {/* Team Lead */}
-              <Form.Item
+              <Form.Item<ProjectRequest>
                 label="Team Lead"
                 name="teamLead"
                 rules={[
@@ -223,7 +181,7 @@ const ProjectForm: FC<ProjectFormProps> = ({
 
           <Col span={isNew ? 24 : 12}>
             {/* Assignees */}
-            <Form.Item label="Assignees" name="assignees">
+            <Form.Item<ProjectRequest> label="Assignees" name="assignees">
               <Select
                 mode="multiple"
                 loading={employeesPending}
