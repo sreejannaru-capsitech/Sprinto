@@ -1,6 +1,14 @@
-import { Avatar, Button, Dropdown, Flex, Space, type MenuProps } from "antd";
+import {
+  Avatar,
+  Button,
+  Dropdown,
+  Flex,
+  Modal,
+  Space,
+  type MenuProps,
+} from "antd";
 import { isAxiosError } from "axios";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { useAntNotification } from "~/hooks";
 import { DownArrow, PencilIcon } from "~/lib/icons";
 import { logOut } from "~/lib/server/auth.api";
@@ -13,14 +21,18 @@ import { getInitials } from "~/lib/utils";
  */
 const SidebarHeader = (): ReactNode => {
   const { data } = useProfileQuery();
-
+  const [visible, setVisible] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const { _api, contextHolder } = useAntNotification();
 
   const handleLogout = async () => {
+    setLoading(true);
     try {
       const res = await logOut();
       if (!res.status) {
         _api({ message: "Failed to log out", type: "error" });
+      } else {
+        window.location.href = "/";
       }
     } catch (error) {
       if (isAxiosError(error)) {
@@ -31,8 +43,9 @@ const SidebarHeader = (): ReactNode => {
       } else {
         _api({ message: "Failed to log out", type: "error" });
       }
+    } finally {
+      setLoading(false);
     }
-    window.location.href = "/";
   };
 
   const items: MenuProps["items"] = [
@@ -53,7 +66,7 @@ const SidebarHeader = (): ReactNode => {
     },
     {
       label: "Log out",
-      onClick: () => handleLogout(),
+      onClick: () => setVisible(true),
       style: { width: "150px" },
       danger: true,
       key: "2",
@@ -74,6 +87,16 @@ const SidebarHeader = (): ReactNode => {
             <DownArrow size={16} />
           </Flex>
         </Dropdown>
+        <Modal
+          title="Do you want to log out?"
+          okText="Log out"
+          width={320}
+          closable={false}
+          open={visible}
+          onCancel={() => setVisible(false)}
+          confirmLoading={loading}
+          onOk={handleLogout}
+        />
       </Space>
       {data?.result?.user.role !== "admin" && (
         <Button className="header-button" type="text" icon={<PencilIcon />} />
