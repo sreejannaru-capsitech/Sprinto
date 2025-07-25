@@ -7,6 +7,7 @@ namespace Sprinto.Server.Extensions
         public static IServiceCollection AddSprintoServices(this IServiceCollection services)
         {
             services.AddSingleton<UserService>();
+            services.AddSingleton<ProjectService>();
             services.AddSingleton<JwtService>();
             
             return services;
