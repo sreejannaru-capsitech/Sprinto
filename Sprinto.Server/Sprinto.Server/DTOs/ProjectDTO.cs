@@ -29,6 +29,10 @@ namespace Sprinto.Server.DTOs
             set { _description = value?.Trim() ?? string.Empty; }
         }
 
+        [BsonIgnoreIfDefault]
+        [BsonElement("is_completed")]
+        public bool? IsCompleted { get; set; }
+
         [Required(ErrorMessage = "Deadline is required")]
         [BsonElement("deadline")]
         public DateOnly Deadline { get; set; }

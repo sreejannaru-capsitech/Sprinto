@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 using Sprinto.Server.Common;
 using Sprinto.Server.DTOs;
 using Sprinto.Server.Extensions;
@@ -47,6 +47,34 @@ namespace Sprinto.Server.Controllers
             }
             return response;
         }
+
+        // Update an existing project ( Admin Only )
+        [HttpPost("{id}")]
+        [Authorize(Roles = "admin")]
+        public async Task<ApiResponse<Project>>
+            Put(string id, [FromBody] ProjectDTO newProject)
+        {
+            var response = new ApiResponse<Project>();
+
+            var _result = ValidateModelState;
+            if (_result != null) return response.HandleValidationError(_result);
+
+            try
+            {
+                if (!ObjectId.TryParse(id, out _))
+                    throw new Exception("Please provide valid id");
+
+                var project = await _projectService.UpdateAsync(id, newProject);
+                response.Message = Constants.Messages.Updated;
+                response.Result = project;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
 
         private object? ValidateModelState
         {

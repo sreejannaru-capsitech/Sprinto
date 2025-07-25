@@ -42,7 +42,7 @@ namespace Sprinto.Server.Models
         {
             Title = dto.Title;
             Description = dto.Description;
-            IsCompleted = false;
+            IsCompleted = dto.IsCompleted ?? false;
             TeamLead = dto.TeamLead;
             Assignees = dto.Assignees;
             CreatedBy = new Creation
