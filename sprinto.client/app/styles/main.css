@@ -44,8 +44,36 @@ h1.ant-typography {
   background: var(--primary-darker-color) !important;
 }
 
-.ant-layout-header {
-  background: none;
+.ant-switch.ant-switch-checked {
+  background: var(--primary-darker-color) !important;
+}
+
+/* Dropdown | Select */
+
+.ant-select-dropdown
+  .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+  font-weight: 500 !important;
+  color: white !important;
+  background: var(--primary-darker-color) !important;
+}
+
+/* Notification */
+
+.ant-notification-notice {
+  padding: 14px 18px !important;
+}
+
+.ant-notification-notice-message {
+  font-size: 15px !important;
+}
+
+.ant-notification-notice-close {
+  margin-top: -6px;
+}
+
+.ant-notification-notice-icon>svg {
+  height: 0.9em !important;
+  margin-bottom: -0.1em !important;
 }
 
 /* .ant-notification-notice {

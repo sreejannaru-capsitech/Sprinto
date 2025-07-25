@@ -1,7 +1,8 @@
-import { Button, Form, Input, notification, type FormProps } from "antd";
+import { Button, Form, Input, type FormProps } from "antd";
 import type { ReactNode } from "react";
 
 import { isAxiosError } from "axios";
+import { useAntNotification } from "~/hooks";
 import { login } from "~/lib/server";
 import "~/styles/home.css";
 
@@ -15,22 +16,21 @@ interface FieldType {
  * @returns {ReactNode} The LoginForm component
  */
 const LoginForm = (): ReactNode => {
-  const [api, contextHolder] = notification.useNotification();
+  const {_api, contextHolder} = useAntNotification();
 
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     try {
       await login(values.email!, values.password!);
     } catch (error) {
       if (isAxiosError(error)) {
-        api.error({
+        _api({
+          type: "error",
           message: error.cause?.message ?? error.message,
-          placement: "bottom",
         });
       } else {
-        api.error({
+        _api({
+          type: "error",
           message: "Could not Sign In",
-          placement: "bottom",
-          pauseOnHover: true,
         });
       }
     }
