@@ -23,3 +23,4 @@ export default axiosApi;
 // Export everything from the server API
 export { queryClient } from "./queryClient";
 export { login } from "./auth.api";
+export { createUser } from "./user.api";
