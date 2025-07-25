@@ -14,3 +14,7 @@ export const login = async (email: string, password: string) => {
 export const getMe = async () => {
   return (await axiosApi.get<ApiResponse<LoginResponse>>("/auth/me")).data;
 };
+
+export const logOut = async () => {
+  return (await axiosApi.post<ApiResponse<null>>("/auth/me")).data;
+};

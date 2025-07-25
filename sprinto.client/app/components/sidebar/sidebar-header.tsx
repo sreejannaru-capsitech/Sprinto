@@ -1,9 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { Flex, Space, Avatar, Dropdown, Button, type MenuProps } from "antd";
+import { isAxiosError } from "axios";
 import type { ReactNode } from "react";
+import { useAntNotification } from "~/hooks";
 import { PROFILE_KEY } from "~/lib/const";
 import { DownArrow, PencilIcon } from "~/lib/icons";
-import { getMe } from "~/lib/server/auth.api";
+import { getMe, logOut } from "~/lib/server/auth.api";
 import { getInitials } from "~/lib/utils";
 
 /**
@@ -17,6 +19,27 @@ const SidebarHeader = (): ReactNode => {
     staleTime: 55 * 60 * 1000, // 55 minutes
   });
 
+  const { _api, contextHolder } = useAntNotification();
+
+  const handleLogout = async () => {
+    try {
+      const res = await logOut();
+      if (!res.status) {
+        _api({ message: "Failed to log out", type: "error" });
+      }
+    } catch (error) {
+      if (isAxiosError(error)) {
+        _api({
+          message: error.cause?.message ?? error.message,
+          type: "error",
+        });
+      } else {
+        _api({ message: "Failed to log out", type: "error" });
+      }
+    }
+    window.location.href = "/";
+  };
+
   const items: MenuProps["items"] = [
     {
       label: (
@@ -25,23 +48,31 @@ const SidebarHeader = (): ReactNode => {
         </a>
       ),
       key: "0",
-      style: { width: "100px" },
+      style: { width: "150px" },
+    },
+    {
+      label: "Change Password",
+      onClick: () => window.location.reload(),
+      style: { width: "150px" },
+      key: "1",
     },
     {
       label: "Log out",
-      onClick: () => window.location.reload(),
-      style: { width: "100px" },
-      key: "1",
+      onClick: () => handleLogout(),
+      style: { width: "150px" },
+      danger: true,
+      key: "2",
     },
   ];
 
   return (
     <Flex align="center" justify="space-between">
+      {contextHolder}
       <Space>
         <Avatar style={{ backgroundColor: "var(--primary-color)" }}>
           {getInitials(data?.result?.user.name ?? "")}
         </Avatar>
-        <Dropdown trigger={["click"]} menu={{ items }} placement="bottomLeft">
+        <Dropdown trigger={["click"]} menu={{ items }} placement="bottomRight">
           <Flex align="center" style={{ cursor: "pointer" }}>
             <span>{data?.result?.user.name}</span>
 
