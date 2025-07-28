@@ -70,7 +70,6 @@ const SidebarHeader = (): ReactNode => {
       label: "Log out",
       onClick: () => setVisible(true),
       style: { width: "150px" },
-      danger: true,
       key: "2",
     },
   ];
