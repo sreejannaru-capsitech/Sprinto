@@ -1,0 +1,14 @@
+.today-text-day {
+    margin: 0;
+    font-size: 58px;
+    font-weight: 500;
+}
+
+.today-text-suffix {
+    margin-bottom: 7px;
+    font-size: 1.2rem;
+}
+
+.today-text-month {
+    margin-left: 6px;
+}

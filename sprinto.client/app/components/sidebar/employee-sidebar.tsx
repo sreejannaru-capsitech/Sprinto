@@ -79,8 +79,6 @@ const EmployeeSidebar = (): ReactNode => {
     },
   ];
 
-  console.log(window.location.pathname.split("/")[1]);
-
   return (
     <>
       <SidebarHeader />
