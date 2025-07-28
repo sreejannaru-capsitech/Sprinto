@@ -227,6 +227,7 @@ namespace Sprinto.Server.Controllers
 
 
         // When user wants to change password
+        [Authorize]
         [HttpPost("/api/auth/change-password")]
         public async Task<ApiResponse<string>> ChangePassword([FromBody] UserPasswordChangeRequest request)
         {
@@ -236,9 +237,16 @@ namespace Sprinto.Server.Controllers
 
             try
             {
+                // Extract email from jwt token
+                var userEmail = User.FindFirstValue(ClaimTypes.Email);
+                if (string.IsNullOrEmpty(userEmail))
+                {
+                    throw new Exception(Constants.Messages.InvalidToken);
+                }
+
                 var _req = new UserLoginRequest
                 {
-                    Email = request.Email,
+                    Email = userEmail,
                     Password = request.OldPassword
                 };
 

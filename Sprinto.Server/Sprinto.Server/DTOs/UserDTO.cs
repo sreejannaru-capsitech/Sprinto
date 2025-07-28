@@ -85,17 +85,8 @@ namespace Sprinto.Server.DTOs
 
     public class UserPasswordChangeRequest
     {
-        private string _email = null!;
         private string _new_password = null!;
         private string _old_password = null!;
-
-        [Required(ErrorMessage = "Please provide an email address")]
-        [EmailAddress(ErrorMessage = "Please provide a proper email address")]
-        public string Email
-        {
-            get => _email;
-            set => _email = value?.Trim() ?? string.Empty;
-        }
 
         [Required(ErrorMessage = "Please provide old password")]
         [MinLength(6, ErrorMessage = "Old Password must be at least 6 characters long")]

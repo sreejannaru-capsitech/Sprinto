@@ -15,7 +15,6 @@ interface UserRequest {
 }
 
 interface PasswordChangeRequest {
-  email?: string;
   oldPassword?: string;
   newPassword?: string;
 }

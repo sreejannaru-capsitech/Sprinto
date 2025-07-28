@@ -62,14 +62,6 @@ const PasswordForm: FC<PasswordFormProps> = ({
     >
       {contextHolder}
       <Form form={form} layout="vertical" requiredMark="optional">
-        <Form.Item<PasswordChangeRequest>
-          label="Email"
-          name="email"
-          rules={[getRequiredEmailRule()]}
-        >
-          <Input placeholder="Email" />
-        </Form.Item>
-
         {/* Password */}
         <Form.Item<PasswordChangeRequest>
           label="Old Password"
