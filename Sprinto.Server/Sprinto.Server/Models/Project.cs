@@ -32,8 +32,7 @@ namespace Sprinto.Server.Models
         public string TeamLead { get; set; } = null!;
 
         [BsonElement("assignees")]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public List<string> Assignees { get; set; } = [];
+        public List<AssigneeDTO> Assignees { get; set; } = [];
 
         [BsonElement("created_by")]
         public Creation CreatedBy { get; set; } = null!;

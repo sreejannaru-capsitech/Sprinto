@@ -43,8 +43,6 @@ namespace Sprinto.Server.DTOs
         public string TeamLead { get; set; } = null!;
 
         [BsonElement("assignees")]
-        [ValidObjectIdList(ErrorMessage = "All Assignee IDs must be valid MongoDB ObjectIds")]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public List<string> Assignees { get; set; } = [];
+        public List<AssigneeDTO> Assignees { get; set; } = [];
     }
 }
