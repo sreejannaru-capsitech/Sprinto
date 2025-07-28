@@ -1,0 +1,35 @@
+meta {
+  name: Create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{URL}}/tasks
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "title": "string",
+    "description": "string",
+    "projectId": "68835a14782e3052b2d41044",
+    "assignees": [
+      {
+        "id": "68835a14782e3052b2d41044",
+        "name": "string"
+      }
+    ],
+    "dueDate": "2025-07-28T11:23:22.204Z",
+    "status": {
+      "id": "68835a14782e3052b2d41044",
+      "title": "string"
+    },
+    "priority": "low"
+  }
+}
+
+settings {
+  encodeUrl: true
+}
