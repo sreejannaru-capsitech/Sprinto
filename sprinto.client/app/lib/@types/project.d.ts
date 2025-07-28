@@ -5,7 +5,7 @@ interface Project {
     isCompleted?: boolean;
     deadline: Date;
     teamLead: string;
-    assignees: string[];
+    assignees: Assignee[];
     createdBy: Creation;
 }
 
@@ -15,5 +15,5 @@ interface ProjectRequest {
     isCompleted: boolean;
     deadline: Date;
     teamLead: string;
-    assignees: string[];
+    assignees: Assignee[];
 }

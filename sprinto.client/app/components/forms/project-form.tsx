@@ -16,6 +16,15 @@ interface ProjectFormProps {
   onClose: () => void;
 }
 
+interface ProjectFormType {
+  title: string;
+  description: string;
+  isCompleted: boolean;
+  deadline: Date;
+  teamLead: string;
+  assignees: string[];
+}
+
 /**
  * This component renders project-form section
  * @returns {ReactNode} The ProjectForm component
@@ -25,7 +34,7 @@ const ProjectForm: FC<ProjectFormProps> = ({
   open,
   onClose,
 }: ProjectFormProps): ReactNode => {
-  const [form] = Form.useForm<ProjectRequest>();
+  const [form] = Form.useForm<ProjectFormType>();
   const [loading, setLoading] = useState<boolean>(false);
 
   const { data: employees, isPending: employeesPending } = useEmployeesQuery();
@@ -59,9 +68,23 @@ const ProjectForm: FC<ProjectFormProps> = ({
     } catch (error) {
       return error;
     }
+
+    // Inject assignee names with their ids
+    const payload: ProjectRequest = {
+      title: values.title,
+      description: values.description,
+      isCompleted: values.isCompleted,
+      deadline: values.deadline,
+      teamLead: values.teamLead,
+      assignees:
+        employees?.result?.items
+          ?.filter((employee) => values.assignees?.includes(employee.id))
+          .map((employee) => ({ id: employee.id, name: employee.name })) ?? [],
+    };
+
     setLoading(true);
     try {
-      const res = await createProject(values);
+      const res = await createProject(payload);
       if (res.status) {
         _api({
           message: "Project created successfully",
@@ -94,7 +117,7 @@ const ProjectForm: FC<ProjectFormProps> = ({
       {contextHolder}
       <Form layout="vertical" form={form} requiredMark="optional">
         {/* Title */}
-        <Form.Item<ProjectRequest>
+        <Form.Item<ProjectFormType>
           label="Title"
           name="title"
           rules={[
@@ -106,7 +129,7 @@ const ProjectForm: FC<ProjectFormProps> = ({
         </Form.Item>
 
         {/* Description */}
-        <Form.Item<ProjectRequest>
+        <Form.Item<ProjectFormType>
           label="Description"
           name="description"
           rules={[getRequiredStringRule("description")]}
@@ -117,7 +140,7 @@ const ProjectForm: FC<ProjectFormProps> = ({
         <Row gutter={16}>
           {!isNew && (
             <Col span={12}>
-              <Form.Item<ProjectRequest>
+              <Form.Item<ProjectFormType>
                 label={"Completed?"}
                 name="isCompleted"
                 valuePropName="checked"
@@ -129,7 +152,7 @@ const ProjectForm: FC<ProjectFormProps> = ({
           )}
 
           <Col span={12}>
-            <Form.Item<ProjectRequest>
+            <Form.Item<ProjectFormType>
               label="Deadline"
               name="deadline"
               rules={[getRequiredSelectRule("project deadline")]}
@@ -140,7 +163,7 @@ const ProjectForm: FC<ProjectFormProps> = ({
 
           {isNew && (
             <Col span={12}>
-              <Form.Item<ProjectRequest>
+              <Form.Item<ProjectFormType>
                 label="Team Lead"
                 name="teamLead"
                 rules={[getRequiredSelectRule("team lead")]}
@@ -159,7 +182,7 @@ const ProjectForm: FC<ProjectFormProps> = ({
           {!isNew && (
             <Col span={12}>
               {/* Team Lead */}
-              <Form.Item<ProjectRequest>
+              <Form.Item<ProjectFormType>
                 label="Team Lead"
                 name="teamLead"
                 rules={[
@@ -181,7 +204,7 @@ const ProjectForm: FC<ProjectFormProps> = ({
 
           <Col span={isNew ? 24 : 12}>
             {/* Assignees */}
-            <Form.Item<ProjectRequest> label="Assignees" name="assignees">
+            <Form.Item<ProjectFormType> label="Assignees" name="assignees">
               <Select
                 mode="multiple"
                 loading={employeesPending}

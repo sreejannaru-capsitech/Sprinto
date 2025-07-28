@@ -8,6 +8,11 @@ interface User {
   createdBy: Creation;
 }
 
+interface Assignee {
+  id: string;
+  name: string;
+}
+
 interface UserRequest {
   name: string;
   email: string;
