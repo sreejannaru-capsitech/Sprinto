@@ -37,7 +37,7 @@ namespace Sprinto.Server.Services
 
             var claims = new List<Claim>
             {
-                new(ClaimTypes.Name, user.Name),
+                //new(ClaimTypes.Name, user.Name),
                 new(ClaimTypes.NameIdentifier, user.Id!.ToString()),
                 new(ClaimTypes.Email, user.Email),
                 new(ClaimTypes.Authentication, isRefresh ?
