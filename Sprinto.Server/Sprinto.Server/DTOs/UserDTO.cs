@@ -55,7 +55,7 @@ namespace Sprinto.Server.DTOs
         public string Email { get; set; } = null!;
 
         [BsonElement("role")]
-        public string Role { get; set; }
+        public string Role { get; set; } = null!;
 
         [BsonElement("created_by")]
         public Creation CreatedBy { get; set; } = null!;
