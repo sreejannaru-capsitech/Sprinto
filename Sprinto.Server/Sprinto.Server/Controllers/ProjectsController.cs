@@ -11,7 +11,7 @@ using System.Security.Claims;
 namespace Sprinto.Server.Controllers
 {
     [Route("api/projects")]
-    [ApiController]
+    //[ApiController]
     public class ProjectsController(ProjectService projectService) : ControllerBase
     {
         private readonly ProjectService _projectService = projectService;
@@ -82,14 +82,12 @@ namespace Sprinto.Server.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    var errors = ModelState
+                    var errorMessages = ModelState
                         .Where(ms => ms.Value?.Errors.Count > 0)
-                        .ToDictionary(
-                            kvp => kvp.Key,
-                            kvp => kvp.Value!.Errors.Select(e => e.ErrorMessage).ToArray()
-                        );
+                        .SelectMany(kvp => kvp.Value!.Errors.Select(e => e.ErrorMessage))
+                        .ToArray();
 
-                    return errors;
+                    return errorMessages;
                 }
 
                 return null;

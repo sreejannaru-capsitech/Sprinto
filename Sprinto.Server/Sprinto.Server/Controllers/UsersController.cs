@@ -10,7 +10,7 @@ using System.Security.Claims;
 namespace Sprinto.Server.Controllers
 {
     [Route("api/users")]
-    [ApiController]
+    //[ApiController]
     public class UsersController(UserService userService, JwtService jwtService, IWebHostEnvironment env) : ControllerBase
     {
         private readonly UserService _userService = userService;
@@ -269,14 +269,12 @@ namespace Sprinto.Server.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    var errors = ModelState
+                    var errorMessages = ModelState
                         .Where(ms => ms.Value?.Errors.Count > 0)
-                        .ToDictionary(
-                            kvp => kvp.Key,
-                            kvp => kvp.Value!.Errors.Select(e => e.ErrorMessage).ToArray()
-                        );
+                        .SelectMany(kvp => kvp.Value!.Errors.Select(e => e.ErrorMessage))
+                        .ToArray();
 
-                    return errors;
+                    return errorMessages;
                 }
 
                 return null;
