@@ -9,6 +9,7 @@ namespace Sprinto.Server.Extensions
             services.AddSingleton<UserService>();
             services.AddSingleton<ProjectService>();
             services.AddSingleton<TaskService>();
+            services.AddSingleton<StatusService>();
             services.AddSingleton<JwtService>();
             
             return services;
