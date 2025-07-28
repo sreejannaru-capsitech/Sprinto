@@ -1,9 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { getMe } from "../auth.api";
-import { EMPLOYEES_KEY, PROFILE_KEY, TEAM_LEADS_KEY } from "~/lib/const";
+import {
+  EMPLOYEES_KEY,
+  PROFILE_KEY,
+  STALE_TIME,
+  TEAM_LEADS_KEY,
+} from "~/lib/const";
 import { getEmployees, getTeamLeads } from "../user.api";
-
-const STALE_TIME = 5 * 60 * 1000; // 5 minutes
 
 export const useProfileQuery = () => {
   return useQuery({

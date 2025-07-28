@@ -6,7 +6,9 @@ export const PROJECTS_KEY = "projects" as const;
 export const EMPLOYEES_KEY = "employees" as const;
 export const TEAM_LEADS_KEY = "teamLeads" as const;
 export const ADMINS_KEY = "admins" as const;
+export const STATUSES_KEY = "statuses" as const;
 
+export const STALE_TIME = 5 * 60 * 1000; // 5 minutes
 
 export const SIDEBAR_ROUTES = [
   "Today",

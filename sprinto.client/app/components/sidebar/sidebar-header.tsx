@@ -15,6 +15,7 @@ import { logOut } from "~/lib/server/auth.api";
 import { useProfileQuery } from "~/lib/server/services";
 import { getInitials } from "~/lib/utils";
 import PasswordForm from "../forms/password-form";
+import TaskForm from "../forms/task-form";
 
 /**
  * This component renders sidebar-header section
@@ -23,6 +24,7 @@ import PasswordForm from "../forms/password-form";
 const SidebarHeader = (): ReactNode => {
   const { data } = useProfileQuery();
   const [visible, setVisible] = useState<boolean>(false);
+  const [taskModalOpen, setTaskModalOpen] = useState<boolean>(false);
   const [passwordOpen, setPasswordOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const { _api, contextHolder } = useAntNotification();
@@ -98,13 +100,22 @@ const SidebarHeader = (): ReactNode => {
           confirmLoading={loading}
           onOk={handleLogout}
         />
+        <TaskForm
+          open={taskModalOpen}
+          onClose={() => setTaskModalOpen(false)}
+        />
         <PasswordForm
           open={passwordOpen}
           onClose={() => setPasswordOpen(false)}
         />
       </Space>
       {data?.result?.user.role !== "admin" && (
-        <Button className="header-button" type="text" icon={<PencilIcon />} />
+        <Button
+          className="header-button"
+          onClick={() => setTaskModalOpen(true)}
+          type="text"
+          icon={<PencilIcon />}
+        />
       )}
     </Flex>
   );

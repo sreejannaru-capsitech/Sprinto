@@ -1,4 +1,5 @@
 import { Col, DatePicker, Form, Input, Modal, Row, Select, Switch } from "antd";
+import { AxiosError } from "axios";
 import dayjs from "dayjs";
 import { useMemo, useState, type FC, type ReactNode } from "react";
 import { useAntNotification } from "~/hooks";
@@ -84,19 +85,19 @@ const ProjectForm: FC<ProjectFormProps> = ({
 
     setLoading(true);
     try {
-      const res = await createProject(payload);
-      if (res.status) {
-        _api({
-          message: "Project created successfully",
-          type: "success",
-        });
-        form.resetFields();
-        onClose();
-      } else {
-        _api({ message: res.message, type: "error" });
-      }
+      await createProject(payload);
+      _api({
+        message: "Project created successfully",
+        type: "success",
+      });
+      form.resetFields();
+      onClose();
     } catch (error) {
-      _api({ message: "Could not create project", type: "error" });
+      if (error instanceof AxiosError) {
+        _api({ message: error.message, type: "error" });
+      } else {
+        _api({ message: "Could not create project", type: "error" });
+      }
     } finally {
       setLoading(false);
     }

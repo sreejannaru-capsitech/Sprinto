@@ -1,7 +1,7 @@
 interface ApiResponse<T> {
     status: boolean;
     message: string;
-    errors: null | object;
+    errors: string[];
     result: null | T;
 }
 
