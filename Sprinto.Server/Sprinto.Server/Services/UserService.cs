@@ -37,30 +37,17 @@ namespace Sprinto.Server.Services
         /// <exception cref="Exception">
         /// Thrown when the creation process fails due to a database or unexpected internal error.
         /// </exception>
-        /// <remarks>
-        /// This method logs the original exception and wraps it in a generic exception for controlled propagation.
-        /// Consider validating <paramref name="dto"/> before invoking this method. For better context,
-        /// replacing the generic <c>Exception</c> with a domain-specific type is recommended.
-        /// </remarks>
         public async Task<User> CreateAsync(UserDTO dto, string userId, string userName)
         {
             try
             {
-                // check if any user exists with the email
-                var existing = await _users.Find(x => x.Email == dto.Email).FirstOrDefaultAsync();
-                if (existing != null)
-                {
-                    throw new DuplicateNameException("User email already exists");
-                }
-
                 var user = new User(dto, userId, userName);
                 await _users.InsertOneAsync(user);
-
                 return user;
             }
-            catch (DuplicateNameException)
+            catch (MongoWriteException ex) when (ex.WriteError.Category == ServerErrorCategory.DuplicateKey)
             {
-                throw;
+                throw new DuplicateNameException("User email already exists");
             }
             catch (Exception ex)
             {
