@@ -32,8 +32,8 @@ namespace Sprinto.Server.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error creating new project");
-                throw new Exception("Could not create project");
+                _logger.LogError(ex, "Error creating new Task Item");
+                throw new Exception("Could not create Task Item");
             }
         }
 

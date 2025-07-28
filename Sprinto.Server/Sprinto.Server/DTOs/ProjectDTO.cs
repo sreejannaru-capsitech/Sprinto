@@ -1,6 +1,5 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using Sprinto.Server.Models;
 using Sprinto.Server.Validation;
 using System.ComponentModel.DataAnnotations;
 
@@ -15,9 +14,10 @@ namespace Sprinto.Server.DTOs
         [MinLength(3, ErrorMessage = "Title should have at least 3 characters")]
         [StringLength(100, ErrorMessage = "Title must not exceed 100 characters")]
         [BsonElement("title")]
-        public string Title 
-        { get => _title;  
-            set { _title = value?.Trim() ?? string.Empty; } 
+        public string Title
+        {
+            get => _title;
+            set { _title = value?.Trim() ?? string.Empty; }
         }
 
         [Required(ErrorMessage = "Description is required")]
