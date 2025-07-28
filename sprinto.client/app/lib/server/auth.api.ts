@@ -1,7 +1,7 @@
-import axiosApi from ".";
+import axiosApi, { _axiosApi } from ".";
 
 export const login = async (email: string, password: string) => {
-  const { data } = await axiosApi.post<ApiResponse<LoginResponse>>(
+  const { data } = await _axiosApi.post<ApiResponse<LoginResponse>>(
     "/auth/login",
     {
       email,
@@ -12,11 +12,11 @@ export const login = async (email: string, password: string) => {
 };
 
 export const getMe = async () => {
-  return (await axiosApi.get<ApiResponse<LoginResponse>>("/auth/me")).data;
+  return (await _axiosApi.get<ApiResponse<LoginResponse>>("/auth/me")).data;
 };
 
 export const logOut = async () => {
-  return (await axiosApi.post<ApiResponse<null>>("/auth/me")).data;
+  return (await _axiosApi.post<ApiResponse<null>>("/auth/me")).data;
 };
 
 export const changePassword = async (request: PasswordChangeRequest) => {
