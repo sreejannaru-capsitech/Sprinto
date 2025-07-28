@@ -10,6 +10,7 @@ namespace Sprinto.Server.DTOs
         private string _title = null!;
 
         [Required(ErrorMessage = "Please provide status title")]
+        [MinLength(3, ErrorMessage = "Status title must have at least 3 characters")]
         [BsonElement("title")]
         public string Title
         {

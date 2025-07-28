@@ -1,0 +1,19 @@
+meta {
+  name: Delete Status
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{URL}}/statuses/:id/delete
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: 688766524516316f631c3905
+}
+
+settings {
+  encodeUrl: true
+}
