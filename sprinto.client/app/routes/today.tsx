@@ -5,13 +5,14 @@ import { Flex, Space, Typography } from "antd";
 
 import "~/styles/today-page.css";
 import type { MetaArgs } from "react-router";
+import TodayPageComponent from "~/pages/today.page";
 
 export const meta = ({}: MetaArgs) => {
   return [
     { title: "Today — Sprinto" },
     { name: "description", content: "Stay focused on what matters" },
   ];
-}
+};
 
 dayjs.extend(advancedFormat);
 
@@ -26,7 +27,7 @@ const TodayPage = (): ReactNode => {
   const month = dayjs().format("MMMM");
 
   return (
-    <Space direction="vertical">
+    <>
       <Flex align="end">
         <h1 className="text-primary today-text-day">{day}</h1>
 
@@ -38,7 +39,8 @@ const TodayPage = (): ReactNode => {
           {month}
         </Typography.Text>
       </Flex>
-    </Space>
+      <TodayPageComponent />
+    </>
   );
 };
 

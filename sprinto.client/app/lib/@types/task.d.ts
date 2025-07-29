@@ -24,3 +24,8 @@ interface TaskItemRequest {
   status: StatusEntity;
   priority: TaskPriority;
 }
+
+interface TodayTasks {
+  today: Task[];
+  overdue: Task[];
+}
