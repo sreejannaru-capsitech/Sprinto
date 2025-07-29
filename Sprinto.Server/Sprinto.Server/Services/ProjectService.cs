@@ -68,7 +68,8 @@ namespace Sprinto.Server.Services
         }
 
         /// <summary>
-        /// Retrieves all projects assigned to the specified user.
+        /// Retrieves all projects assigned to the specified user,
+        /// excluding those marked as completed.
         /// </summary>
         /// <param name="userId">The unique identifier of the user.</param>
         /// <returns>A list of <see cref="Project"/> documents assigned to the specified user.</returns>
@@ -77,12 +78,22 @@ namespace Sprinto.Server.Services
         {
             try
             {
-                var filter = Builders<Project>.Filter.ElemMatch(
+                var assigneeFilter = Builders<Project>.Filter.ElemMatch(
                     p => p.Assignees,
                     a => a.Id == userId
                 );
 
-                var projects = await _projects.Find(filter).ToListAsync();
+                var completionFilter = Builders<Project>.Filter.Eq(
+                    p => p.IsCompleted,
+                    false
+                );
+
+                var finalFilter = Builders<Project>.Filter.And(
+                    assigneeFilter,
+                    completionFilter
+                );
+
+                var projects = await _projects.Find(finalFilter).ToListAsync();
                 return projects;
             }
             catch (Exception ex)
