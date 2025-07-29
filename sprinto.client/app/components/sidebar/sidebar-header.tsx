@@ -1,21 +1,13 @@
-import {
-  Avatar,
-  Button,
-  Dropdown,
-  Flex,
-  Modal,
-  Space,
-  type MenuProps,
-} from "antd";
+import { Avatar, Dropdown, Flex, Modal, Space, type MenuProps } from "antd";
 import { isAxiosError } from "axios";
 import { useState, type ReactNode } from "react";
 import { useAntNotification } from "~/hooks";
-import { DownArrow, PencilIcon } from "~/lib/icons";
+import { DownArrow } from "~/lib/icons";
 import { logOut } from "~/lib/server/auth.api";
 import { useProfileQuery } from "~/lib/server/services";
 import { getInitials } from "~/lib/utils";
 import PasswordForm from "../forms/password-form";
-import TaskForm from "../forms/task-form";
+import CreateTask from "./create-task";
 
 /**
  * This component renders sidebar-header section
@@ -24,7 +16,6 @@ import TaskForm from "../forms/task-form";
 const SidebarHeader = (): ReactNode => {
   const { data } = useProfileQuery();
   const [visible, setVisible] = useState<boolean>(false);
-  const [taskModalOpen, setTaskModalOpen] = useState<boolean>(false);
   const [passwordOpen, setPasswordOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const { _api, contextHolder } = useAntNotification();
@@ -100,23 +91,13 @@ const SidebarHeader = (): ReactNode => {
           confirmLoading={loading}
           onOk={handleLogout}
         />
-        <TaskForm
-          open={taskModalOpen}
-          onClose={() => setTaskModalOpen(false)}
-        />
         <PasswordForm
           open={passwordOpen}
           onClose={() => setPasswordOpen(false)}
         />
       </Space>
-      {data?.result?.user.role !== "admin" && (
-        <Button
-          className="header-button"
-          onClick={() => setTaskModalOpen(true)}
-          type="text"
-          icon={<PencilIcon />}
-        />
-      )}
+      {/* Do not show create task button for admins */}
+      {data?.result?.user.role !== "admin" && <CreateTask />}
     </Flex>
   );
 };
