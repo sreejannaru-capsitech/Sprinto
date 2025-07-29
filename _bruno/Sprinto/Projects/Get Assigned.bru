@@ -1,0 +1,15 @@
+meta {
+  name: Get Assigned
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{URL}}/projects/assigned
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}
