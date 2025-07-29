@@ -7,7 +7,7 @@ import { logOut } from "~/lib/server/auth.api";
 import { useProfileQuery } from "~/lib/server/services";
 import { getInitials } from "~/lib/utils";
 import PasswordForm from "../forms/password-form";
-import CreateTask from "./create-task";
+import CreateTask from "../create-task";
 
 /**
  * This component renders sidebar-header section
