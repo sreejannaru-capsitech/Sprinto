@@ -1,7 +1,8 @@
-import { Col, Row } from "antd";
+import { Col, Flex, Row, Space, Typography } from "antd";
 import { useMemo, type ReactNode } from "react";
 import CreateTask from "~/components/create-task";
 import Spinner from "~/components/ui/spinner";
+import TaskItem from "~/components/ui/task-item";
 import CenteredLayout from "~/layouts/centered-layout";
 import { TaskIcon } from "~/lib/icons";
 import { useTodayTaskQuery } from "~/lib/server/services";
@@ -26,10 +27,9 @@ const TodayPageComponent = (): ReactNode => {
           <div style={{ textAlign: "center" }}>
             <TaskIcon size={44} />
             <p
-              className="text-primary-dark"
+              className="text-primary-dark font-bold"
               style={{
                 fontSize: "1rem",
-                fontWeight: "500",
                 marginBlockStart: "0.5rem",
               }}
             >
@@ -39,14 +39,31 @@ const TodayPageComponent = (): ReactNode => {
           </div>
         </CenteredLayout>
       ) : (
-        <Row>
-          <Col span={8}>
-            <h2>Overdue</h2>
-          </Col>
-          <Col span={8}>
-            <h2>Today</h2>
-          </Col>
-        </Row>
+        <Flex style={{ marginTop: "2rem" }} gap={32}>
+          {/* Don't show overdue tasks section if there are none */}
+          {data?.result?.overdue.length ? (
+            <div>
+              <Typography.Title level={4} className="font-bold">
+                Overdue
+              </Typography.Title>
+              <Space direction="vertical" size={16}>
+                {data?.result?.overdue.map((task) => (
+                  <TaskItem key={task.id} task={task} />
+                ))}
+              </Space>
+            </div>
+          ) : null}
+          <div>
+            <Typography.Title level={4} className="font-bold">
+              Today
+            </Typography.Title>
+            <Space direction="vertical" size={16}>
+              {data?.result?.today.map((task) => (
+                <TaskItem key={task.id} task={task} />
+              ))}
+            </Space>
+          </div>
+        </Flex>
       )}
     </Spinner>
   );

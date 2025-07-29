@@ -1,0 +1,29 @@
+.task-item {
+  border-radius: 20px;
+  background-color: var(--primary-light-color) !important;
+  width: 350px;
+}
+
+.small-text {
+  font-size: 14px !important;
+}
+
+.smaller-text {
+  font-size: 13px !important;
+}
+
+.task-item-header {
+  margin-bottom: 4px;
+}
+
+.ant-card-body {
+  padding: 10px 12px 12px 12px !important;
+}
+
+.ant-card-bordered {
+  border: 1px solid var(--border-color) !important;
+
+  &:hover {
+    border: transparent !important;
+  }
+}

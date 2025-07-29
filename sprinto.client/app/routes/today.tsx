@@ -1,11 +1,11 @@
-import type { ReactNode } from "react";
+import { Flex, Typography } from "antd";
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
-import { Flex, Space, Typography } from "antd";
+import type { ReactNode } from "react";
 
-import "~/styles/today-page.css";
 import type { MetaArgs } from "react-router";
 import TodayPageComponent from "~/pages/today.page";
+import "~/styles/today-page.css";
 
 export const meta = ({}: MetaArgs) => {
   return [

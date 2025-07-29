@@ -2,6 +2,7 @@
   --primary-color: rgba(20, 27, 52, 0.47);
   --primary-darker-color: rgba(20, 27, 52, 0.6);
   --primary-light-color: rgba(20, 27, 52, 0.03);
+  --border-color: rgba(5, 5, 5, 0.06);
   --color-black: rgba(0, 0, 0, 0.88);
 }
 
@@ -130,11 +131,19 @@ h1.ant-typography {
 /* ========= Custom Styles ========= */
 
 .text-primary {
-  color: var(--primary-color);
+  color: var(--primary-color) !important;
 }
 
 .text-primary-dark {
-  color: var(--primary-darker-color);
+  color: var(--primary-darker-color) !important;
+}
+
+.font-bold {
+  font-weight: 500 !important;
+}
+
+.font-bolder {
+  font-weight: 600 !important;
 }
 
 @keyframes spin {
