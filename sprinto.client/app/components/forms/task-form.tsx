@@ -1,4 +1,4 @@
-import { DatePicker, Form, Input, Modal, Select } from "antd";
+import { Col, DatePicker, Form, Input, Modal, Row, Select } from "antd";
 import dayjs from "dayjs";
 import { useMemo, useState, type FC, type ReactNode } from "react";
 import { useAntNotification } from "~/hooks";
@@ -103,18 +103,32 @@ const TaskForm: FC<TaskFormProps> = ({
           <Input.TextArea placeholder="Task Description" rows={3} />
         </Form.Item>
 
-        {/* Project */}
-        <Form.Item<TaskFormType>
-          label="Project"
-          name="projectId"
-          rules={[getRequiredSelectRule("project")]}
-        >
-          <Select
-            loading={statusesPending}
-            options={statusOptions}
-            placeholder="Select a project"
-          />
-        </Form.Item>
+        <Row gutter={16}>
+          <Col span={12}>
+            {/* Project */}
+            <Form.Item<TaskFormType>
+              label="Project"
+              name="projectId"
+              rules={[getRequiredSelectRule("project")]}
+            >
+              <Select
+                loading={statusesPending}
+                options={statusOptions}
+                placeholder="Select a project"
+              />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            {/* Due Date */}
+            <Form.Item<TaskFormType>
+              label="Due Date"
+              name="dueDate"
+              rules={[getRequiredSelectRule("duedate")]}
+            >
+              <DatePicker style={{ width: "100%" }} minDate={dayjs()} />
+            </Form.Item>
+          </Col>
+        </Row>
 
         {/* Assignees */}
         <Form.Item<TaskFormType> label="Assignees" name="assignees">
@@ -126,36 +140,32 @@ const TaskForm: FC<TaskFormProps> = ({
           />
         </Form.Item>
 
-        {/* Due Date */}
-        <Form.Item<TaskFormType>
-          label="Due Date"
-          name="dueDate"
-          rules={[getRequiredSelectRule("duedate")]}
-        >
-          <DatePicker style={{ width: "100%" }} minDate={dayjs()} />
-        </Form.Item>
-
-        {/* Status */}
-        <Form.Item<TaskFormType>
-          label="Status"
-          name="status"
-          rules={[getRequiredSelectRule("task status")]}
-        >
-          <Select
-            loading={statusesPending}
-            options={statusOptions}
-            placeholder="Select status"
-          />
-        </Form.Item>
-
-        {/* Priority */}
-        <Form.Item<TaskFormType>
-          label="Priority"
-          name="priority"
-          rules={[getRequiredSelectRule("task priority")]}
-        >
-          <Select options={priorityOptions} placeholder="Select priority" />
-        </Form.Item>
+        <Row gutter={16}>
+          <Col span={12}>
+            {/* Status */}
+            <Form.Item<TaskFormType>
+              label="Status"
+              name="status"
+              rules={[getRequiredSelectRule("task status")]}
+            >
+              <Select
+                loading={statusesPending}
+                options={statusOptions}
+                placeholder="Select status"
+              />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            {/* Priority */}
+            <Form.Item<TaskFormType>
+              label="Priority"
+              name="priority"
+              rules={[getRequiredSelectRule("task priority")]}
+            >
+              <Select options={priorityOptions} placeholder="Select priority" />
+            </Form.Item>
+          </Col>
+        </Row>
       </Form>
     </Modal>
   );
