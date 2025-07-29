@@ -10,7 +10,7 @@ namespace Sprinto.Server.Services
     {
         private readonly IMongoCollection<Status> _statuses;
         private readonly ILogger<StatusService> _logger;
-        private readonly string[] fixedStatuses = ["todo", "in_progress", "done"];
+        private readonly string[] fixedStatuses = ["Todo", "In Progress", "Done"];
 
         public StatusService(IMongoClient mongoCLient,
             IOptions<DatabaseSettings> dbsettings,
