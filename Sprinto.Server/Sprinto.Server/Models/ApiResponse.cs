@@ -34,4 +34,10 @@ namespace Sprinto.Server.Models
         public string Token { get; set; } = null!;
         public DateTime ExpiryTime { get; set; }
     }
+
+    public class TodayTasksResponse
+    {
+        public List<TaskItem> Today { get; set; } = [];
+        public List<TaskItem> Overdue { get; set; } = [];
+    }
 }

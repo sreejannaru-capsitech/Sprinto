@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Sprinto.Server.Common;
 using Sprinto.Server.DTOs;
@@ -40,6 +39,31 @@ namespace Sprinto.Server.Controllers
 
                 response.Message = Constants.Messages.Created;
                 response.Result = createdProject;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
+        // Get today tasks
+        [HttpGet("today")]
+        public async Task<ApiResponse<TodayTasksResponse>>
+            GetTodayTasks()
+        {
+            var response = new ApiResponse<TodayTasksResponse>();
+
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userId))
+                    throw new Exception(Constants.Messages.InvalidToken);
+
+                var tasks = await _taskService.GetTasksOfTodayAsync(userId);
+
+                response.Message = Constants.Messages.Success;
+                response.Result = tasks;
             }
             catch (Exception ex)
             {

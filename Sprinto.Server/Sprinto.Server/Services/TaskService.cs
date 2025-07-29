@@ -2,6 +2,7 @@
 using MongoDB.Driver;
 using Sprinto.Server.DTOs;
 using Sprinto.Server.Models;
+using System.Threading.Tasks;
 
 namespace Sprinto.Server.Services
 {
@@ -57,6 +58,56 @@ namespace Sprinto.Server.Services
             {
                 _logger.LogError(ex, "Error creating new Task Item");
                 throw new Exception("Could not create Task Item");
+            }
+        }
+
+        /// <summary>
+        /// Retrieves tasks assigned to a specific user that are due today or overdue,
+        /// excluding tasks with a status of "Done".
+        /// </summary>
+        /// <param name="userId">The ID of the user whose tasks are to be retrieved.</param>
+        /// <returns>
+        /// A <see cref="TodayTasksResponse"/> containing today's and overdue tasks.
+        /// </returns>
+        /// <exception cref="Exception">Thrown when task retrieval fails.</exception>
+        public async Task<TodayTasksResponse> GetTasksOfTodayAsync(string userId)
+        {
+            try
+            {
+                var today = DateTime.Today;
+
+                // Match user assignment
+                var assigneeFilter = Builders<TaskItem>.Filter.ElemMatch(
+                    t => t.Assignees,
+                    a => a.Id == userId
+                );
+
+                // Exclude "Done" status
+                var statusFilter = Builders<TaskItem>.Filter.Ne(
+                    t => t.Status.Title,
+                    "Done"
+                );
+
+                // Combine for today tasks
+                var userFilter = Builders<TaskItem>.Filter.And(
+                    assigneeFilter,
+                    statusFilter
+                );
+
+                var tasks = await _tasks.Find(userFilter).ToListAsync();
+
+                // Separate today's and overdue tasks
+                var response = new TodayTasksResponse
+                {
+                    Today = [.. tasks.Where(t => t.DueDate.Date == today)],
+                    Overdue = [.. tasks.Where(t => t.DueDate.Date < today)]
+                };
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving tasks for user {UserId}", userId);
+                throw new Exception("Could not retrieve tasks of today");
             }
         }
     }
