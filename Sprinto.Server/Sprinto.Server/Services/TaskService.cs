@@ -20,12 +20,35 @@ namespace Sprinto.Server.Services
             _logger = logger;
         }
 
+        // Retrives the next available task sequence.
+        public async Task<long> GetNextSequenceAsync()
+        {
+            try
+            {
+                var sort = Builders<TaskItem>.Sort.Descending(t => t.Sequence);
+
+                var highestTask = await _tasks
+                    .Find(FilterDefinition<TaskItem>.Empty)
+                    .Sort(sort)
+                    .Limit(1)
+                    .FirstOrDefaultAsync();
+
+                return highestTask?.Sequence + 1 ?? 1;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving next task sequence");
+                throw new Exception("Could not determine next task sequence");
+            }
+        }
+
         // Creates and inserts a new task item in the database.
         public async Task<TaskItem> CreateAsync(TaskDTO dto, string userId, string userName)
         {
             try
             {
-                var task = new TaskItem(dto, userId, userName);
+                long seq = await GetNextSequenceAsync();
+                var task = new TaskItem(dto, userId, userName, seq);
                 await _tasks.InsertOneAsync(task);
 
                 return task;
@@ -36,7 +59,5 @@ namespace Sprinto.Server.Services
                 throw new Exception("Could not create Task Item");
             }
         }
-
-
     }
 }
