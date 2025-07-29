@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using Sprinto.Server.Common;
 using Sprinto.Server.DTOs;
 using Sprinto.Server.Models;
 
@@ -48,6 +49,50 @@ namespace Sprinto.Server.Services
         }
 
         /// <summary>
+        /// Retrieves all projects from the database.
+        /// </summary>
+        /// <returns> A list of <see cref="Project"/> documents.</returns>
+        /// <exception cref="Exception">Thrown when an error occurs during the retrieval of projects.</exception>
+        public async Task<List<Project>> GetAsync()
+        {
+            try
+            {
+                var projects = await _projects.Find(_ => true).ToListAsync();
+                return projects;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving projects");
+                throw new Exception("Could not retrieve projects");
+            }
+        }
+
+        /// <summary>
+        /// Retrieves all projects assigned to the specified user.
+        /// </summary>
+        /// <param name="userId">The unique identifier of the user.</param>
+        /// <returns>A list of <see cref="Project"/> documents assigned to the specified user.</returns>
+        /// <exception cref="Exception">Thrown when an error occurs during the retrieval of assigned projects.</exception>
+        public async Task<List<Project>> GetAssignedAsync(string userId)
+        {
+            try
+            {
+                var filter = Builders<Project>.Filter.ElemMatch(
+                    p => p.Assignees,
+                    a => a.Id == userId
+                );
+
+                var projects = await _projects.Find(filter).ToListAsync();
+                return projects;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving assigned projects");
+                throw new Exception("Could not retrieve assigned projects");
+            }
+        }
+
+        /// <summary>
         /// Updates the fields of a <see cref="Project"/> document in the database with the values provided in the DTO.
         /// </summary>
         /// <param name="id">The unique identifier of the project to update.</param>
@@ -87,6 +132,34 @@ namespace Sprinto.Server.Services
             {
                 _logger.LogError(ex, "Error updating project with id {ProjectId}", id);
                 throw new Exception("Could not update project");
+            }
+        }
+
+
+        /// <summary>
+        /// Deletes the project with the specified ID.
+        /// </summary>
+        /// <param name="id">The unique identifier of the project to delete.</param>
+        /// <returns>The deleted <see cref="Project"/> entity.</returns>
+        /// <exception cref="Exception">Thrown when an unexpected error occurs during project deletion.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when the project with the specified ID is not found.</exception>
+        public async Task<Project> DeleteAsync(string id)
+        {
+            try
+            {
+                var project = await _projects.FindOneAndDeleteAsync(x => x.Id == id)
+                ?? throw new InvalidOperationException(Constants.Messages.NotFound);
+
+                return project;
+            }
+            catch (InvalidOperationException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting project with ID {Id}", id);
+                throw new Exception("Could not delete project");
             }
         }
     }

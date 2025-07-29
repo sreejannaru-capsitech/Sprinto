@@ -48,6 +48,50 @@ namespace Sprinto.Server.Controllers
             return response;
         }
 
+        // Get all projects from database (Admin Only)
+        [HttpGet]
+        [Authorize(Roles = "admin")]
+        public async Task<ApiResponse<List<Project>>> GetAsync()
+        {
+            var response = new ApiResponse<List<Project>>();
+
+            try
+            {
+                var projects = await _projectService.GetAsync();
+                response.Message = Constants.Messages.Success;
+                response.Result = projects;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
+        // Get all projects assigned to the specified user.
+        [HttpGet("assigned")]
+        [Authorize(Roles = "employee,teamLead")]
+        public async Task<ApiResponse<List<Project>>> GetAssignedAsync()
+        {
+            var response = new ApiResponse<List<Project>>();
+
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userId))
+                    throw new Exception(Constants.Messages.InvalidToken);
+
+                var projects = await _projectService.GetAssignedAsync(userId);
+                response.Message = Constants.Messages.Success;
+                response.Result = projects;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
         // Update an existing project ( Admin Only )
         [HttpPost("{id}")]
         [Authorize(Roles = "admin")]
@@ -66,6 +110,25 @@ namespace Sprinto.Server.Controllers
 
                 var project = await _projectService.UpdateAsync(id, newProject);
                 response.Message = Constants.Messages.Updated;
+                response.Result = project;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
+        // Deletes the project with the specified ID. (Admin Only)
+        [HttpPost("{id}/delete")]
+        [Authorize(Roles = "admin")]
+        public async Task<ApiResponse<Project>> DeleteAsync(string id)
+        {
+            var response = new ApiResponse<Project>();
+            try
+            {
+                var project = await _projectService.DeleteAsync(id);
+                response.Message = Constants.Messages.Deleted;
                 response.Result = project;
             }
             catch (Exception ex)
