@@ -1,7 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Sprinto.Server.DTOs;
-using System.ComponentModel.DataAnnotations;
 
 
 namespace Sprinto.Server.Models

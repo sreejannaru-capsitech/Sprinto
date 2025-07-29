@@ -83,18 +83,10 @@ namespace Sprinto.Server.Services
                     a => a.Id == userId
                 );
 
-                var completionFilter = Builders<Project>.Filter.Eq(
-                    p => p.IsCompleted,
-                    false
-                );
-
-                var finalFilter = Builders<Project>.Filter.And(
-                    assigneeFilter,
-                    completionFilter
-                );
-
-                var projects = await _projects.Find(finalFilter).ToListAsync();
-                return projects;
+                var projects = await _projects.Find(assigneeFilter).ToListAsync();
+                // Filter projects which are not completed
+                var notCompleted = projects.Where(a => a.IsCompleted == false).ToList();
+                return notCompleted;
             }
             catch (Exception ex)
             {
