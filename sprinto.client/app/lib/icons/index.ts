@@ -15,3 +15,6 @@ export { default as PlusIcon } from "./plus.icon";
 export { default as TickRoundedIcon } from "./tick.rounded.icon";
 export { default as CloseRoundedIcon } from "./close.rounded.icon";
 export { default as LoaderIcon } from "./loader.icon";
+export { default as HighIcon } from "./high.icon";
+export { default as MediumIcon } from "./medium.icon";
+export { default as LowIcon } from "./low.icon";
