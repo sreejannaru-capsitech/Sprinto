@@ -2,7 +2,11 @@ import { Col, DatePicker, Form, Input, Modal, Row, Select } from "antd";
 import dayjs from "dayjs";
 import { useMemo, useState, type FC, type ReactNode } from "react";
 import { useAntNotification } from "~/hooks";
-import { useStatusesQuery } from "~/lib/server/services";
+import {
+  useAssignedProjectsQuery,
+  useCreateTask,
+  useStatusesQuery,
+} from "~/lib/server/services";
 import {
   getNonWhitespaceValidator,
   getRequiredSelectRule,
@@ -25,7 +29,7 @@ interface TaskFormType {
   priority: TaskPriority;
 }
 
-const priorityOptions = [
+const priorityOptions: SelectOptions[] = [
   {
     label: "Low",
     value: "low",
@@ -52,10 +56,13 @@ const TaskForm: FC<TaskFormProps> = ({
 }: TaskFormProps): ReactNode => {
   const [form] = Form.useForm<TaskFormType>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [assignees, setAssignees] = useState<SelectOptions[]>([]);
 
   const { data: statuses, isPending: statusesPending } = useStatusesQuery();
+  const { data: projects, isPending: projectsPending } =
+    useAssignedProjectsQuery();
 
-  const statusOptions = useMemo(() => {
+  const statusOptions: SelectOptions[] = useMemo(() => {
     return (
       statuses?.result?.map((status) => ({
         label: status.title,
@@ -64,9 +71,83 @@ const TaskForm: FC<TaskFormProps> = ({
     );
   }, [statuses]);
 
+  const projectOptions: SelectOptions[] = useMemo(() => {
+    return (
+      projects?.result?.map((project) => ({
+        label: project.title,
+        value: project.id,
+      })) ?? []
+    );
+  }, [projects]);
+
+  const changeAssignees = (value: string) => {
+    if (!value) {
+      setAssignees([]);
+      return;
+    }
+
+    const project = projects?.result?.find((project) => project.id === value);
+    if (!project) {
+      setAssignees([]);
+      return;
+    }
+
+    const options = project.assignees.map((assignee) => ({
+      label: assignee.name,
+      value: assignee.id,
+    }));
+
+    setAssignees(options);
+  };
+
   const { _api, contextHolder } = useAntNotification();
 
-  const handleSubmit = async () => {};
+  const { mutateAsync } = useCreateTask(_api);
+
+  const handleSubmit = async () => {
+    let values;
+    try {
+      values = await form.validateFields();
+    } catch (error) {
+      return error;
+    }
+
+    const getAssignees = (
+      assignees: string[] | undefined,
+      project: string
+    ): Assignee[] => {
+      const _proj = projects?.result?.find((proj) => proj.id === project);
+      if (!_proj || !assignees) return [];
+
+      const _assignees = _proj.assignees.map((assignee) => ({
+        id: assignee.id,
+        name: assignee.name,
+      }));
+
+      return _assignees.filter((assignee) => assignees.includes(assignee.id));
+    };
+
+    // Inject assignee names with their ids
+    const payload: TaskItemRequest = {
+      title: values.title,
+      description: values.description,
+      projectId: values.projectId,
+      assignees: getAssignees(values.assignees, values.projectId),
+      dueDate: values.dueDate,
+      status: statuses?.result?.find((status) => status.id === values.status)!, // get the status object from the id
+      priority: values.priority,
+    };
+
+    setLoading(true);
+    try {
+      await mutateAsync(payload);
+      form.resetFields();
+      onClose();
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Modal
@@ -112,9 +193,12 @@ const TaskForm: FC<TaskFormProps> = ({
               rules={[getRequiredSelectRule("project")]}
             >
               <Select
-                loading={statusesPending}
-                options={statusOptions}
+                loading={projectsPending}
+                options={projectOptions}
                 placeholder="Select a project"
+                onChange={(value: string) => {
+                  changeAssignees(value);
+                }}
               />
             </Form.Item>
           </Col>
@@ -131,12 +215,29 @@ const TaskForm: FC<TaskFormProps> = ({
         </Row>
 
         {/* Assignees */}
-        <Form.Item<TaskFormType> label="Assignees" name="assignees">
+        <Form.Item<TaskFormType>
+          label="Assignees"
+          name="assignees"
+          dependencies={["projectId"]}
+          rules={[
+            ({ getFieldValue }) => ({
+              validator() {
+                if (!getFieldValue("projectId")) {
+                  return Promise.reject(
+                    new Error("Please select a project to assign users")
+                  );
+                }
+                return Promise.resolve();
+              },
+            }),
+          ]}
+        >
           <Select
             mode="multiple"
-            loading={statusesPending}
+            loading={projectsPending}
+            maxTagCount="responsive"
             placeholder="Select assignees"
-            options={statusOptions}
+            options={assignees}
           />
         </Form.Item>
 

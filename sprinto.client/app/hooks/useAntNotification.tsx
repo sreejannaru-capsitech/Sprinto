@@ -11,6 +11,10 @@ type NotificationOptions = {
   duration?: number;
 };
 
+export interface NotificationApi {
+  (options: NotificationOptions): void;
+}
+
 export const useAntNotification = () => {
   const [api, contextHolder] = notification.useNotification();
 

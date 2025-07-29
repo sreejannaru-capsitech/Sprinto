@@ -1,6 +1,7 @@
 interface Project {
     id: string;
     title: string;
+    alias: string;
     description: string;
     isCompleted?: boolean;
     deadline: Date;
