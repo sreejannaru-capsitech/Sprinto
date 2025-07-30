@@ -42,7 +42,7 @@ namespace Sprinto.Server.Models
 
         [Required]
         [BsonElement("priority")]
-        public string? Priority { get; set; }
+        public TaskPriority Priority { get; set; }
 
         [BsonElement("comments")]
         public List<Comment> Comments { get; set; } = [];

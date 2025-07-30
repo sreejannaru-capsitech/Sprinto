@@ -8,7 +8,6 @@ namespace Sprinto.Server.DTOs
     {
         private string _title = null!;
         private string _description = null!;
-        private string _priority = null!;
 
         [Required(ErrorMessage = "Title is required")]
         [MinLength(3, ErrorMessage = "Title should have at least 3 characters")]
@@ -39,10 +38,14 @@ namespace Sprinto.Server.DTOs
 
         [Required(ErrorMessage = "Please provide task priority")]
         [RegularExpression("^(?i)(low|medium|high)$", ErrorMessage = "Priority must be low, medium or high")]
-        public string Priority
-        {
-            get => _priority;
-            set { _priority = value?.Trim() ?? string.Empty; }
-        }
+        public TaskPriority Priority { get; set; }
     }
+
+    public enum TaskPriority 
+    {
+        low,
+        medium,
+        high
+    }
+
 }
