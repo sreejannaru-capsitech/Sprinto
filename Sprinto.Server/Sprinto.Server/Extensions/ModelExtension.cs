@@ -16,5 +16,23 @@ namespace Sprinto.Server.Extensions
                 Role = user.Role,
             };
         }
+
+        public static TaskResponse ToTaskResponse(this TaskItem task) {
+            return new TaskResponse
+            {
+                Id = task.Id,
+                Title = task.Title,
+                CreatedBy = task.CreatedBy,
+                Description = task.Description,
+                Sequence = task.Sequence,
+                ProjectALias = task.ProjectALias,
+                ProjectId = task.ProjectId,
+                Priority = task.Priority,
+                Assignees = task.Assignees,
+                DueDate = task.DueDate,
+                Status = task.Status,
+                Comments = task.Comments,
+            };
+        }
     }
 }

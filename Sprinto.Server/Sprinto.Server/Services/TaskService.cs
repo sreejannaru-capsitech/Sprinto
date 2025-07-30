@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Sprinto.Server.DTOs;
+using Sprinto.Server.Extensions;
 using Sprinto.Server.Models;
 
 
@@ -101,11 +102,16 @@ namespace Sprinto.Server.Services
                     .Project<TaskItem>(projection)
                     .ToListAsync();
 
+                var todayTasks = tasks.Where(t => t.DueDate == today).ToList()
+                    .Select(u => u.ToTaskResponse()).ToList();
+                var overdueTasks = tasks.Where(t => t.DueDate < today).ToList()
+                    .Select(u => u.ToTaskResponse()).ToList();
+
                 // Separate today's and overdue tasks
                 var response = new TodayTasksResponse
                 {
-                    Today = [.. tasks.Where(t => t.DueDate == today)],
-                    Overdue = [.. tasks.Where(t => t.DueDate < today)]
+                    Today = todayTasks,
+                    Overdue = overdueTasks
                 };
 
                 return response;

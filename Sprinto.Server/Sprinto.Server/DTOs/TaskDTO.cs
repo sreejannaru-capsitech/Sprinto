@@ -1,4 +1,4 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using Sprinto.Server.Models;
 using Sprinto.Server.Validation;
 using System.ComponentModel.DataAnnotations;
 
@@ -49,6 +49,33 @@ namespace Sprinto.Server.DTOs
         [Required(ErrorMessage = "Please provide task priority")]
         [RegularExpression("^(?i)(low|medium|high)$", ErrorMessage = "Priority must be low, medium or high")]
         public TaskPriority Priority { get; set; }
+    }
+
+    public class TaskResponse
+    {
+        public string? Id { get; set; }
+
+        public string Title { get; set; } = null!;
+
+        public long Sequence { get; set; }
+
+        public string ProjectALias { get; set; } = null!;
+
+        public string? Description { get; set; }
+
+        public string ProjectId { get; set; } = null!;
+
+        public List<AssigneeDTO> Assignees { get; set; } = [];
+
+        public DateOnly DueDate { get; set; }
+
+        public StatusReq Status { get; set; } = null!;
+
+        public TaskPriority Priority { get; set; }
+
+        public List<Comment> Comments { get; set; } = [];
+
+        public Creation CreatedBy { get; set; } = null!;
     }
 
     public enum TaskPriority 

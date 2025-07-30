@@ -37,7 +37,7 @@ namespace Sprinto.Server.Models
 
     public class TodayTasksResponse
     {
-        public List<TaskItem> Today { get; set; } = [];
-        public List<TaskItem> Overdue { get; set; } = [];
+        public List<TaskResponse> Today { get; set; } = [];
+        public List<TaskResponse> Overdue { get; set; } = [];
     }
 }

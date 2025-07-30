@@ -18,10 +18,10 @@ namespace Sprinto.Server.Controllers
 
         // create new task
         [HttpPost]
-        public async Task<ApiResponse<TaskItem>>
+        public async Task<ApiResponse<TaskResponse>>
             Post([FromBody] TaskDTO taskDTO)
         {
-            var response = new ApiResponse<TaskItem>();
+            var response = new ApiResponse<TaskResponse>();
 
             var _result = ValidateModelState;
             if (_result != null) return response.HandleValidationError(_result);
@@ -35,10 +35,10 @@ namespace Sprinto.Server.Controllers
                 if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(userName))
                     throw new Exception(Constants.Messages.InvalidToken);
 
-                var createdProject = await _taskService.CreateAsync(taskDTO, userId, userName);
+                var createdTask = await _taskService.CreateAsync(taskDTO, userId, userName);
 
                 response.Message = Constants.Messages.Created;
-                response.Result = createdProject;
+                response.Result = createdTask.ToTaskResponse();
             }
             catch (Exception ex)
             {
