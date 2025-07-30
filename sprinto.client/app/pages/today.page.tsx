@@ -1,11 +1,9 @@
-import { Col, Flex, Row, Space, Typography } from "antd";
+import { Flex, Space, Typography } from "antd";
 import { useMemo, useState, type ReactNode } from "react";
-import CreateTask from "~/components/create-task";
 import TaskForm from "~/components/forms/task-form";
+import NoTask from "~/components/ui/no-task";
 import Spinner from "~/components/ui/spinner";
 import TaskItem from "~/components/ui/task-item";
-import CenteredLayout from "~/layouts/centered-layout";
-import { TaskIcon } from "~/lib/icons";
 import { useTodayTaskQuery } from "~/lib/server/services";
 
 /**
@@ -26,21 +24,7 @@ const TodayPageComponent = (): ReactNode => {
   return (
     <Spinner isActive={isPending}>
       {isEmpty ? (
-        <CenteredLayout>
-          <div style={{ textAlign: "center" }}>
-            <TaskIcon size={44} />
-            <p
-              className="text-primary-dark font-bold"
-              style={{
-                fontSize: "1rem",
-                marginBlockStart: "0.5rem",
-              }}
-            >
-              You don't have any task today
-            </p>
-            <CreateTask block />
-          </div>
-        </CenteredLayout>
+        <NoTask text="You don't have any task today" />
       ) : (
         <Flex style={{ marginTop: "2rem" }} gap={32}>
           <TaskForm
