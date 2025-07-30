@@ -26,12 +26,16 @@ namespace Sprinto.Server.Models
         [BsonElement("is_completed")]
         public bool IsCompleted { get; set; }
 
-        [BsonElement("deadline")]
-        public DateTime Deadline { get; set; }
+        [BsonElement("start_date")]
+        [BsonIgnoreIfNull]
+        public DateOnly? StartDate { get; set; }
 
-        [BsonElement("maintainer_id")]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string TeamLead { get; set; } = null!;
+        [BsonElement("deadline")]
+        [BsonIgnoreIfNull]
+        public DateOnly? Deadline { get; set; }
+
+        [BsonElement("maintainer")]
+        public AssigneeDTO TeamLead { get; set; } = null!;
 
         [BsonElement("assignees")]
         public List<AssigneeDTO> Assignees { get; set; } = [];
@@ -42,9 +46,11 @@ namespace Sprinto.Server.Models
         public Project(ProjectDTO dto, string id, string name)
         {
             Title = dto.Title;
-            Alias = GetInitialsFromName(dto.Title);
+            Alias = dto.Alias;
             Description = dto.Description;
             IsCompleted = dto.IsCompleted ?? false;
+            StartDate = dto.StartDate;
+            Deadline = dto.Deadline;
             TeamLead = dto.TeamLead;
             Assignees = dto.Assignees;
             CreatedBy = new Creation
@@ -55,37 +61,5 @@ namespace Sprinto.Server.Models
         }
 
         public Project() { }
-
-        // Generates alias for a project from it's title
-        private static string GetInitialsFromName(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-                return string.Empty;
-
-            var words = name
-                .Trim()
-                .Split([' '], StringSplitOptions.RemoveEmptyEntries);
-
-            if (words.Length == 1)
-            {
-                var word = words[0];
-                return word.Length >= 3
-                    ? $"{char.ToUpper(word[0])}{char.ToUpper(word[1])}{char.ToUpper(word[^1])}"
-                    : word.ToUpper(); // fallback for short words
-            }
-            else if (words.Length == 2)
-            {
-                var first = words[0];
-                var second = words[1];
-                return $"{char.ToUpper(first[0])}{char.ToUpper(second[0])}{char.ToUpper(second[^1])}";
-            }
-            else
-            {
-                var first = words[0];
-                var second = words[1];
-                var last = words[^1];
-                return $"{char.ToUpper(first[0])}{char.ToUpper(second[0])}{char.ToUpper(last[^1])}";
-            }
-        }
     }
 }

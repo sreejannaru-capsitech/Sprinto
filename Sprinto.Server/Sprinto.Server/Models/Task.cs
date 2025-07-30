@@ -20,6 +20,10 @@ namespace Sprinto.Server.Models
         [BsonElement("seq")]
         public long Sequence { get; set; }
 
+        [Required]
+        [BsonElement("project_alias")]
+        public string ProjectALias { get; set; } = null!;
+
         [BsonIgnoreIfNull]
         [BsonElement("description")]
         public string? Description { get; set; }
@@ -48,7 +52,7 @@ namespace Sprinto.Server.Models
         public List<Comment> Comments { get; set; } = [];
 
         [BsonElement("activities")]
-        public List<Activity> Activities { get; set; } = [];
+        public List<Activity<object>> Activities { get; set; } = [];
 
         [BsonElement("created_by")]
         public Creation CreatedBy { get; set; } = null!;
@@ -58,6 +62,7 @@ namespace Sprinto.Server.Models
         public TaskItem(TaskDTO task, string id, string name, long seq)
         {
             Title = task.Title;
+            ProjectALias = task.ProjectAlias;
             Sequence = seq;
             Description = task.Description;
             ProjectId = task.ProjectId;

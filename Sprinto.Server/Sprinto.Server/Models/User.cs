@@ -19,7 +19,7 @@ namespace Sprinto.Server.Models
         [BsonElement("email")]
         public string Email { get; set; } = null!;
 
-        [BsonElement("passwordHash")]
+        [BsonElement("password_hash")]
         public string Password { get; set; } = null!;
 
         [BsonElement("role")]

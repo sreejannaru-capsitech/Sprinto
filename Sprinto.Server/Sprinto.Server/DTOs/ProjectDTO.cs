@@ -1,6 +1,5 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using Sprinto.Server.Validation;
 using System.ComponentModel.DataAnnotations;
 
 namespace Sprinto.Server.DTOs
@@ -9,6 +8,7 @@ namespace Sprinto.Server.DTOs
     {
         private string _title = null!;
         private string _description = null!;
+        private string _alias = null!;
 
         [Required(ErrorMessage = "Title is required")]
         [MinLength(3, ErrorMessage = "Title should have at least 3 characters")]
@@ -18,6 +18,15 @@ namespace Sprinto.Server.DTOs
         {
             get => _title;
             set { _title = value?.Trim() ?? string.Empty; }
+        }
+
+        [Required(ErrorMessage = "Please provide project alias")]
+        [MinLength(3, ErrorMessage = "Alias should have exactly 3 characters")]
+        [StringLength(3, ErrorMessage = "Alias should have exactly 3 characters")]
+        public string Alias
+        {
+            get => _alias;
+            set { _alias = value?.Trim() ?? string.Empty; }
         }
 
         [Required(ErrorMessage = "Description is required")]
@@ -33,14 +42,14 @@ namespace Sprinto.Server.DTOs
         [BsonElement("is_completed")]
         public bool? IsCompleted { get; set; }
 
-        [Required(ErrorMessage = "Deadline is required")]
         [BsonElement("deadline")]
-        public DateTime Deadline { get; set; }
+        public DateOnly? Deadline { get; set; }
 
-        [ValidObjectId(ErrorMessage = "maintainerId must be a valid MongoDB ObjectId")]
-        [BsonElement("maintainer_id")]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string TeamLead { get; set; } = null!;
+        public DateOnly? StartDate { get; set; }
+
+        [Required(ErrorMessage = "Please provide project maintainer details")]
+        [BsonElement("maintainer")]
+        public AssigneeDTO TeamLead { get; set; } = null!;
 
         [BsonElement("assignees")]
         public List<AssigneeDTO> Assignees { get; set; } = [];

@@ -6,8 +6,6 @@ namespace Sprinto.Server.Models
 {
     public class Comment
     {
-       
-
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         [BsonElement("_id")]

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Sprinto.Server.Models
 {
-    public class Activity
+    public class Activity<T>
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
@@ -13,17 +13,25 @@ namespace Sprinto.Server.Models
 
         [Required]
         [BsonElement("action")]
-        public string Action { get; set; } = null!;
+        public ActivityAction Action { get; set; }
 
         [BsonIgnoreIfNull]
         [BsonElement("prev_value")]
-        public string? PrevValue { get; set; }
+        public T? PrevValue { get; set; }
 
         [BsonIgnoreIfNull]
         [BsonElement("curr_value")]
-        public string? CurrValue { get; set; }
+        public T? CurrValue { get; set; }
 
         [BsonElement("created_by")]
         public Creation CreatedBy { get; set; } = null!;
+    }
+
+    public enum ActivityAction
+    {
+        Created,
+        Updated,
+        Assigned,
+        Deleted
     }
 }
