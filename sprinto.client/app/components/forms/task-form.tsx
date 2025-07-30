@@ -133,7 +133,7 @@ const TaskForm: FC<TaskFormProps> = ({
       description: values.description,
       projectId: values.projectId,
       assignees: getAssignees(values.assignees, values.projectId),
-      dueDate: values.dueDate,
+      dueDate: dayjs(values.dueDate).format("YYYY-MM-DD"),
       status: statuses?.result?.find((status) => status.id === values.status)!, // get the status object from the id
       priority: values.priority,
     };
