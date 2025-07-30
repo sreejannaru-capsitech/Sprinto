@@ -25,7 +25,7 @@ namespace Sprinto.Server.Extensions
                 CreatedBy = task.CreatedBy,
                 Description = task.Description,
                 Sequence = task.Sequence,
-                ProjectALias = task.ProjectALias,
+                ProjectAlias = task.ProjectAlias,
                 ProjectId = task.ProjectId,
                 Priority = task.Priority,
                 Assignees = task.Assignees,

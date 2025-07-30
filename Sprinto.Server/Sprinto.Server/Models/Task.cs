@@ -22,7 +22,7 @@ namespace Sprinto.Server.Models
 
         [Required]
         [BsonElement("project_alias")]
-        public string ProjectALias { get; set; } = null!;
+        public string ProjectAlias { get; set; } = null!;
 
         [BsonIgnoreIfNull]
         [BsonElement("description")]
@@ -63,7 +63,7 @@ namespace Sprinto.Server.Models
             (TaskDTO task, string id, string name, long seq, string alias)
         {
             Title = task.Title;
-            ProjectALias = alias;
+            ProjectAlias = alias;
             Sequence = seq;
             Description = task.Description;
             ProjectId = task.ProjectId;

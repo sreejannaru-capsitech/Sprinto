@@ -44,7 +44,7 @@ namespace Sprinto.Server.DTOs
 
         public long Sequence { get; set; }
 
-        public string ProjectALias { get; set; } = null!;
+        public string ProjectAlias { get; set; } = null!;
 
         public string? Description { get; set; }
 
