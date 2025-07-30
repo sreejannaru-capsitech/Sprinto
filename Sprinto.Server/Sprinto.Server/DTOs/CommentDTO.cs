@@ -23,5 +23,7 @@ namespace Sprinto.Server.DTOs
         [BsonElement("is_edited")]
         [BsonIgnoreIfDefault]
         public bool? IsEdited { get; set; }
+
+        public DateTime? UpdatedAt { get; set; }
     }
 }

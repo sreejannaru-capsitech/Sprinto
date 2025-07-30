@@ -20,6 +20,10 @@ namespace Sprinto.Server.Models
         [BsonIgnoreIfDefault]
         public bool? IsEdited { get; set; }
 
+        [BsonElement("updated_at")]
+        [BsonIgnoreIfNull]
+        public DateTime? UpdatedAt { get; set; }
+
         [BsonElement("created_by")]
         public Creation CreatedBy { get; set; } = null!;
 
