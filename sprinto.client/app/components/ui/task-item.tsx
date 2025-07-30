@@ -11,6 +11,7 @@ dayjs.extend(utc);
 dayjs.extend(advancedFormat);
 
 import "~/styles/task-item.css";
+import ToolTip from "./tooltip";
 
 interface TaskItemProps {
   task: Task;
@@ -45,16 +46,16 @@ const TaskItem: FC<TaskItemProps> = ({ task }: TaskItemProps): ReactNode => {
         <Flex align="center">
           {task.assignees.map((assignee) => (
             <Avatar key={assignee.id} size={18}>
-              <Tooltip title={assignee.name} placement="top">
-              <span className="small-text">{getInitials(assignee.name)}</span>
-              </Tooltip>
+              <ToolTip title={assignee.name}>
+                <span className="small-text">{getInitials(assignee.name)}</span>
+              </ToolTip>
             </Avatar>
           ))}
         </Flex>
       </Flex>
       <Row gutter={0}>
         <Col span={2}>
-          <Tooltip title={task.priority} placement="top">
+          <ToolTip title={task.priority + " priority"}>
             <span>
               {task.priority === "low" ? (
                 <LowIcon size={22} />
@@ -64,7 +65,7 @@ const TaskItem: FC<TaskItemProps> = ({ task }: TaskItemProps): ReactNode => {
                 <HighIcon size={22} />
               )}
             </span>
-          </Tooltip>
+          </ToolTip>
         </Col>
         <Col span={21}>
           <Typography.Text className="font-bold">{task.title}</Typography.Text>
@@ -74,7 +75,7 @@ const TaskItem: FC<TaskItemProps> = ({ task }: TaskItemProps): ReactNode => {
           <Flex align="center" gap={4}>
             <Tag>{task.status.title}</Tag>
             <Tag style={{ display: "flex", alignItems: "center", gap: 2 }}>
-             <CalenderIcon size={16} />
+              <CalenderIcon size={16} />
               <span>{dueDate}</span>
             </Tag>
           </Flex>
