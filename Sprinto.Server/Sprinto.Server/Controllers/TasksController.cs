@@ -106,6 +106,31 @@ namespace Sprinto.Server.Controllers
             return response;
         }
 
+        // Get all assigned tasks
+        [HttpGet("inbox")]
+        public async Task<ApiResponse<List<TaskResponse>>>
+            GetInboxTasks()
+        {
+            var response = new ApiResponse<List<TaskResponse>>();
+
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userId))
+                    throw new Exception(Constants.Messages.InvalidToken);
+
+                var tasks = await _taskService.GetInboxTasks(userId);
+
+                response.Message = Constants.Messages.Success;
+                response.Result = tasks;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
         private object? ValidateModelState
         {
             get

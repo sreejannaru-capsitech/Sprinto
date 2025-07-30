@@ -123,6 +123,45 @@ namespace Sprinto.Server.Services
             }
         }
 
+        // Find all user assigned tasks
+        public async Task<List<TaskResponse>> GetInboxTasks(string userId)
+        {
+            try
+            {
+                // Match user assignment
+                var assigneeFilter = Builders<TaskItem>.Filter.ElemMatch(
+                    t => t.Assignees,
+                    a => a.Id == userId
+                );
+
+                // Exclude "Done" status
+                var statusFilter = Builders<TaskItem>.Filter.Ne(
+                    t => t.Status.Title,
+                    "Done"
+                );
+
+                // Combine filters
+                var userFilter = Builders<TaskItem>.Filter.And(
+                    assigneeFilter,
+                    statusFilter
+                );
+
+                // Exclude activities from the response
+                var projection = Builders<TaskItem>.Projection.Exclude(t => t.Activities);
+
+                var tasks = await _tasks.Find(userFilter)
+                    .Project<TaskItem>(projection)
+                    .ToListAsync();
+
+                return tasks.Select(u => u.ToTaskResponse()).ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving tasks for user {UserId}", userId);
+                throw new Exception("Could not retrieve inbox tasks");
+            }
+        }
+
         // Find and update a task
         public async Task<TaskItem> UpdateAsync(string id, TaskDTO dto, string userId, string userName)
         {
