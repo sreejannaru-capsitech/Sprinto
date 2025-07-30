@@ -74,7 +74,7 @@ namespace Sprinto.Server.Services
         {
             try
             {
-                var today = DateTime.Today;
+                var today = DateOnly.FromDateTime(DateTime.Today);
 
                 // Match user assignment
                 var assigneeFilter = Builders<TaskItem>.Filter.ElemMatch(
@@ -88,7 +88,7 @@ namespace Sprinto.Server.Services
                     "Done"
                 );
 
-                // Combine for today tasks
+                // Combine filters
                 var userFilter = Builders<TaskItem>.Filter.And(
                     assigneeFilter,
                     statusFilter
@@ -99,9 +99,10 @@ namespace Sprinto.Server.Services
                 // Separate today's and overdue tasks
                 var response = new TodayTasksResponse
                 {
-                    Today = [.. tasks.Where(t => t.DueDate.Date == today)],
-                    Overdue = [.. tasks.Where(t => t.DueDate.Date < today)]
+                    Today = [.. tasks.Where(t => t.DueDate == today)],
+                    Overdue = [.. tasks.Where(t => t.DueDate < today)]
                 };
+
                 return response;
             }
             catch (Exception ex)

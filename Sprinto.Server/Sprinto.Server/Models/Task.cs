@@ -34,7 +34,7 @@ namespace Sprinto.Server.Models
 
         [Required]
         [BsonElement("due_date")]
-        public DateTime DueDate { get; set; }
+        public DateOnly DueDate { get; set; }
 
         [Required]
         [BsonElement("status")]
