@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 using Sprinto.Server.Common;
 using Sprinto.Server.DTOs;
 using Sprinto.Server.Extensions;
@@ -39,6 +40,39 @@ namespace Sprinto.Server.Controllers
 
                 response.Message = Constants.Messages.Created;
                 response.Result = createdTask.ToTaskResponse();
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
+        // Update a task
+        [HttpPost("{id}")]
+        public async Task<ApiResponse<TaskResponse>>
+            Update([FromRoute] string id, [FromBody] TaskDTO taskDTO)
+        {
+            var response = new ApiResponse<TaskResponse>();
+
+            var _result = ValidateModelState;
+            if (_result != null) return response.HandleValidationError(_result);
+
+            try
+            {
+                if (!ObjectId.TryParse(id, out _))
+                    throw new Exception("Please provide valid id");
+                // Extract ID and Name of current admin
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userName = User.FindFirstValue(ClaimTypes.Name);
+
+                if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(userName))
+                    throw new Exception(Constants.Messages.InvalidToken);
+
+                var updatedTask = await _taskService.UpdateAsync(id, taskDTO, userId, userName);
+
+                response.Message = Constants.Messages.Success;
+                response.Result = updatedTask.ToTaskResponse();
             }
             catch (Exception ex)
             {
