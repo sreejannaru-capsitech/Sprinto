@@ -7,8 +7,6 @@ namespace Sprinto.Server.DTOs
     public class TaskDTO
     {
         private string _title = null!;
-        private string _description = null!;
-        private string _alias = null!;
 
         [Required(ErrorMessage = "Title is required")]
         [MinLength(3, ErrorMessage = "Title should have at least 3 characters")]
@@ -19,20 +17,7 @@ namespace Sprinto.Server.DTOs
             set { _title = value?.Trim() ?? string.Empty; }
         }
 
-        [Required(ErrorMessage = "Please provide project alias")]
-        [MinLength(3, ErrorMessage = "Alias should have exactly 3 characters")]
-        [StringLength(3, ErrorMessage = "Alias should have exactly 3 characters")]
-        public string ProjectAlias
-        {
-            get => _alias;
-            set { _alias = value?.Trim() ?? string.Empty; }
-        }
-
-        public string Description
-        {
-            get => _description;
-            set { _description = value?.Trim() ?? string.Empty; }
-        }
+        public string? Description { get; set; }
 
         [Required(ErrorMessage = "Please provide project Id")]
         [ValidObjectId(ErrorMessage = "ProjectId must be a valid 24-character MongoDB ObjectId")]

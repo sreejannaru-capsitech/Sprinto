@@ -59,10 +59,11 @@ namespace Sprinto.Server.Models
 
 
         // Custom Constructor
-        public TaskItem(TaskDTO task, string id, string name, long seq)
+        public TaskItem
+            (TaskDTO task, string id, string name, long seq, string alias)
         {
             Title = task.Title;
-            ProjectALias = task.ProjectAlias;
+            ProjectALias = alias;
             Sequence = seq;
             Description = task.Description;
             ProjectId = task.ProjectId;
