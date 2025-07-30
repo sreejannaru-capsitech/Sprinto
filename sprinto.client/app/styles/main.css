@@ -75,7 +75,7 @@ h1.ant-typography {
 .ant-layout-content {
   background: white;
   border-top-left-radius: 25px;
-  padding: 45px 60px;
+  padding: 45px 60px 0px 60px;
 }
 
 /* Button Styles */

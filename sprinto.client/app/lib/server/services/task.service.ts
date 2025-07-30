@@ -5,12 +5,14 @@ import {
   STALE_TIME,
   TASKS_KEY,
   TODAY_TASKS_KEY,
+  UPCOMING_TASKS_KEY,
 } from "~/lib/const";
 // import { queryClient } from "../queryClient";
 import {
   createTask,
   getInboxTasks,
   getTodayTasks,
+  getUpcomingTasks,
   updateTask,
 } from "../task.api";
 import { handleApiError } from "~/lib/utils";
@@ -64,6 +66,14 @@ export const useInboxTasksQuery = () => {
   return useQuery({
     queryKey: [INBOX_TASKS_KEY],
     queryFn: getInboxTasks,
+    staleTime: STALE_TIME,
+  });
+};
+
+export const useUpcomingTasksQuery = () => {
+  return useQuery({
+    queryKey: [UPCOMING_TASKS_KEY],
+    queryFn: getUpcomingTasks,
     staleTime: STALE_TIME,
   });
 };

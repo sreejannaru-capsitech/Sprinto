@@ -22,7 +22,7 @@ const InboxPage = (): ReactNode => {
         <InboxIcon size={36} />
         <Typography.Title
           level={2}
-          className="text-primary"
+          className="text-primary-dark"
           style={{ margin: 0 }}
         >
           Inbox

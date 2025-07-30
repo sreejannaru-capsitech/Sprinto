@@ -11,6 +11,7 @@ export const STATUSES_KEY = "statuses" as const;
 export const TASKS_KEY = "tasks" as const;
 export const TODAY_TASKS_KEY = "todayTasks" as const;
 export const INBOX_TASKS_KEY = "inboxTasks" as const;
+export const UPCOMING_TASKS_KEY = "upcomingTasks" as const;
 
 export const STALE_TIME = 5 * 60 * 1000; // 5 minutes
 
