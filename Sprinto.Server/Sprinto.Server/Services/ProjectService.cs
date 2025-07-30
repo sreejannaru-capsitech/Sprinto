@@ -68,12 +68,12 @@ namespace Sprinto.Server.Services
         }
 
         /// <summary>
-        /// Retrieves all projects assigned to the specified user,
+        /// Retrieves all projects assigned to or maintained by the specified user,
         /// excluding those marked as completed.
         /// </summary>
         /// <param name="userId">The unique identifier of the user.</param>
-        /// <returns>A list of <see cref="Project"/> documents assigned to the specified user.</returns>
-        /// <exception cref="Exception">Thrown when an error occurs during the retrieval of assigned projects.</exception>
+        /// <returns>A list of <see cref="Project"/> documents relevant to the specified user.</returns>
+        /// <exception cref="Exception">Thrown when an error occurs during the retrieval of projects.</exception>
         public async Task<List<Project>> GetAssignedAsync(string userId)
         {
             try
@@ -83,15 +83,26 @@ namespace Sprinto.Server.Services
                     a => a.Id == userId
                 );
 
-                var projects = await _projects.Find(assigneeFilter).ToListAsync();
-                // Filter projects which are not completed
+                var maintainerFilter = Builders<Project>.Filter.Eq(
+                    p => p.TeamLead.Id,
+                    userId
+                );
+
+                var accessFilter = Builders<Project>.Filter.Or(
+                    assigneeFilter,
+                    maintainerFilter
+                );
+
+                var projects  = await _projects.Find(accessFilter).ToListAsync();
+
                 var notCompleted = projects.Where(a => a.IsCompleted == false).ToList();
+
                 return notCompleted;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving assigned projects");
-                throw new Exception("Could not retrieve assigned projects");
+                _logger.LogError(ex, "Error retrieving assigned or maintained projects");
+                throw new Exception("Could not retrieve projects");
             }
         }
 
