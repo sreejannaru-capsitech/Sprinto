@@ -1,13 +1,24 @@
-import { Col, DatePicker, Form, Input, Modal, Row, Select, Switch } from "antd";
+import {
+  Col,
+  DatePicker,
+  Flex,
+  Form,
+  Input,
+  Modal,
+  Row,
+  Select,
+  Switch,
+  Typography,
+} from "antd";
 import { AxiosError } from "axios";
 import dayjs from "dayjs";
 import { useMemo, useState, type FC, type ReactNode } from "react";
 import { useAntNotification } from "~/hooks";
 import { createProject } from "~/lib/server/project.api";
 import { useEmployeesQuery, useTeamLeadsQuery } from "~/lib/server/services";
+import { getAliasFromTitle } from "~/lib/utils";
 import {
   getNonWhitespaceValidator,
-  getRequiredSelectRule,
   getRequiredStringRule,
 } from "~/lib/validators";
 
@@ -19,9 +30,11 @@ interface ProjectFormProps {
 
 interface ProjectFormType {
   title: string;
+  alias: string;
   description: string;
   isCompleted: boolean;
-  deadline: Date;
+  startDate?: string;
+  deadline?: string;
   teamLead: string;
   assignees: string[];
 }
@@ -37,6 +50,7 @@ const ProjectForm: FC<ProjectFormProps> = ({
 }: ProjectFormProps): ReactNode => {
   const [form] = Form.useForm<ProjectFormType>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [alias, setAlias] = useState<string>("");
 
   const { data: employees, isPending: employeesPending } = useEmployeesQuery();
 
@@ -74,9 +88,20 @@ const ProjectForm: FC<ProjectFormProps> = ({
     const payload: ProjectRequest = {
       title: values.title,
       description: values.description,
+      alias: alias,
       isCompleted: values.isCompleted,
-      deadline: values.deadline,
-      teamLead: values.teamLead,
+      deadline: values.deadline
+        ? dayjs(values.deadline).format("YYYY-MM-DD")
+        : undefined,
+      startDate: values.startDate
+        ? dayjs(values.startDate).format("YYYY-MM-DD")
+        : undefined,
+      teamLead: teamLeads?.result?.items.find(
+        (e) => e.id === values.teamLead
+      ) ?? {
+        id: values.teamLead,
+        name: values.teamLead,
+      },
       assignees:
         employees?.result?.items
           ?.filter((employee) => values.assignees?.includes(employee.id))
@@ -117,17 +142,29 @@ const ProjectForm: FC<ProjectFormProps> = ({
     >
       {contextHolder}
       <Form layout="vertical" form={form} requiredMark="optional">
-        {/* Title */}
-        <Form.Item<ProjectFormType>
-          label="Title"
-          name="title"
-          rules={[
-            getRequiredStringRule("title"),
-            getNonWhitespaceValidator("title"),
-          ]}
-        >
-          <Input placeholder="Project Title" />
-        </Form.Item>
+        <Row gutter={16}>
+          <Col span={18}>
+            {/* Title */}
+            <Form.Item<ProjectFormType>
+              label="Title"
+              name="title"
+              rules={[
+                getRequiredStringRule("title"),
+                getNonWhitespaceValidator("title"),
+              ]}
+            >
+              <Input
+                placeholder="Project Title"
+                onChange={(e) => setAlias(getAliasFromTitle(e.target.value))}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={6}>
+            <Form.Item<ProjectFormType> label="Alias" required>
+              <Input disabled placeholder="Alias" value={alias} />
+            </Form.Item>
+          </Col>
+        </Row>
 
         {/* Description */}
         <Form.Item<ProjectFormType>
@@ -139,71 +176,45 @@ const ProjectForm: FC<ProjectFormProps> = ({
         </Form.Item>
 
         <Row gutter={16}>
-          {!isNew && (
-            <Col span={12}>
-              <Form.Item<ProjectFormType>
-                label={"Completed?"}
-                name="isCompleted"
-                valuePropName="checked"
-                initialValue={false}
-              >
-                <Switch checkedChildren="Yes" unCheckedChildren="No" />
-              </Form.Item>
-            </Col>
-          )}
-
           <Col span={12}>
-            <Form.Item<ProjectFormType>
-              label="Deadline"
-              name="deadline"
-              rules={[getRequiredSelectRule("project deadline")]}
-            >
-              <DatePicker style={{ width: "100%" }} minDate={dayjs()} />
+            <Form.Item<ProjectFormType> label="Start Date" name="startDate">
+              <DatePicker
+                style={{ width: "100%" }}
+                minDate={dayjs().subtract(6, "weeks")}
+              />
             </Form.Item>
           </Col>
 
-          {isNew && (
-            <Col span={12}>
-              <Form.Item<ProjectFormType>
-                label="Team Lead"
-                name="teamLead"
-                rules={[getRequiredSelectRule("team lead")]}
-              >
-                <Select
-                  loading={teamLeadsPending}
-                  options={teamLeadOptions}
-                  placeholder="Select Team Lead"
-                />
-              </Form.Item>
-            </Col>
-          )}
+          <Col span={12}>
+            <Form.Item<ProjectFormType> label="Deadline" name="deadline">
+              <DatePicker style={{ width: "100%" }} minDate={dayjs()} />
+            </Form.Item>
+          </Col>
         </Row>
 
         <Row gutter={16}>
-          {!isNew && (
-            <Col span={12}>
-              {/* Team Lead */}
-              <Form.Item<ProjectFormType>
-                label="Team Lead"
-                name="teamLead"
-                rules={[
-                  {
-                    type: "string",
-                    required: true,
-                    message: "Please select Team Lead",
-                  },
-                ]}
-              >
-                <Select
-                  loading={teamLeadsPending}
-                  options={teamLeadOptions}
-                  placeholder="Select Team Lead"
-                />
-              </Form.Item>
-            </Col>
-          )}
+          <Col span={8}>
+            {/* Team Lead */}
+            <Form.Item<ProjectFormType>
+              label="Team Lead"
+              name="teamLead"
+              rules={[
+                {
+                  type: "string",
+                  required: true,
+                  message: "Please select TL",
+                },
+              ]}
+            >
+              <Select
+                loading={teamLeadsPending}
+                options={teamLeadOptions}
+                placeholder="Select TL"
+              />
+            </Form.Item>
+          </Col>
 
-          <Col span={isNew ? 24 : 12}>
+          <Col span={16}>
             {/* Assignees */}
             <Form.Item<ProjectFormType> label="Assignees" name="assignees">
               <Select
@@ -215,6 +226,20 @@ const ProjectForm: FC<ProjectFormProps> = ({
             </Form.Item>
           </Col>
         </Row>
+
+        {!isNew && (
+          <Flex align="center" gap={8}>
+            <Typography.Text>Mark As Completed?</Typography.Text>
+            <Form.Item<ProjectFormType>
+              name="isCompleted"
+              valuePropName="checked"
+              initialValue={false}
+              style={{ marginBottom: 0 }}
+            >
+              <Switch checkedChildren="Yes" unCheckedChildren="No" />
+            </Form.Item>
+          </Flex>
+        )}
       </Form>
     </Modal>
   );

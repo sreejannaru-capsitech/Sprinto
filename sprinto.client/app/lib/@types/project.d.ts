@@ -4,17 +4,20 @@ interface Project {
     alias: string;
     description: string;
     isCompleted?: boolean;
-    deadline: Date;
-    teamLead: string;
+    startDate: string;
+    deadline: string;
+    teamLead: Assignee;
     assignees: Assignee[];
     createdBy: Creation;
 }
 
 interface ProjectRequest {
     title: string;
+    alias: string;
     description: string;
     isCompleted: boolean;
-    deadline: Date;
-    teamLead: string;
+    startDate?: string;
+    deadline?: string;
+    teamLead: Assignee;
     assignees: Assignee[];
 }
