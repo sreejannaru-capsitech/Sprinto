@@ -92,6 +92,10 @@ h1.ant-typography {
   background: var(--primary-darker-color) !important;
 }
 
+.ant-btn-variant-outlined:hover {
+  border-color: var(--primary-color) !important;
+}
+
 /* Dropdown | Select */
 
 .ant-select-dropdown
@@ -153,5 +157,5 @@ h1.ant-typography {
 }
 
 .animate-spin {
-  animation: spin 1s linear infinite;
+  animation: spin 0.75s linear infinite;
 }

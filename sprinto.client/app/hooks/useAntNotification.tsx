@@ -33,7 +33,7 @@ export const useAntNotification = () => {
     message,
     description,
     type = "info",
-    placement = "bottom",
+    placement = "bottomRight",
     duration = 3,
   }: NotificationOptions) => {
     api[type]({

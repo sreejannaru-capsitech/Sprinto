@@ -21,9 +21,9 @@ const CreateTask: FC<CreateTaskProps> = ({
       <TaskForm open={taskModalOpen} onClose={() => setTaskModalOpen(false)} />
       {block ? (
         <Button type="default" onClick={() => setTaskModalOpen(true)}>
-          <Flex align="center" gap={4}>
+          <Flex align="center" gap={5}>
             <PlusIcon size={20} />
-            <span>Create New</span>
+            <span style={{marginTop: "-1px"}}>Create New</span>
           </Flex>
         </Button>
       ) : (
