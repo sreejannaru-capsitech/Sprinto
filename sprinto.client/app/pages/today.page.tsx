@@ -1,6 +1,7 @@
 import { Col, Flex, Row, Space, Typography } from "antd";
-import { useMemo, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import CreateTask from "~/components/create-task";
+import TaskForm from "~/components/forms/task-form";
 import Spinner from "~/components/ui/spinner";
 import TaskItem from "~/components/ui/task-item";
 import CenteredLayout from "~/layouts/centered-layout";
@@ -13,6 +14,8 @@ import { useTodayTaskQuery } from "~/lib/server/services";
  */
 const TodayPageComponent = (): ReactNode => {
   const { data, isPending } = useTodayTaskQuery();
+
+  const [editingTask, setEditingTask] = useState<Task | undefined>(undefined);
 
   const isEmpty = useMemo(() => {
     return (
@@ -40,6 +43,11 @@ const TodayPageComponent = (): ReactNode => {
         </CenteredLayout>
       ) : (
         <Flex style={{ marginTop: "2rem" }} gap={32}>
+          <TaskForm
+            onClose={() => setEditingTask(undefined)}
+            open={!!editingTask}
+            task={editingTask}
+          />
           {/* Don't show overdue tasks section if there are none */}
           {data?.result?.overdue.length ? (
             <div>
@@ -48,21 +56,32 @@ const TodayPageComponent = (): ReactNode => {
               </Typography.Title>
               <Space direction="vertical" size={16}>
                 {data?.result?.overdue.map((task) => (
-                  <TaskItem key={task.id} task={task} />
+                  <TaskItem
+                    key={task.id}
+                    task={task}
+                    setTask={setEditingTask}
+                  />
                 ))}
               </Space>
             </div>
           ) : null}
-          <div>
-            <Typography.Title level={4} className="font-bold">
-              Today
-            </Typography.Title>
-            <Space direction="vertical" size={16}>
-              {data?.result?.today.map((task) => (
-                <TaskItem key={task.id} task={task} />
-              ))}
-            </Space>
-          </div>
+          {data?.result?.today.length ? (
+            <div>
+              <Typography.Title level={4} className="font-bold">
+                Today
+              </Typography.Title>
+              <Space direction="vertical" size={16}>
+                {data?.result?.today.map((task) => (
+                  <TaskItem
+                    key={task.id}
+                    task={task}
+                    isToday
+                    setTask={setEditingTask}
+                  />
+                ))}
+              </Space>
+            </div>
+          ) : null}
         </Flex>
       )}
     </Spinner>

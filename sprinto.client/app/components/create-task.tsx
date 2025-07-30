@@ -18,12 +18,16 @@ const CreateTask: FC<CreateTaskProps> = ({
 
   return (
     <>
-      <TaskForm open={taskModalOpen} onClose={() => setTaskModalOpen(false)} />
+      <TaskForm
+        isNew
+        open={taskModalOpen}
+        onClose={() => setTaskModalOpen(false)}
+      />
       {block ? (
         <Button type="default" onClick={() => setTaskModalOpen(true)}>
           <Flex align="center" gap={5}>
             <PlusIcon size={20} />
-            <span style={{marginTop: "-1px"}}>Create New</span>
+            <span style={{ marginTop: "-1px" }}>Create New</span>
           </Flex>
         </Button>
       ) : (

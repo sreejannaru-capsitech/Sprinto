@@ -1,11 +1,12 @@
 import { Col, DatePicker, Form, Input, Modal, Row, Select } from "antd";
 import dayjs from "dayjs";
-import { useMemo, useState, type FC, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type FC, type ReactNode } from "react";
 import { useAntNotification } from "~/hooks";
 import {
   useAssignedProjectsQuery,
   useCreateTask,
   useStatusesQuery,
+  useUpdateTask,
 } from "~/lib/server/services";
 import {
   getNonWhitespaceValidator,
@@ -15,6 +16,7 @@ import {
 
 interface TaskFormProps {
   isNew?: boolean;
+  task?: Task;
   open: boolean;
   onClose: () => void;
 }
@@ -51,12 +53,30 @@ const priorityOptions: SelectOptions[] = [
  */
 const TaskForm: FC<TaskFormProps> = ({
   isNew = false,
+  task,
   open,
   onClose,
 }: TaskFormProps): ReactNode => {
   const [form] = Form.useForm<TaskFormType>();
   const [loading, setLoading] = useState<boolean>(false);
   const [assignees, setAssignees] = useState<SelectOptions[]>([]);
+
+  useEffect(() => {
+    if (task && !isNew) {
+      changeAssignees(task.projectId);
+
+      form.setFieldValue("title", task.title);
+      form.setFieldValue("description", task.description);
+      form.setFieldValue("projectId", task.projectId);
+      form.setFieldValue(
+        "assignees",
+        task.assignees.map((a) => a.id)
+      );
+      form.setFieldValue("dueDate", dayjs(task.dueDate));
+      form.setFieldValue("status", task.status.id);
+      form.setFieldValue("priority", task.priority);
+    }
+  }, [task, isNew]);
 
   const { data: statuses, isPending: statusesPending } = useStatusesQuery();
   const { data: projects, isPending: projectsPending } =
@@ -80,6 +100,13 @@ const TaskForm: FC<TaskFormProps> = ({
     );
   }, [projects]);
 
+  /**
+   * Updates the list of assignees for a given project.
+   * - If no project ID is provided or the project isn't found, resets the assignees list.
+   * - Otherwise, populates assignees from the project's current assignees and includes the team lead.
+   *
+   * @param value - The ID of the selected project.
+   */
   const changeAssignees = (value: string) => {
     if (!value) {
       setAssignees([]);
@@ -97,12 +124,18 @@ const TaskForm: FC<TaskFormProps> = ({
       value: assignee.id,
     }));
 
+    options.push({
+      label: project.teamLead.name,
+      value: project.teamLead.id,
+    });
+
     setAssignees(options);
   };
 
   const { _api, contextHolder } = useAntNotification();
 
-  const { mutateAsync } = useCreateTask(_api);
+  const { mutateAsync: createTask } = useCreateTask(_api);
+  const { mutateAsync: updateTask } = useUpdateTask(_api);
 
   const handleSubmit = async () => {
     let values;
@@ -112,6 +145,7 @@ const TaskForm: FC<TaskFormProps> = ({
       return error;
     }
 
+    // Extracts ID and Name of assignees from the assignees list
     const getAssignees = (
       assignees: string[] | undefined,
       project: string
@@ -124,7 +158,18 @@ const TaskForm: FC<TaskFormProps> = ({
         name: assignee.name,
       }));
 
-      return _assignees.filter((assignee) => assignees.includes(assignee.id));
+      const asg = _assignees.filter((assignee) =>
+        assignees.includes(assignee.id)
+      );
+
+      if (assignees.includes(_proj.teamLead.id)) {
+        asg.push({
+          id: _proj.teamLead.id,
+          name: _proj.teamLead.name,
+        });
+      }
+
+      return asg;
     };
 
     // Inject assignee names with their ids
@@ -140,7 +185,8 @@ const TaskForm: FC<TaskFormProps> = ({
 
     setLoading(true);
     try {
-      await mutateAsync(payload);
+      if (isNew) await createTask(payload);
+      else await updateTask({ id: task?.id!, task: payload });
       form.resetFields();
       onClose();
     } catch (error) {
@@ -151,8 +197,9 @@ const TaskForm: FC<TaskFormProps> = ({
 
   return (
     <Modal
-      title="CREATE NEW TASK"
-      okText="Create"
+      title={isNew ? "CREATE NEW TASK" : "EDIT TASK"}
+      okText={isNew ? "Create" : "Save"}
+      centered
       open={open}
       onCancel={() => {
         onClose();
@@ -176,11 +223,7 @@ const TaskForm: FC<TaskFormProps> = ({
         </Form.Item>
 
         {/* Description */}
-        <Form.Item<TaskFormType>
-          label="Description"
-          name="description"
-          rules={[getRequiredStringRule("description")]}
-        >
+        <Form.Item<TaskFormType> label="Description" name="description">
           <Input.TextArea placeholder="Task Description" rows={3} />
         </Form.Item>
 
@@ -196,6 +239,7 @@ const TaskForm: FC<TaskFormProps> = ({
                 loading={projectsPending}
                 options={projectOptions}
                 placeholder="Select a project"
+                disabled={!isNew}
                 onChange={(value: string) => {
                   changeAssignees(value);
                 }}
@@ -209,7 +253,10 @@ const TaskForm: FC<TaskFormProps> = ({
               name="dueDate"
               rules={[getRequiredSelectRule("duedate")]}
             >
-              <DatePicker style={{ width: "100%" }} minDate={dayjs()} />
+              <DatePicker
+                style={{ width: "100%" }}
+                minDate={isNew ? dayjs() : undefined}
+              />
             </Form.Item>
           </Col>
         </Row>

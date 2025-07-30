@@ -18,6 +18,45 @@ export const getInitials = (fullName: string): string => {
 };
 
 /**
+ * Extracts 3-letter initials from a name string.
+ * 
+ * @param name - Full name string to extract initials from.
+ * @returns A string of 3 uppercase letters based on name structure.
+ *
+ * @example
+ * getInitialsFromName("ecommerce") → "ECE"
+ * getInitialsFromName("play ball") → "PYL"
+ * getInitialsFromName("rice bubble gum") → "RBM"
+ */
+export const getAliasFromTitle = (name: string): string => {
+  if (!name.trim()) return "";
+
+  const words = name.trim().split(/\s+/);
+
+  if (words.length === 1) {
+    const word = words[0];
+    return word.length >= 3
+      ? (word[0] + word[1] + word[word.length - 1]).toUpperCase()
+      : word.toUpperCase();
+  } else if (words.length === 2) {
+    const [first, second] = words;
+    return (
+      first[0] +
+      second[0] +
+      second[second.length - 1]
+    ).toUpperCase();
+  } else {
+    const [first, second] = words;
+    const last = words[words.length - 1];
+    return (
+      first[0] +
+      second[0] +
+      last[last.length - 1]
+    ).toUpperCase();
+  }
+};
+
+/**
  * This function handles API errors and displays appropriate messages
  * @param {Error} error The error object
  * @param {NotificationApi} _api The notification API

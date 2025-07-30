@@ -10,6 +10,11 @@ export const createTask = async (task: TaskItemRequest) => {
   return data;
 };
 
+export const updateTask = async (id: string, task: TaskItemRequest) => {
+  const { data } = await axiosApi.post<ApiResponse<Task>>(`/tasks/${id}`, task);
+  return data;
+};
+
 export const getTodayTasks = async () => {
   const { data } = await axiosApi.get<ApiResponse<TodayTasks>>("/tasks/today");
   return data;
