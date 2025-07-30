@@ -19,3 +19,8 @@ export const getTodayTasks = async () => {
   const { data } = await axiosApi.get<ApiResponse<TodayTasks>>("/tasks/today");
   return data;
 };
+
+export const getInboxTasks = async () => {
+  const { data } = await axiosApi.get<ApiResponse<Task[]>>("/tasks/inbox");
+  return data;
+};
