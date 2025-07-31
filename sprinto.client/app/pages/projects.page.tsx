@@ -1,7 +1,8 @@
-import { Flex, Space, Typography } from "antd";
+import { Flex } from "antd";
 import { useMemo, type ReactNode } from "react";
 import NoData from "~/components/ui/no-data";
 import ProjectItem from "~/components/ui/project-item";
+import ProjectsContainer from "~/components/ui/projects-container";
 import Spinner from "~/components/ui/spinner";
 import { useAssignedProjectsQuery } from "~/lib/server/services";
 
@@ -28,30 +29,20 @@ const ProjectsPageComponent = (): ReactNode => {
       {!data?.result?.length ? (
         <NoData text="You are not assigned to any project" isProject />
       ) : (
-        <Flex style={{ marginTop: "4rem" }} wrap gap={40}>
+        <Flex style={{ marginTop: "2rem" }} wrap gap={50}>
           {active.length ? (
-            <div>
-              <Typography.Title level={4} className="font-bold">
-                Active Projects
-              </Typography.Title>
-              <Space direction="vertical" size={16}>
-                {active.map((project) => (
-                  <ProjectItem key={project.id} project={project} />
-                ))}
-              </Space>
-            </div>
+            <ProjectsContainer text="Active Projects">
+              {active.map((project) => (
+                <ProjectItem key={project.id} project={project} />
+              ))}
+            </ProjectsContainer>
           ) : null}
           {inActive.length ? (
-            <div>
-              <Typography.Title level={4} className="font-bold">
-                Inactive Projects
-              </Typography.Title>
-              <Space direction="vertical" size={16}>
-                {inActive.map((project) => (
-                  <ProjectItem key={project.id} project={project} />
-                ))}
-              </Space>
-            </div>
+            <ProjectsContainer text="Inactive Projects">
+              {inActive.map((project) => (
+                <ProjectItem key={project.id} project={project} />
+              ))}
+            </ProjectsContainer>
           ) : null}
         </Flex>
       )}

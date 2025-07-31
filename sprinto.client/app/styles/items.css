@@ -34,11 +34,23 @@
   }
 }
 
-/* Task Container */
+/* Task & Project Container */
 
 .task-container {
   min-width: 380px;
   max-width: 380px;
+  max-height: 680px;
+  overflow-y: hidden;
+  padding: 6px 10px 14px 10px;
+
+  &:hover {
+    overflow-y: auto;
+  }
+}
+
+.project-container {
+  min-width: 420px;
+  max-width: 420px;
   max-height: 680px;
   overflow-y: hidden;
   padding: 6px 10px 14px 10px;
