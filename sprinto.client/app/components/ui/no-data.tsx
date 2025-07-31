@@ -1,22 +1,26 @@
 import type { FC, ReactNode } from "react";
 import CenteredLayout from "~/layouts/centered-layout";
-import { TaskIcon } from "~/lib/icons";
+import { ProjectIcon, TaskIcon } from "~/lib/icons";
 import CreateTask from "../create-task";
 
 interface NoTaskProps {
   text: string;
+  isProject?: boolean;
 }
 
 /**
  * This component renders no-task section
  * @param {NoTaskProps} props
- * @returns {ReactNode} The NoTask component
+ * @returns {ReactNode} The NoData component
  */
-const NoTask: FC<NoTaskProps> = ({ text }: NoTaskProps): ReactNode => {
+const NoData: FC<NoTaskProps> = ({
+  text,
+  isProject = false,
+}: NoTaskProps): ReactNode => {
   return (
     <CenteredLayout>
       <div style={{ textAlign: "center" }}>
-        <TaskIcon size={44} />
+        {isProject ? <ProjectIcon size={44} /> : <TaskIcon size={44} />}
         <p
           className="text-primary-dark font-bold"
           style={{
@@ -26,10 +30,10 @@ const NoTask: FC<NoTaskProps> = ({ text }: NoTaskProps): ReactNode => {
         >
           {text}
         </p>
-        <CreateTask block />
+        {!isProject && <CreateTask block />}
       </div>
     </CenteredLayout>
   );
 };
 
-export default NoTask;
+export default NoData;

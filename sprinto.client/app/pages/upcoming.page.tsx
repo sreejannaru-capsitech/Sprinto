@@ -1,7 +1,7 @@
 import { Flex, Space, Typography } from "antd";
 import { useState, type ReactNode } from "react";
 import TaskForm from "~/components/forms/task-form";
-import NoTask from "~/components/ui/no-task";
+import NoData from "~/components/ui/no-data";
 import Spinner from "~/components/ui/spinner";
 import TaskItem from "~/components/ui/task-item";
 import {
@@ -56,7 +56,7 @@ const UpcomingPageComponent = (): ReactNode => {
   return (
     <Spinner isActive={isPending}>
       {!data?.result?.length ? (
-        <NoTask text="You don't have any upcoming task" />
+        <NoData text="You don't have any upcoming task" />
       ) : (
         <Flex style={{ marginTop: "2rem" }} gap={40}>
           <TaskForm
