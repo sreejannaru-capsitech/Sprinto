@@ -1,8 +1,8 @@
 :root {
   --primary-color: rgba(20, 27, 52, 0.47);
   --primary-darker-color: rgba(20, 27, 52, 0.6);
-  --solid-gray: rgba(100, 100, 100, 1);
-  --solid-gray-light: rgb(161, 161, 161);
+  --solid-gray: rgba(114, 118, 133, 1);
+  --solid-gray-light: rgba(161, 164, 174, 1);
   --primary-light-color: rgba(20, 27, 52, 0.03);
   --border-color: rgba(5, 5, 5, 0.06);
   --color-black: rgba(0, 0, 0, 0.88);
