@@ -19,7 +19,7 @@ namespace Sprinto.Server.DTOs
         }
     }
 
-    public class StatusReq
+    public class StatusEntity
     {
         private string _title = null!;
 

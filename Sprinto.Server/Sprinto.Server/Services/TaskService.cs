@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using Sprinto.Server.DTOs;
 using Sprinto.Server.Extensions;
@@ -10,6 +11,7 @@ namespace Sprinto.Server.Services
     public class TaskService
     {
         private readonly IMongoCollection<TaskItem> _tasks;
+        private readonly IMongoCollection<Project> _projects;
         private readonly ILogger<TaskService> _logger;
 
         public TaskService(IMongoClient mongoCLient,
@@ -19,6 +21,7 @@ namespace Sprinto.Server.Services
             var mongoDB = mongoCLient.GetDatabase(dbsettings.Value.DatabaseName);
 
             _tasks = mongoDB.GetCollection<TaskItem>(dbsettings.Value.TasksCollection);
+            _projects = mongoDB.GetCollection<Project>(dbsettings.Value.ProjectsCollection);
             _logger = logger;
         }
 
@@ -49,11 +52,33 @@ namespace Sprinto.Server.Services
         {
             try
             {
+                var project = await _projects.Find(a => a.Id == dto.ProjectId).FirstOrDefaultAsync()
+                    ?? throw new KeyNotFoundException("Invalid Project Id");
+
+
                 long seq = await GetNextSequenceAsync();
-                var task = new TaskItem(dto, userId, userName, seq);
+                var task = new TaskItem(dto, userId, userName, seq, project.Alias);
+
+                // Log the creation activity
+                var creation = new Activity
+                {
+                    Action = ActivityAction.TaskCreated,
+                    CreatedBy = new Creation
+                    {
+                        UserId = userId,
+                        UserName = userName
+                    }
+                };
+
+                task.Activities.Add(creation);
+
                 await _tasks.InsertOneAsync(task);
 
                 return task;
+            }
+            catch (KeyNotFoundException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -153,7 +178,7 @@ namespace Sprinto.Server.Services
                     .Project<TaskItem>(projection)
                     .ToListAsync();
 
-                return tasks.Select(u => u.ToTaskResponse()).ToList();
+                return [.. tasks.Select(u => u.ToTaskResponse())];
             }
             catch (Exception ex)
             {
@@ -205,7 +230,6 @@ namespace Sprinto.Server.Services
             }
         }
 
-
         public async Task<List<ProjectTaskGroup>> GetGroupedUpcomingTasks(string userId)
         {
             try
@@ -216,7 +240,7 @@ namespace Sprinto.Server.Services
                     {
                         { "assignees", new BsonDocument("$elemMatch", new BsonDocument("_id", new ObjectId(userId))) },
                         { "status.title", new BsonDocument("$ne", "Done") },
-                        { "due_date", new BsonDocument("$gt", DateTime.Today) }
+                        { "due_date", new BsonDocument("$gt", DateTime.Today.AddDays(1)) } // FIXME: Fix the date check
                     }),
                     new("$lookup", new BsonDocument
                     {
@@ -266,7 +290,19 @@ namespace Sprinto.Server.Services
             }
         }
 
-        // Find and update a task
+        /// <summary>
+        /// Updates an existing task with new values from the provided <see cref="TaskDTO"/>.
+        /// Tracks changes made to task properties and records corresponding activity logs.
+        /// </summary>
+        /// <param name="id">The unique identifier of the task to update.</param>
+        /// <param name="dto">A data transfer object containing the updated task properties.</param>
+        /// <param name="userId">The ID of the user performing the update.</param>
+        /// <param name="userName">The name of the user performing the update.</param>
+        /// <returns>
+        /// The updated <see cref="TaskItem"/> after applying changes.
+        /// </returns>
+        /// <exception cref="KeyNotFoundException">Thrown when the task with the specified ID does not exist.</exception>
+        /// <exception cref="Exception">Thrown when an unexpected error occurs during the update process.</exception>
         public async Task<TaskItem> UpdateAsync(string id, TaskDTO dto, string userId, string userName)
         {
             try
@@ -274,29 +310,69 @@ namespace Sprinto.Server.Services
                 var existingTask = await _tasks.Find(t => t.Id == id).FirstOrDefaultAsync()
                     ?? throw new KeyNotFoundException($"Task with id {id} not found");
 
-                var activities = new List<object>(); // Will hold Activity<T> of any type
+                var activities = new List<Activity>();
 
-                void LogChange<T>(ActivityAction actionType, T? oldVal, T? newVal)
+                var creator = new Creation { UserId = userId, UserName = userName };
+
+                // Check Description
+                if (existingTask.Description != dto.Description)
                 {
-                    if (!EqualityComparer<T>.Default.Equals(oldVal, newVal))
+                    activities.Add(new Activity
                     {
-                        var activity = new Activity<T>
+                        Action = ActivityAction.DescUpdated,
+                        Description = new ActivityLog<string>
                         {
-                            Action = actionType,
-                            PrevValue = oldVal,
-                            CurrValue = newVal,
-                            CreatedBy = new Creation { UserId = userId, UserName = userName }
-                        };
-                        activities.Add(activity);
-                    }
+                            Current = dto.Description,
+                            Previous = existingTask.Description
+                        },
+                        CreatedBy = creator
+                    });
                 }
 
-                // Track field-by-field changes with type safety
-                LogChange(ActivityAction.Updated, existingTask.Title, dto.Title);
-                LogChange(ActivityAction.Updated, existingTask.Description, dto.Description);
-                LogChange(ActivityAction.Updated, existingTask.DueDate, dto.DueDate);
-                LogChange(ActivityAction.Updated, existingTask.Status, dto.Status);
-                LogChange(ActivityAction.Updated, existingTask.Priority, dto.Priority);
+                // Check Title
+                if (existingTask.Title != dto.Title)
+                {
+                    activities.Add(new Activity
+                    {
+                        Action = ActivityAction.TitleUpdated,
+                        Title = new ActivityLog<string>
+                        {
+                            Current = dto.Title,
+                            Previous = existingTask.Title
+                        },
+                        CreatedBy = creator
+                    });
+                }
+
+                // Check Status
+                if (existingTask.Status.Id != dto.Status.Id)
+                {
+                    activities.Add(new Activity
+                    {
+                        Action = ActivityAction.StatusUpdated,
+                        Status = new ActivityLog<StatusEntity>
+                        {
+                            Current = dto.Status,
+                            Previous = existingTask.Status
+                        },
+                        CreatedBy = creator
+                    });
+                }
+
+                // Check Priority
+                if (existingTask.Priority != dto.Priority)
+                {
+                    activities.Add(new Activity
+                    {
+                        Action = ActivityAction.PriorityUpdated,
+                        Priority = new ActivityLog<TaskPriority>
+                        {
+                            Current = dto.Priority,
+                            Previous = existingTask.Priority
+                        },
+                        CreatedBy = creator
+                    });
+                }
 
                 // Detect assignee changes (these are still strings)
                 var prevAssignees = existingTask.Assignees.Select(a => a.Id).ToHashSet();
@@ -305,14 +381,34 @@ namespace Sprinto.Server.Services
                 var added = newAssignees.Except(prevAssignees);
                 var removed = prevAssignees.Except(newAssignees);
 
-                foreach (var user in added)
+                // Assignee added
+                if (added.Any())
                 {
-                    LogChange(ActivityAction.Assigned, default, user);
+                    activities.Add(new Activity
+                    {
+                        Action = ActivityAction.AssigneeAdded,
+                        Assignee = new ActivityLog<List<Assignee>>
+                        {
+                            Previous = null,
+                            Current = [.. dto.Assignees.Where(a => added.Contains(a.Id))]
+                        },
+                        CreatedBy = creator
+                    });
                 }
 
-                foreach (var user in removed)
+                // Assignee removed
+                if (removed.Any())
                 {
-                    LogChange(ActivityAction.Assigned, user, default);
+                    activities.Add(new Activity
+                    {
+                        Action = ActivityAction.AssigneeRemoved,
+                        Assignee = new ActivityLog<List<Assignee>>
+                        {
+                            Previous = [.. existingTask.Assignees.Where(a => removed.Contains(a.Id))],
+                            Current = null
+                        },
+                        CreatedBy = creator
+                    });
                 }
 
                 var update = Builders<TaskItem>.Update
@@ -322,7 +418,7 @@ namespace Sprinto.Server.Services
                     .Set(t => t.Status, dto.Status)
                     .Set(t => t.Priority, dto.Priority)
                     .Set(t => t.Assignees, dto.Assignees)
-                    .PushEach("activities", activities); // Dynamic list of Activity<T>
+                    .PushEach("activities", activities); // Add generated activities
 
                 var options = new FindOneAndUpdateOptions<TaskItem>
                 {

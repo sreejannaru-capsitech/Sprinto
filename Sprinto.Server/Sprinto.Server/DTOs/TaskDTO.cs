@@ -25,13 +25,13 @@ namespace Sprinto.Server.DTOs
         [ValidObjectId(ErrorMessage = "ProjectId must be a valid 24-character MongoDB ObjectId")]
         public string ProjectId { get; set; } = null!;
 
-        public List<AssigneeDTO> Assignees { get; set; } = [];
+        public List<Assignee> Assignees { get; set; } = [];
 
         [Required (ErrorMessage = "Please provide task due date")]
         public DateOnly DueDate { get; set; }
 
         [Required(ErrorMessage = "Please provide task status")]
-        public StatusReq Status { get; set; } = null!;
+        public StatusEntity Status { get; set; } = null!;
 
         [Required(ErrorMessage = "Please provide task priority")]
         [RegularExpression("^(?i)(low|medium|high)$", ErrorMessage = "Priority must be low, medium or high")]
@@ -54,11 +54,11 @@ namespace Sprinto.Server.DTOs
         [BsonRepresentation(BsonType.ObjectId)]
         public string ProjectId { get; set; } = null!;
 
-        public List<AssigneeDTO> Assignees { get; set; } = [];
+        public List<Assignee> Assignees { get; set; } = [];
 
         public DateOnly DueDate { get; set; }
 
-        public StatusReq Status { get; set; } = null!;
+        public StatusEntity Status { get; set; } = null!;
 
         public TaskPriority Priority { get; set; }
 

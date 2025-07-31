@@ -34,7 +34,7 @@ namespace Sprinto.Server.Models
         public string ProjectId { get; set; } = null!;
 
         [BsonElement("assignees")]
-        public List<AssigneeDTO> Assignees { get; set; } = [];
+        public List<Assignee> Assignees { get; set; } = [];
 
         [Required]
         [BsonElement("due_date")]
@@ -42,7 +42,7 @@ namespace Sprinto.Server.Models
 
         [Required]
         [BsonElement("status")]
-        public StatusReq Status { get; set; } = null!;
+        public StatusEntity Status { get; set; } = null!;
 
         [Required]
         [BsonElement("priority")]
@@ -52,7 +52,7 @@ namespace Sprinto.Server.Models
         public List<Comment> Comments { get; set; } = [];
 
         [BsonElement("activities")]
-        public List<Activity<object>> Activities { get; set; } = [];
+        public List<Activity> Activities { get; set; } = [];
 
         [BsonElement("created_by")]
         public Creation CreatedBy { get; set; } = null!;

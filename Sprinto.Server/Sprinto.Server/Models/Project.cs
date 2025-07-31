@@ -35,10 +35,10 @@ namespace Sprinto.Server.Models
         public DateOnly? Deadline { get; set; }
 
         [BsonElement("maintainer")]
-        public AssigneeDTO TeamLead { get; set; } = null!;
+        public Assignee TeamLead { get; set; } = null!;
 
         [BsonElement("assignees")]
-        public List<AssigneeDTO> Assignees { get; set; } = [];
+        public List<Assignee> Assignees { get; set; } = [];
 
         [BsonElement("created_by")]
         public Creation CreatedBy { get; set; } = null!;

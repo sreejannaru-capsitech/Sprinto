@@ -1,6 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Sprinto.Server.DTOs;
+using Sprinto.Server.Validation;
 using System.ComponentModel.DataAnnotations;
 
 namespace Sprinto.Server.Models
@@ -38,13 +39,33 @@ namespace Sprinto.Server.Models
             // Auto set default password for new users as "welcome"
             Password = BCrypt.Net.BCrypt.EnhancedHashPassword("welcome", workFactor: 15);
             Role = dto.Role;
-            CreatedBy = new Creation 
-            { 
+            CreatedBy = new Creation
+            {
                 UserId = id,
                 UserName = name
             };
         }
 
         public User() { }
+    }
+
+    public class Assignee
+    {
+        private string _name = null!;
+
+        [BsonRepresentation(BsonType.ObjectId)]
+        [Required(ErrorMessage = "Please provide assignee Id")]
+        [ValidObjectId(ErrorMessage = "Assignee Id must be a valid MongoDB ObjectId")]
+        [BsonElement("_id")]
+        public string? Id { get; set; }
+
+
+        [Required(ErrorMessage = "Please provide assignee name")]
+        [BsonElement("name")]
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value?.Trim() ?? string.Empty; }
+        }
     }
 }
