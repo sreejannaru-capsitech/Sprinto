@@ -108,10 +108,10 @@ namespace Sprinto.Server.Controllers
 
         // Get all assigned tasks
         [HttpGet("inbox")]
-        public async Task<ApiResponse<List<TaskResponse>>>
+        public async Task<ApiResponse<InboxTaskGroup>>
             GetInboxTasks()
         {
-            var response = new ApiResponse<List<TaskResponse>>();
+            var response = new ApiResponse<InboxTaskGroup>();
 
             try
             {

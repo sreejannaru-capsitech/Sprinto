@@ -149,7 +149,7 @@ namespace Sprinto.Server.Services
         }
 
         // Find all user assigned tasks
-        public async Task<List<TaskResponse>> GetInboxTasks(string userId)
+        public async Task<InboxTaskGroup> GetInboxTasks(string userId)
         {
             try
             {
@@ -178,15 +178,31 @@ namespace Sprinto.Server.Services
                     .Project<TaskItem>(projection)
                     .ToListAsync();
 
-                return [.. tasks.Select(u => u.ToTaskResponse())];
+                var responses = tasks.Select(t => t.ToTaskResponse());
+
+                var grouped = new InboxTaskGroup
+                {
+                    Low = [.. responses
+                        .Where(t => t.Priority == TaskPriority.low)
+                        .OrderBy(t => t.DueDate)],
+
+                    Medium = [.. responses
+                        .Where(t => t.Priority == TaskPriority.medium)
+                        .OrderBy(t => t.DueDate)],
+
+                    High = [.. responses
+                        .Where(t => t.Priority == TaskPriority.high)
+                        .OrderBy(t => t.DueDate)]
+                };
+
+                return grouped;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving tasks for user {UserId}", userId);
+                _logger.LogError(ex, "Error retrieving inbox tasks for user {UserId}", userId);
                 throw new Exception("Could not retrieve inbox tasks");
             }
         }
-
         // Find all user assinged upcoming tasks
         public async Task<List<TaskResponse>> GetUpcomingTasks(string userId)
         {

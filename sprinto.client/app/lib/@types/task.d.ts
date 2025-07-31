@@ -29,3 +29,9 @@ interface TodayTasks {
   today: Task[];
   overdue: Task[];
 }
+
+interface InboxTasks {
+  low: Task[];
+  medium: Task[];
+  high: Task[];
+}

@@ -50,4 +50,11 @@ namespace Sprinto.Server.Models
         public string ProjectTitle { get; set; } = null!;
         public List<TaskResponse> Tasks { get; set; } = [];
     }
+
+    public class InboxTaskGroup
+    {
+        public List<TaskResponse> Low { get; set; } = [];
+        public List<TaskResponse> Medium { get; set; } = [];
+        public List<TaskResponse> High { get; set; } = [];
+    }
 }
