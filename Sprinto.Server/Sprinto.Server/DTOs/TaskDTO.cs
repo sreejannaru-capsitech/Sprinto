@@ -28,7 +28,7 @@ namespace Sprinto.Server.DTOs
         public List<Assignee> Assignees { get; set; } = [];
 
         [Required (ErrorMessage = "Please provide task due date")]
-        public DateOnly DueDate { get; set; }
+        public DateTime DueDate { get; set; }
 
         [Required(ErrorMessage = "Please provide task status")]
         public StatusEntity Status { get; set; } = null!;
@@ -56,7 +56,7 @@ namespace Sprinto.Server.DTOs
 
         public List<Assignee> Assignees { get; set; } = [];
 
-        public DateOnly DueDate { get; set; }
+        public DateTime DueDate { get; set; }
 
         public StatusEntity Status { get; set; } = null!;
 

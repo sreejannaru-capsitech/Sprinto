@@ -38,7 +38,8 @@ namespace Sprinto.Server.Models
 
         [Required]
         [BsonElement("due_date")]
-        public DateOnly DueDate { get; set; }
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc, DateOnly = true)]
+        public DateTime DueDate { get; set; }
 
         [Required]
         [BsonElement("status")]

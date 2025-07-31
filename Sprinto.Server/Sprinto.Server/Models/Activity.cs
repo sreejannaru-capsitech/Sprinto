@@ -26,6 +26,9 @@ namespace Sprinto.Server.Models
         public ActivityLog<string>? Description { get; set; }
 
         [BsonIgnoreIfNull]
+        public ActivityLog<DateTime>? DueDate { get; set; }
+
+        [BsonIgnoreIfNull]
         public ActivityLog<List<Assignee>>? Assignee { get; set; }
 
         [BsonIgnoreIfNull]

@@ -100,7 +100,7 @@ namespace Sprinto.Server.Services
         {
             try
             {
-                var today = DateOnly.FromDateTime(DateTime.Today);
+                var today = DateTime.Today;
 
                 // Match user assignment
                 var assigneeFilter = Builders<TaskItem>.Filter.ElemMatch(
@@ -204,8 +204,7 @@ namespace Sprinto.Server.Services
                     "Done"
                 );
 
-                var dateFilter = Builders<TaskItem>.Filter.Gt(
-                    t => t.DueDate, DateOnly.FromDateTime(DateTime.Today));
+                var dateFilter = Builders<TaskItem>.Filter.Gt(t => t.DueDate, DateTime.Today);
 
                 // Combine filters
                 var userFilter = Builders<TaskItem>.Filter.And(
@@ -240,7 +239,7 @@ namespace Sprinto.Server.Services
                     {
                         { "assignees", new BsonDocument("$elemMatch", new BsonDocument("_id", new ObjectId(userId))) },
                         { "status.title", new BsonDocument("$ne", "Done") },
-                        { "due_date", new BsonDocument("$gt", DateTime.Today.AddDays(1)) } // FIXME: Fix the date check
+                        { "due_date", new BsonDocument("$gt",  DateTime.Today) } // FIXME: Fix the date check
                     }),
                     new("$lookup", new BsonDocument
                     {
@@ -354,6 +353,21 @@ namespace Sprinto.Server.Services
                         {
                             Current = dto.Status,
                             Previous = existingTask.Status
+                        },
+                        CreatedBy = creator
+                    });
+                }
+
+                // Check DueDate
+                if (existingTask.DueDate != dto.DueDate)
+                {
+                    activities.Add(new Activity
+                    {
+                        Action = ActivityAction.DuedateUpdated,
+                        DueDate = new ActivityLog<DateTime>
+                        {
+                            Current = dto.DueDate,
+                            Previous = existingTask.DueDate
                         },
                         CreatedBy = creator
                     });

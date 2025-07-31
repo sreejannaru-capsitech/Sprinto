@@ -28,11 +28,13 @@ namespace Sprinto.Server.Models
 
         [BsonElement("start_date")]
         [BsonIgnoreIfNull]
-        public DateOnly? StartDate { get; set; }
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc, DateOnly = true)]
+        public DateTime? StartDate { get; set; }
 
         [BsonElement("deadline")]
         [BsonIgnoreIfNull]
-        public DateOnly? Deadline { get; set; }
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc, DateOnly = true)]
+        public DateTime? Deadline { get; set; }
 
         [BsonElement("maintainer")]
         public Assignee TeamLead { get; set; } = null!;

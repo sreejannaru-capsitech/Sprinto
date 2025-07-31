@@ -44,9 +44,9 @@ namespace Sprinto.Server.DTOs
         public bool? IsCompleted { get; set; }
 
         [BsonElement("deadline")]
-        public DateOnly? Deadline { get; set; }
+        public DateTime? Deadline { get; set; }
 
-        public DateOnly? StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
 
         [Required(ErrorMessage = "Please provide project maintainer details")]
         [BsonElement("maintainer")]
