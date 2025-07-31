@@ -203,6 +203,9 @@ const TaskForm: FC<TaskFormProps> = ({
       open={open}
       onCancel={() => {
         onClose();
+      }}
+      afterOpenChange={() => {
+        if (open) return;
         form.resetFields();
       }}
       onOk={handleSubmit}

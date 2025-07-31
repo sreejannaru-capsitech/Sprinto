@@ -135,6 +135,9 @@ const ProjectForm: FC<ProjectFormProps> = ({
       open={open}
       onCancel={() => {
         onClose();
+      }}
+      afterOpenChange={() => {
+        if (open) return;
         form.resetFields();
       }}
       onOk={handleSubmit}

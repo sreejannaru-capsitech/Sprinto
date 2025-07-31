@@ -41,6 +41,10 @@ const TaskItem: FC<TaskItemProps> = ({
     return dayjs.utc(task.dueDate).format("Do MMMM");
   }, [task.dueDate]);
 
+  const isOverdue = useMemo(() => {
+    return dayjs.utc(task.dueDate).isBefore(dayjs.utc(), "day");
+  }, [task.dueDate]);
+
   return (
     <Card
       hoverable
@@ -108,9 +112,21 @@ const TaskItem: FC<TaskItemProps> = ({
             <Tag>{task.status.title}</Tag>
 
             {!isToday && (
-              <Tag style={{ display: "flex", alignItems: "center", gap: 2 }}>
-                <CalenderIcon size={16} />
-                <span>{dueDate}</span>
+              <Tag
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 2,
+                  borderColor: isOverdue ? "" : "",
+                }}
+              >
+                <CalenderIcon
+                  fill={isOverdue ? "#e05151" : "#141B34"}
+                  size={16}
+                />
+                <span style={{ color: isOverdue ? "#e05151" : "" }}>
+                  {dueDate}
+                </span>
               </Tag>
             )}
           </Flex>

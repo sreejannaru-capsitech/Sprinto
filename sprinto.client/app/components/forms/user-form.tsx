@@ -78,6 +78,9 @@ const UserForm: FC<UserFormProps> = ({
       open={open}
       onCancel={() => {
         onClose();
+      }}
+      afterOpenChange={() => {
+        if (open) return;
         form.resetFields();
       }}
       onOk={handleSubmit}
