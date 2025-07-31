@@ -18,7 +18,7 @@ const ToolTip: FC<ToolTipProps> = ({
   return (
     <Tooltip
       title={title}
-      color="rgba(20, 27, 52, 0.6)"
+      color="var(--solid-gray)"
       placement="top"
       arrow={false}
     >

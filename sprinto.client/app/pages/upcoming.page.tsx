@@ -1,12 +1,11 @@
-import { Flex, Space, Typography } from "antd";
+import { Flex } from "antd";
 import { useState, type ReactNode } from "react";
 import TaskForm from "~/components/forms/task-form";
 import NoData from "~/components/ui/no-data";
 import Spinner from "~/components/ui/spinner";
+import TaskContainer from "~/components/ui/task-container";
 import TaskItem from "~/components/ui/task-item";
-import {
-  useUpcomingTasksQuery
-} from "~/lib/server/services";
+import { useUpcomingTasksQuery } from "~/lib/server/services";
 
 /**
  * This component renders inbox.page section
@@ -66,20 +65,11 @@ const UpcomingPageComponent = (): ReactNode => {
           />
 
           {data.result.map((group) => (
-            <div key={group.projectId}>
-              <Typography.Title level={4} className="font-bold">
-                {group.projectTitle}
-              </Typography.Title>
-              <Space direction="vertical" size={16}>
-                {group.tasks.map((task) => (
-                  <TaskItem
-                    key={task.id}
-                    task={task}
-                    setTask={setEditingTask}
-                  />
-                ))}
-              </Space>
-            </div>
+            <TaskContainer text={group.projectTitle} key={group.projectId}>
+              {group.tasks.map((task) => (
+                <TaskItem key={task.id} task={task} setTask={setEditingTask} />
+              ))}
+            </TaskContainer>
           ))}
         </Flex>
       )}

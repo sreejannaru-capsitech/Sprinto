@@ -1,6 +1,8 @@
 :root {
   --primary-color: rgba(20, 27, 52, 0.47);
   --primary-darker-color: rgba(20, 27, 52, 0.6);
+  --solid-gray: rgba(100, 100, 100, 1);
+  --solid-gray-light: rgb(161, 161, 161);
   --primary-light-color: rgba(20, 27, 52, 0.03);
   --border-color: rgba(5, 5, 5, 0.06);
   --color-black: rgba(0, 0, 0, 0.88);
@@ -21,6 +23,12 @@ body {
 
 h1.ant-typography {
   font-size: 43px;
+}
+
+/* Avatar */
+
+.ant-avatar {
+  background: var(--solid-gray-light) !important;
 }
 
 /* Modal Styles */
@@ -164,4 +172,28 @@ h1.ant-typography {
 
 .animate-spin {
   animation: spin 0.75s linear infinite;
+}
+
+/* Scrollbar */
+
+/* width */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  /* box-shadow: inset 0 0 5px grey; */
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgba(20, 27, 52, 0.05);
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: transparent;
 }

@@ -53,15 +53,25 @@ const TaskItem: FC<TaskItemProps> = ({
           {task.projectAlias}-{task.sequence}
         </Typography.Text>
 
-        <Flex align="center">
+        <div>
           {task.assignees.map((assignee) => (
-            <Avatar key={assignee.id} size={18}>
-              <ToolTip title={assignee.name}>
-                <span className="small-text">{getInitials(assignee.name)}</span>
-              </ToolTip>
-            </Avatar>
+            <Avatar.Group
+              key={assignee.id}
+              max={{
+                count: 2,
+                style: { color: "black", backgroundColor: "white" },
+              }}
+            >
+              <Avatar size={18}>
+                <ToolTip title={assignee.name}>
+                  <span className="small-text">
+                    {getInitials(assignee.name)}
+                  </span>
+                </ToolTip>
+              </Avatar>
+            </Avatar.Group>
           ))}
-        </Flex>
+        </div>
       </Flex>
       <Row gutter={0}>
         <Col span={2}>
@@ -86,7 +96,13 @@ const TaskItem: FC<TaskItemProps> = ({
         <Col span={21}>
           <Typography.Text className="font-bold">{task.title}</Typography.Text>
           <Typography.Paragraph className="text-primary">
-            {task.description ? truncateText(task.description, 35) : ""}
+            {task.description ? (
+              <ToolTip title={task.description}>
+                <span>{truncateText(task.description, 35)}</span>
+              </ToolTip>
+            ) : (
+              ""
+            )}
           </Typography.Paragraph>
           <Flex align="center" gap={4}>
             <Tag>{task.status.title}</Tag>

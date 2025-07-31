@@ -1,8 +1,9 @@
-import { Flex, Space, Typography } from "antd";
+import { Flex } from "antd";
 import { useMemo, useState, type ReactNode } from "react";
 import TaskForm from "~/components/forms/task-form";
 import NoData from "~/components/ui/no-data";
 import Spinner from "~/components/ui/spinner";
+import TaskContainer from "~/components/ui/task-container";
 import TaskItem from "~/components/ui/task-item";
 import { useInboxTasksQuery } from "~/lib/server/services";
 
@@ -38,38 +39,23 @@ const InboxPageComponent = (): ReactNode => {
             task={editingTask}
           />
 
-          <div>
-            <Typography.Title level={4} className="font-bold">
-              High Priority
-            </Typography.Title>
-            <Space direction="vertical" size={16}>
-              {highTasks.map((task) => (
-                <TaskItem key={task.id} task={task} setTask={setEditingTask} />
-              ))}
-            </Space>
-          </div>
+          <TaskContainer text="High Priority">
+            {highTasks.map((task) => (
+              <TaskItem key={task.id} task={task} setTask={setEditingTask} />
+            ))}
+          </TaskContainer>
 
-          <div>
-            <Typography.Title level={4} className="font-bold">
-              Medium Priority
-            </Typography.Title>
-            <Space direction="vertical" size={16}>
-              {mediumTasks.map((task) => (
-                <TaskItem key={task.id} task={task} setTask={setEditingTask} />
-              ))}
-            </Space>
-          </div>
+          <TaskContainer text="Medium Priority">
+            {mediumTasks.map((task) => (
+              <TaskItem key={task.id} task={task} setTask={setEditingTask} />
+            ))}
+          </TaskContainer>
 
-          <div>
-            <Typography.Title level={4} className="font-bold">
-              Low Priority
-            </Typography.Title>
-            <Space direction="vertical" size={16}>
-              {lowTasks.map((task) => (
-                <TaskItem key={task.id} task={task} setTask={setEditingTask} />
-              ))}
-            </Space>
-          </div>
+          <TaskContainer text="Low Priority">
+            {lowTasks.map((task) => (
+              <TaskItem key={task.id} task={task} setTask={setEditingTask} />
+            ))}
+          </TaskContainer>
         </Flex>
       )}
     </Spinner>

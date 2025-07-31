@@ -4,6 +4,12 @@
   width: 350px;
 }
 
+.project-item {
+ border-radius: 20px;
+  background-color: var(--primary-light-color) !important;
+  width: 400px; 
+}
+
 .small-text {
   font-size: 14px !important;
 }
@@ -25,5 +31,19 @@
 
   &:hover {
     border: transparent !important;
+  }
+}
+
+/* Task Container */
+
+.task-container {
+  min-width: 380px;
+  max-width: 380px;
+  max-height: 680px;
+  overflow-y: hidden;
+  padding: 6px 10px 14px 10px;
+
+  &:hover {
+    overflow-y: auto;
   }
 }

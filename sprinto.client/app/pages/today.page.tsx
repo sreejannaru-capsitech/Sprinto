@@ -1,8 +1,9 @@
-import { Flex, Space, Typography } from "antd";
+import { Flex } from "antd";
 import { useMemo, useState, type ReactNode } from "react";
 import TaskForm from "~/components/forms/task-form";
 import NoData from "~/components/ui/no-data";
 import Spinner from "~/components/ui/spinner";
+import TaskContainer from "~/components/ui/task-container";
 import TaskItem from "~/components/ui/task-item";
 import { useTodayTaskQuery } from "~/lib/server/services";
 
@@ -26,7 +27,7 @@ const TodayPageComponent = (): ReactNode => {
       {isEmpty ? (
         <NoData text="You don't have any task today" />
       ) : (
-        <Flex style={{ marginTop: "2rem" }} gap={32}>
+        <Flex style={{ marginTop: "1rem" }} gap={50}>
           <TaskForm
             onClose={() => setEditingTask(undefined)}
             open={!!editingTask}
@@ -34,37 +35,23 @@ const TodayPageComponent = (): ReactNode => {
           />
           {/* Don't show overdue tasks section if there are none */}
           {data?.result?.overdue.length ? (
-            <div>
-              <Typography.Title level={4} className="font-bold">
-                Overdue
-              </Typography.Title>
-              <Space direction="vertical" size={16}>
-                {data?.result?.overdue.map((task) => (
-                  <TaskItem
-                    key={task.id}
-                    task={task}
-                    setTask={setEditingTask}
-                  />
-                ))}
-              </Space>
-            </div>
+            <TaskContainer text="Overdue">
+              {data?.result?.overdue.map((task) => (
+                <TaskItem key={task.id} task={task} setTask={setEditingTask} />
+              ))}
+            </TaskContainer>
           ) : null}
           {data?.result?.today.length ? (
-            <div>
-              <Typography.Title level={4} className="font-bold">
-                Today
-              </Typography.Title>
-              <Space direction="vertical" size={16}>
-                {data?.result?.today.map((task) => (
-                  <TaskItem
-                    key={task.id}
-                    task={task}
-                    isToday
-                    setTask={setEditingTask}
-                  />
-                ))}
-              </Space>
-            </div>
+            <TaskContainer text="Today">
+              {data?.result?.today.map((task) => (
+                <TaskItem
+                  key={task.id}
+                  task={task}
+                  isToday
+                  setTask={setEditingTask}
+                />
+              ))}
+            </TaskContainer>
           ) : null}
         </Flex>
       )}
