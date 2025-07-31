@@ -1,8 +1,9 @@
 import { Menu, type MenuProps } from "antd";
-import type { ReactNode } from "react";
+import { Children, useMemo, type ReactNode } from "react";
 import { NavLink } from "react-router";
 import { SIDEBAR_ROUTES } from "~/lib/const";
 import {
+  ArchiveIcon,
   CalenderIcon,
   InboxIcon,
   ProjectIcon,
@@ -13,12 +14,16 @@ import {
 import "~/styles/sidebar.css";
 import SidebarHeader from "./sidebar-header";
 import { isCurrentPath, menuItemStyle } from ".";
+import { useAssignedProjectsQuery } from "~/lib/server/services";
+import ToolTip from "../ui/tooltip";
 
 /**
  * This component renders sidebar section
  * @returns {ReactNode} The EmployeeSidebar component
  */
 const EmployeeSidebar = (): ReactNode => {
+  const { data: projs, isPending: projsPending } = useAssignedProjectsQuery();
+
   const menuItems: MenuProps["items"] = [
     {
       icon: <SearchIcon size={22} />,
@@ -79,6 +84,39 @@ const EmployeeSidebar = (): ReactNode => {
     },
   ];
 
+  const dynamicMenuItems: MenuProps["items"] = useMemo(() => {
+    if (!projs?.result?.length) return [];
+
+    return projs?.result.map((project) => ({
+      key: project.id,
+      icon: <ArchiveIcon size={22} />,
+      label: (
+        <ToolTip title={project.title}>
+          <span style={menuItemStyle}>{project.alias}</span>
+        </ToolTip>
+      ),
+      className: isCurrentPath(project.title.toLowerCase()),
+      children: [
+        {
+          key: project.id,
+          label: <NavLink to={"/projects/" + project.id}>Overview</NavLink>,
+        },
+        {
+          key: `${project.id}-tasks`,
+          label: (
+            <NavLink to={"/projects/" + project.id + "/tasks"}>Tasks</NavLink>
+          ),
+        },
+        {
+          key: `${project.id}-teams`,
+          label: (
+            <NavLink to={"/projects/" + project.id + "/teams"}>Teams</NavLink>
+          ),
+        },
+      ],
+    }));
+  }, [projs]);
+
   return (
     <>
       <SidebarHeader />
@@ -86,6 +124,12 @@ const EmployeeSidebar = (): ReactNode => {
         mode="inline"
         style={{ marginTop: "80px", background: "none" }}
         items={menuItems}
+      />
+
+      <Menu
+        mode="inline"
+        style={{ marginTop: "40px", background: "none" }}
+        items={dynamicMenuItems}
       />
     </>
   );
