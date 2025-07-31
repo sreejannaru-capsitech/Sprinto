@@ -1,4 +1,6 @@
-﻿using Sprinto.Server.Models;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using Sprinto.Server.Models;
 using Sprinto.Server.Validation;
 using System.ComponentModel.DataAnnotations;
 
@@ -38,6 +40,7 @@ namespace Sprinto.Server.DTOs
 
     public class TaskResponse
     {
+        [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
 
         public string Title { get; set; } = null!;
@@ -48,6 +51,7 @@ namespace Sprinto.Server.DTOs
 
         public string? Description { get; set; }
 
+        [BsonRepresentation(BsonType.ObjectId)]
         public string ProjectId { get; set; } = null!;
 
         public List<AssigneeDTO> Assignees { get; set; } = [];

@@ -162,6 +162,110 @@ namespace Sprinto.Server.Services
             }
         }
 
+        // Find all user assinged upcoming tasks
+        public async Task<List<TaskResponse>> GetUpcomingTasks(string userId)
+        {
+            try
+            {
+                // Match user assignment
+                var assigneeFilter = Builders<TaskItem>.Filter.ElemMatch(
+                    t => t.Assignees,
+                    a => a.Id == userId
+                );
+
+                // Exclude "Done" status
+                var statusFilter = Builders<TaskItem>.Filter.Ne(
+                    t => t.Status.Title,
+                    "Done"
+                );
+
+                var dateFilter = Builders<TaskItem>.Filter.Gt(
+                    t => t.DueDate, DateOnly.FromDateTime(DateTime.Today));
+
+                // Combine filters
+                var userFilter = Builders<TaskItem>.Filter.And(
+                    assigneeFilter,
+                    statusFilter,
+                    dateFilter
+                );
+
+                // Exclude activities from the response
+                var projection = Builders<TaskItem>.Projection.Exclude(t => t.Activities);
+
+                var tasks = await _tasks.Find(userFilter)
+                    .Project<TaskItem>(projection)
+                    .ToListAsync();
+
+                return [.. tasks.Select(u => u.ToTaskResponse())];
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving tasks for user {UserId}", userId);
+                throw new Exception("Could not retrieve upcoming tasks");
+            }
+        }
+
+
+        public async Task<List<ProjectTaskGroup>> GetGroupedUpcomingTasks(string userId)
+        {
+            try
+            {
+                var pipeline = new List<BsonDocument>
+                {
+                    new("$match", new BsonDocument
+                    {
+                        { "assignees", new BsonDocument("$elemMatch", new BsonDocument("_id", new ObjectId(userId))) },
+                        { "status.title", new BsonDocument("$ne", "Done") },
+                        { "due_date", new BsonDocument("$gt", DateTime.Today) }
+                    }),
+                    new("$lookup", new BsonDocument
+                    {
+                        { "from", "projects" },
+                        { "localField", "project_id" },
+                        { "foreignField", "_id" },
+                        { "as", "project" }
+                    }),
+                    new("$unwind", "$project"),
+                    new("$group", new BsonDocument
+                    {
+                        { "_id", "$project_id" },
+                        { "ProjectTitle", new BsonDocument("$first", "$project.title") },
+                        { "Tasks", new BsonDocument("$push", new BsonDocument
+                            {
+                                { "_id", "$_id" },
+                                { "Title", "$title" },
+                                { "DueDate", "$due_date" },
+                                { "Status", "$status" },
+                                { "Assignees", "$assignees" },
+                                { "ProjectId", "$project_id" },
+                                { "Description", "$description" },
+                                { "Priority", "$priority" },
+                                { "Sequence", "$seq" },
+                                { "ProjectAlias", "$project_alias" },
+                                { "Comments", "$comments" },
+                                { "CreatedBy", "$created_by" },
+                            })
+                        }
+                    }),
+                    new("$project", new BsonDocument
+                    {
+                        { "ProjectId", "$_id" },
+                        { "ProjectTitle", 1 },
+                        { "Tasks", 1 },
+                        { "_id", 0 }
+                    })
+                };
+
+                var result = await _tasks.Aggregate<ProjectTaskGroup>(pipeline).ToListAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error grouping tasks for user {UserId}", userId);
+                throw new Exception("Could not group upcoming tasks");
+            }
+        }
+
         // Find and update a task
         public async Task<TaskItem> UpdateAsync(string id, TaskDTO dto, string userId, string userName)
         {

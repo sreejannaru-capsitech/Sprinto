@@ -131,6 +131,56 @@ namespace Sprinto.Server.Controllers
             return response;
         }
 
+        // Get all upcoming tasks
+        //[HttpGet("upcoming")]
+        //public async Task<ApiResponse<List<TaskResponse>>>
+        //    GetUpcomingTasks()
+        //{
+        //    var response = new ApiResponse<List<TaskResponse>>();
+
+        //    try
+        //    {
+        //        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //        if (string.IsNullOrEmpty(userId))
+        //            throw new Exception(Constants.Messages.InvalidToken);
+
+        //        var tasks = await _taskService.GetUpcomingTasks(userId);
+
+        //        response.Message = Constants.Messages.Success;
+        //        response.Result = tasks;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response.HandleException(ex);
+        //    }
+        //    return response;
+        //}
+
+        // Get all upcoming tasks
+        [HttpGet("upcoming")]
+        public async Task<ApiResponse<List<ProjectTaskGroup>>>
+            GetUpcomingGroupedTasks()
+        {
+            var response = new ApiResponse<List<ProjectTaskGroup>>();
+
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userId))
+                    throw new Exception(Constants.Messages.InvalidToken);
+
+                var tasks = await _taskService.GetGroupedUpcomingTasks(userId);
+
+                response.Message = Constants.Messages.Success;
+                response.Result = tasks;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
         private object? ValidateModelState
         {
             get
