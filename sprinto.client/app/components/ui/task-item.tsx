@@ -1,5 +1,7 @@
-import { Avatar, Card, Col, Flex, Row, Tag, Tooltip, Typography } from "antd";
+import { Avatar, Card, Col, Flex, Row, Tag, Typography } from "antd";
 import dayjs from "dayjs";
+import advancedFormat from "dayjs/plugin/advancedFormat";
+import utc from "dayjs/plugin/utc";
 import {
   useMemo,
   type Dispatch,
@@ -8,15 +10,12 @@ import {
   type SetStateAction,
 } from "react";
 import { CalenderIcon, HighIcon, LowIcon, MediumIcon } from "~/lib/icons";
-import { useAssignedProjectsQuery } from "~/lib/server/services";
 import { getInitials, truncateText } from "~/lib/utils";
-import advancedFormat from "dayjs/plugin/advancedFormat";
-import utc from "dayjs/plugin/utc";
 
 dayjs.extend(utc);
 dayjs.extend(advancedFormat);
 
-import "~/styles/task-item.css";
+import "~/styles/items.css";
 import ToolTip from "./tooltip";
 
 interface TaskItemProps {
