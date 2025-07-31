@@ -18,3 +18,5 @@ export { default as LoaderIcon } from "./loader.icon";
 export { default as HighIcon } from "./high.icon";
 export { default as MediumIcon } from "./medium.icon";
 export { default as LowIcon } from "./low.icon";
+export { default as ArchiveIcon } from "./archive.icon";
+export { default as HourGlassIcon } from "./hourglass.icon";

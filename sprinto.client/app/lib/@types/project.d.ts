@@ -4,8 +4,8 @@ interface Project {
     alias: string;
     description: string;
     isCompleted?: boolean;
-    startDate: string;
-    deadline: string;
+    startDate?: string;
+    deadline?: string;
     teamLead: Assignee;
     assignees: Assignee[];
     createdBy: Creation;
