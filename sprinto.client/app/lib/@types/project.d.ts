@@ -21,3 +21,9 @@ interface ProjectRequest {
     teamLead: Assignee;
     assignees: Assignee[];
 }
+
+interface ProjectTaskGroup {
+  projectId: string;
+  projectTitle: string;
+  tasks: Task[];
+};

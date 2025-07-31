@@ -35,7 +35,6 @@ const TaskItem: FC<TaskItemProps> = ({
   isToday = false,
   setTask,
 }: TaskItemProps): ReactNode => {
-
   const dueDate = useMemo(() => {
     if (dayjs.utc(task.dueDate).isSame(dayjs.utc(), "day")) {
       return "Today";
@@ -67,7 +66,13 @@ const TaskItem: FC<TaskItemProps> = ({
       </Flex>
       <Row gutter={0}>
         <Col span={2}>
-          <ToolTip title={task.priority + " priority"}>
+          <ToolTip
+            title={
+              task.priority.charAt(0).toUpperCase() +
+              task.priority.slice(1) +
+              " Priority"
+            }
+          >
             <span>
               {task.priority === "low" ? (
                 <LowIcon size={22} />

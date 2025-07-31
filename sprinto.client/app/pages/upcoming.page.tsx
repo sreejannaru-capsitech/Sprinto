@@ -1,19 +1,12 @@
 import { Flex, Space, Typography } from "antd";
-import { useMemo, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import TaskForm from "~/components/forms/task-form";
 import NoTask from "~/components/ui/no-task";
 import Spinner from "~/components/ui/spinner";
 import TaskItem from "~/components/ui/task-item";
 import {
-  useAssignedProjectsQuery,
-  useUpcomingTasksQuery,
+  useUpcomingTasksQuery
 } from "~/lib/server/services";
-
-type ProjectTaskGroup = {
-  projectId: string;
-  projectName: string;
-  tasks: Task[];
-};
 
 /**
  * This component renders inbox.page section
@@ -21,61 +14,61 @@ type ProjectTaskGroup = {
  */
 const UpcomingPageComponent = (): ReactNode => {
   const { data, isPending } = useUpcomingTasksQuery();
-  const { data: projects, isPending: projectsPending } =
-    useAssignedProjectsQuery();
+  // const { data: projects, isPending: projectsPending } =
+  //   useAssignedProjectsQuery();
 
   const [editingTask, setEditingTask] = useState<Task | undefined>(undefined);
 
-  const groupTasksByProject = (
-    tasks: Task[],
-    projects: Project[]
-  ): ProjectTaskGroup[] => {
-    const map = new Map<string, { projectName: string; tasks: Task[] }>();
+  // const groupTasksByProject = (
+  //   tasks: Task[],
+  //   projects: Project[]
+  // ): ProjectTaskGroup[] => {
+  //   const map = new Map<string, { projectName: string; tasks: Task[] }>();
 
-    for (const task of tasks) {
-      const project = projects.find((p) => p.id === task.projectId);
-      if (!project) continue;
+  //   for (const task of tasks) {
+  //     const project = projects.find((p) => p.id === task.projectId);
+  //     if (!project) continue;
 
-      if (!map.has(task.projectId)) {
-        map.set(task.projectId, { projectName: project.title, tasks: [] });
-      }
+  //     if (!map.has(task.projectId)) {
+  //       map.set(task.projectId, { projectName: project.title, tasks: [] });
+  //     }
 
-      map.get(task.projectId)!.tasks.push(task);
-    }
+  //     map.get(task.projectId)!.tasks.push(task);
+  //   }
 
-    return Array.from(map.entries()).map(([projectId, data]) => ({
-      projectId,
-      projectName: data.projectName,
-      tasks: data.tasks,
-    }));
-  };
+  //   return Array.from(map.entries()).map(([projectId, data]) => ({
+  //     projectId,
+  //     projectTitle: data.projectName,
+  //     tasks: data.tasks,
+  //   }));
+  // };
 
-  const groupedTasks = useMemo(() => {
-    if (!data?.result?.length) return [];
+  // const groupedTasks = useMemo(() => {
+  //   if (!data?.result?.length) return [];
 
-    const tasks = data?.result;
+  //   const tasks = data?.result;
 
-    if (!tasks || !projects) return [];
+  //   if (!tasks || !projects) return [];
 
-    return groupTasksByProject(tasks, projects?.result ?? []);
-  }, [data, projects]);
+  //   return groupTasksByProject(tasks, projects?.result ?? []);
+  // }, [data, projects]);
 
   return (
-    <Spinner isActive={isPending || projectsPending}>
+    <Spinner isActive={isPending}>
       {!data?.result?.length ? (
         <NoTask text="You don't have any upcoming task" />
       ) : (
-        <Flex style={{ marginTop: "2rem" }} gap={50}>
+        <Flex style={{ marginTop: "2rem" }} gap={40}>
           <TaskForm
             onClose={() => setEditingTask(undefined)}
             open={!!editingTask}
             task={editingTask}
           />
 
-          {groupedTasks.map((group) => (
+          {data.result.map((group) => (
             <div key={group.projectId}>
               <Typography.Title level={4} className="font-bold">
-                {group.projectName}
+                {group.projectTitle}
               </Typography.Title>
               <Space direction="vertical" size={16}>
                 {group.tasks.map((task) => (
