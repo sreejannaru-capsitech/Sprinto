@@ -12,7 +12,8 @@ namespace Sprinto.Server.Controllers
 {
     [Route("api/projects")]
     //[ApiController]
-    public class ProjectsController(ProjectService projectService) : ControllerBase
+    public class ProjectsController
+        (ProjectService projectService) : ControllerBase
     {
         private readonly ProjectService _projectService = projectService;
 
@@ -108,6 +109,46 @@ namespace Sprinto.Server.Controllers
                 var project = await _projectService.UpdateAsync(id, newProject);
                 response.Message = Constants.Messages.Updated;
                 response.Result = project;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
+        [HttpGet("{id}/tasks")]
+        [Authorize]
+        public async Task<ApiResponse<List<TaskResponse>>>
+            GetTaskItems(string id)
+        {
+            var response = new ApiResponse<List<TaskResponse>>();
+
+            try
+            {
+                var tasks = await _projectService.GetTaskItemsAsync(id);
+                response.Message = Constants.Messages.Success;
+                response.Result = [.. tasks.Select(u => u.ToTaskResponse())]; ;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
+        [HttpGet("{id}/activities")]
+        [Authorize]
+        public async Task<ApiResponse<List<Activity>>>
+            GetActivities(string id)
+        {
+            var response = new ApiResponse<List<Activity>>();
+
+            try
+            {
+                var activities = await _projectService.GetActivitiesAsync(id);
+                response.Message = Constants.Messages.Success;
+                response.Result = activities;
             }
             catch (Exception ex)
             {

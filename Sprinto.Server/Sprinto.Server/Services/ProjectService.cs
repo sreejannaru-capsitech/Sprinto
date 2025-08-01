@@ -9,6 +9,7 @@ namespace Sprinto.Server.Services
     public class ProjectService
     {
         private readonly IMongoCollection<Project> _projects;
+        private readonly IMongoCollection<TaskItem> _tasks;
         private readonly ILogger<ProjectService> _logger;
 
         public ProjectService(IMongoClient mongoCLient,
@@ -18,6 +19,7 @@ namespace Sprinto.Server.Services
             var mongoDB = mongoCLient.GetDatabase(dbsettings.Value.DatabaseName);
 
             _projects = mongoDB.GetCollection<Project>(dbsettings.Value.ProjectsCollection);
+            _tasks = mongoDB.GetCollection<TaskItem>(dbsettings.Value.TasksCollection);
             _logger = logger;
         }
 
@@ -64,6 +66,21 @@ namespace Sprinto.Server.Services
             {
                 _logger.LogError(ex, "Error retrieving projects");
                 throw new Exception("Could not retrieve projects");
+            }
+        }
+
+        // Get project By Id
+        public async Task<Project?> GetAsync(string id)
+        {
+            try
+            {
+                var project = await _projects.Find(a => a.Id == id).FirstOrDefaultAsync();
+                return project;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving project with id {id}", id);
+                throw new Exception("Could not retrieve the project");
             }
         }
 
@@ -146,6 +163,52 @@ namespace Sprinto.Server.Services
             {
                 _logger.LogError(ex, "Error updating project with id {ProjectId}", id);
                 throw new Exception("Could not update project");
+            }
+        }
+
+        // Get all tasks referenced to a project
+        public async Task<List<TaskItem>> GetTaskItemsAsync(string id)
+        {
+            try
+            {
+                var project = GetAsync(id) ?? throw new KeyNotFoundException("Project not found");
+
+                var tasks = await _tasks.Find(a => a.ProjectId == id).ToListAsync();
+                return tasks;
+            }
+            catch (KeyNotFoundException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving tasks for project with id {ProjectId}", id);
+                throw new Exception("Could retrieve tasks for project");
+            }
+        }
+
+        // Get all activities in a project
+        public async Task<List<Activity>> GetActivitiesAsync(string id)
+        {
+            try
+            {
+                var tasks = await GetTaskItemsAsync(id);
+
+                var activities = tasks
+                    .SelectMany(task => task.Activities ?? [])
+                    .OrderByDescending(a => a.CreatedBy.Time)
+                    .ToList();
+
+                return activities;
+            }
+            catch (KeyNotFoundException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving activities for project {ProjectId}", id);
+                throw new Exception("Could not retrieve project activities");
             }
         }
 
