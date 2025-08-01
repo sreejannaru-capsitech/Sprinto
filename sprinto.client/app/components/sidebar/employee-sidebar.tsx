@@ -37,7 +37,7 @@ const EmployeeSidebar = (): ReactNode => {
     if (path.length === 2) {
       setStaticSelectedKey([path[1]]);
       setDynamicSelectedKey([]);
-      setOpenKeys([]);
+      // setOpenKeys([]);
     } else if (path.length === 3) {
       setStaticSelectedKey([]);
       setDynamicSelectedKey([`${path[2]}-overview`]);
@@ -58,7 +58,7 @@ const EmployeeSidebar = (): ReactNode => {
   const onStaticSelect: MenuProps["onSelect"] = ({ key }) => {
     setStaticSelectedKey([key]);
     setDynamicSelectedKey([]);
-    setOpenKeys([]);
+    // setOpenKeys([]);
   };
 
   const onDynamicSelect: MenuProps["onSelect"] = ({ key, keyPath }) => {
