@@ -1,0 +1,37 @@
+import type { FC, ReactNode } from "react";
+
+/**
+ * This component renders logo.icon section
+ * @param {IconProps} props
+ * @returns {ReactNode} The Logo component
+ */
+const AlertIcon: FC<IconProps> = ({
+  fill = "#141B34",
+  size = 24,
+}: IconProps): ReactNode => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+    >
+      <path
+        opacity="0.4"
+        d="M12 22.75C17.9371 22.75 22.75 17.9371 22.75 12C22.75 6.06294 17.9371 1.25 12 1.25C6.06294 1.25 1.25 6.06294 1.25 12C1.25 17.9371 6.06294 22.75 12 22.75Z"
+        fill={fill}
+      />
+      <path
+        d="M11 12.5V8C11 7.44772 11.4477 7 12 7C12.5523 7 13 7.44772 13 8V12.5C13 13.0523 12.5523 13.5 12 13.5C11.4477 13.5 11 13.0523 11 12.5Z"
+        fill={fill}
+      />
+      <path
+        d="M11 15.998V15.9883C11 15.436 11.4477 14.9883 12 14.9883C12.5523 14.9883 13 15.436 13 15.9883V15.998C13 16.5503 12.5523 16.998 12 16.998C11.4477 16.998 11 16.5503 11 15.998Z"
+        fill={fill}
+      />
+    </svg>
+  );
+};
+
+export default AlertIcon;

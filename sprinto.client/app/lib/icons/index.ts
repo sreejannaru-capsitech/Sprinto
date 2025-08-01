@@ -21,3 +21,4 @@ export { default as LowIcon } from "./low.icon";
 export { default as ArchiveIcon } from "./archive.icon";
 export { default as HourGlassIcon } from "./hourglass.icon";
 export { default as DashboardIcon } from "./dashboard.icon";
+export { default as AlertIcon } from "./alert.icon";

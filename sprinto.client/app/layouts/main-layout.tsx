@@ -1,10 +1,11 @@
 import { Breadcrumb, Layout, Space, Spin } from "antd";
 import { type ReactNode } from "react";
-import { Outlet } from "react-router";
+import { Navigate, Outlet } from "react-router";
 import AdminSidebar from "~/components/sidebar/admin-sidebar";
 import EmployeeSidebar from "~/components/sidebar/employee-sidebar";
 import Spinner from "~/components/ui/spinner";
-import { useProfileQuery } from "~/lib/server/services";
+import { useProfileQuery, useProjectsQuery } from "~/lib/server/services";
+import NoProject from "~/pages/no-project";
 
 const { Header, Content, Sider } = Layout;
 
@@ -15,9 +16,15 @@ const { Header, Content, Sider } = Layout;
 const MainLayout = (): ReactNode => {
   // Fetch the profile and access token from the server
   const { data, isPending } = useProfileQuery();
+  const { data: projects, isPending: projsPending } = useProjectsQuery();
+
+  // If the user is not logged in, show the login page
+  if (!isPending && data?.result === null) {
+    return <Navigate to="/" />;
+  }
 
   return (
-    <Spinner isActive={isPending} fullscreen>
+    <Spinner isActive={isPending || projsPending} fullscreen>
       <Layout style={{ height: "100vh" }}>
         <Sider
           width={250}
@@ -48,7 +55,14 @@ const MainLayout = (): ReactNode => {
             </Space>
           </Header>
           <Content style={{ display: "flex", flexDirection: "column" }}>
-            <Outlet />
+            {/* If the user is non-admin and has no projects, show no-project page */}
+            {data?.result?.user.role !== "admin" &&
+            projects?.result &&
+            projects.result.length === 0 ? (
+              <NoProject />
+            ) : (
+              <Outlet />
+            )}
           </Content>
         </Layout>
       </Layout>

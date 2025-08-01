@@ -1,6 +1,6 @@
-import { Spin } from "antd";
 import type { ReactNode } from "react";
 import { Navigate, Outlet } from "react-router";
+import Spinner from "~/components/ui/spinner";
 import { useProfileQuery } from "~/lib/server/services";
 
 /**
@@ -12,7 +12,7 @@ const RootLayout = (): ReactNode => {
   const { data, isPending } = useProfileQuery();
 
   if (isPending) {
-    return <Spin fullscreen />;
+    return <Spinner fullscreen children={null} />;
   }
 
   // If the user is not logged in, show the login page
