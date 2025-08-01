@@ -1,4 +1,4 @@
-import { Breadcrumb, Layout, Space, Spin } from "antd";
+import { Breadcrumb, Layout, Space, Spin, Tag } from "antd";
 import { type ReactNode } from "react";
 import { Navigate, Outlet } from "react-router";
 import AdminSidebar from "~/components/sidebar/admin-sidebar";
@@ -17,6 +17,8 @@ const MainLayout = (): ReactNode => {
   // Fetch the profile and access token from the server
   const { data, isPending } = useProfileQuery();
   const { data: projects, isPending: projsPending } = useProjectsQuery();
+
+  const role = data?.result?.user.role;
 
   // If the user is not logged in, show the login page
   if (!isPending && data?.result === null) {
@@ -41,7 +43,11 @@ const MainLayout = (): ReactNode => {
         </Sider>
         <Layout>
           <Header>
-            <Space align="center" size={24}>
+            <Space
+              align="center"
+              style={{ width: "100%", justifyContent: "space-between" }}
+              size={24}
+            >
               <Breadcrumb
                 items={[
                   {
@@ -52,6 +58,9 @@ const MainLayout = (): ReactNode => {
                   },
                 ]}
               />
+              <Tag className="capitalize">
+                {role === "teamLead" ? "Team Lead" : role}
+              </Tag>
             </Space>
           </Header>
           <Content style={{ display: "flex", flexDirection: "column" }}>

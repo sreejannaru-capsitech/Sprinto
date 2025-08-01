@@ -28,7 +28,7 @@ const NoProject = (): ReactNode => {
             marginBlockStart: "0.2rem",
           }}
         >
-          Contact you Team Lead or Admin
+          Contact your team lead or admin
         </p>
       </div>
     </CenteredLayout>

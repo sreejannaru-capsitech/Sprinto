@@ -164,6 +164,10 @@ h1.ant-typography {
   font-weight: 600 !important;
 }
 
+.capitalize {
+  text-transform: capitalize !important;
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);
