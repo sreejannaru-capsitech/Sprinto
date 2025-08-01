@@ -188,18 +188,27 @@ namespace Sprinto.Server.Services
         }
 
         // Get all activities in a project
-        public async Task<List<Activity>> GetActivitiesAsync(string id)
+        public async Task<List<TaskActivity>> GetActivitiesAsync(string id)
         {
             try
             {
                 var tasks = await GetTaskItemsAsync(id);
 
-                var activities = tasks
-                    .SelectMany(task => task.Activities ?? [])
-                    .OrderByDescending(a => a.CreatedBy.Time)
+                var taskActivities = tasks
+                    .SelectMany(task =>
+                        (task.Activities ?? []).Select(activity => new TaskActivity
+                        {
+                            Sequence = task.Sequence,
+                            ProjectAlias = task.ProjectAlias,
+                            TaskId = task.Id!,
+                            ProjectId = task.ProjectId,
+                            Activity = activity
+                        })
+                    )
+                    .OrderByDescending(ta => ta.Activity.CreatedBy.Time)
                     .ToList();
 
-                return activities;
+                return taskActivities;
             }
             catch (KeyNotFoundException)
             {

@@ -57,4 +57,17 @@ namespace Sprinto.Server.Models
         public List<TaskResponse> Medium { get; set; } = [];
         public List<TaskResponse> High { get; set; } = [];
     }
+
+    public class TaskActivity 
+    {
+        public long Sequence { get; set; }
+        public string ProjectAlias { get; set; } = null!;
+
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string ProjectId { get; set; } = null!;
+
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string TaskId { get; set; } = null!;
+        public Activity Activity { get; set; } = null!;
+    }
 }

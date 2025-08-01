@@ -139,10 +139,10 @@ namespace Sprinto.Server.Controllers
 
         [HttpGet("{id}/activities")]
         [Authorize]
-        public async Task<ApiResponse<List<Activity>>>
+        public async Task<ApiResponse<List<TaskActivity>>>
             GetActivities(string id)
         {
-            var response = new ApiResponse<List<Activity>>();
+            var response = new ApiResponse<List<TaskActivity>>();
 
             try
             {
