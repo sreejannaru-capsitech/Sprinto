@@ -20,3 +20,4 @@ export { default as MediumIcon } from "./medium.icon";
 export { default as LowIcon } from "./low.icon";
 export { default as ArchiveIcon } from "./archive.icon";
 export { default as HourGlassIcon } from "./hourglass.icon";
+export { default as DashboardIcon } from "./dashboard.icon";
