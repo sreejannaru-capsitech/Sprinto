@@ -13,5 +13,8 @@ export default [
     route("inbox", "routes/inbox.tsx"),
     route("upcoming", "routes/upcoming.tsx"),
     route("projects", "routes/projects.tsx"),
+    route("projects/:projectId", "routes/project-overview.tsx"),
+    // route("projects/:id/tasks", "routes/project-tasks.tsx"),
+    // route("projects/:id/teams", "routes/project-teams.tsx"),
   ]),
 ] satisfies RouteConfig;
