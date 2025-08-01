@@ -1,3 +1,4 @@
+import { Button, Flex } from "antd";
 import type { ReactNode } from "react";
 import CenteredLayout from "~/layouts/centered-layout";
 import { AlertIcon } from "~/lib/icons";
@@ -30,6 +31,10 @@ const NoProject = (): ReactNode => {
         >
           Contact your team lead or admin
         </p>
+        <Flex gap={4} justify="center">
+          <Button type="primary">Reload</Button>
+          <Button>Log out</Button>
+        </Flex>
       </div>
     </CenteredLayout>
   );
