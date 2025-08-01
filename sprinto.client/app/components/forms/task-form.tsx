@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import { useEffect, useMemo, useState, type FC, type ReactNode } from "react";
 import { useAntNotification } from "~/hooks";
 import {
-  useAssignedProjectsQuery,
+  useProjectsQuery,
   useCreateTask,
   useStatusesQuery,
   useUpdateTask,
@@ -79,8 +79,7 @@ const TaskForm: FC<TaskFormProps> = ({
   }, [task, isNew]);
 
   const { data: statuses, isPending: statusesPending } = useStatusesQuery();
-  const { data: projects, isPending: projectsPending } =
-    useAssignedProjectsQuery();
+  const { data: projects, isPending: projectsPending } = useProjectsQuery();
 
   const statusOptions: SelectOptions[] = useMemo(() => {
     return (

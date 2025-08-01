@@ -48,47 +48,44 @@ namespace Sprinto.Server.Controllers
             return response;
         }
 
-        // Get all projects from database (Admin Only)
+        // Get projects based on user role
+        // Admins get all project list
+        // Other users get list of assigned projects
         [HttpGet]
-        [Authorize(Roles = "admin")]
-        public async Task<ApiResponse<List<Project>>> GetAsync()
-        {
-            var response = new ApiResponse<List<Project>>();
-
-            try
-            {
-                var projects = await _projectService.GetAsync();
-                response.Message = Constants.Messages.Success;
-                response.Result = projects;
-            }
-            catch (Exception ex)
-            {
-                response.HandleException(ex);
-            }
-            return response;
-        }
-
-        // Get all projects assigned to the specified user.
-        [HttpGet("assigned")]
-        [Authorize(Roles = "employee,teamLead")]
-        public async Task<ApiResponse<List<Project>>> GetAssignedAsync()
+        [Authorize]
+        public async Task<ApiResponse<List<Project>>> GetProjectsAsync()
         {
             var response = new ApiResponse<List<Project>>();
 
             try
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (string.IsNullOrEmpty(userId))
-                    throw new Exception(Constants.Messages.InvalidToken);
+                var userRole = User.FindFirstValue(ClaimTypes.Role);
 
-                var projects = await _projectService.GetAssignedAsync(userId);
+                if (string.IsNullOrEmpty(userRole))
+                    throw new Exception("User role is missing");
+
+                if (userRole == "admin")
+                {
+                    var projects = await _projectService.GetAsync();
+                    response.Result = projects;
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(userId))
+                        throw new Exception(Constants.Messages.InvalidToken);
+
+                    var projects = await _projectService.GetAssignedAsync(userId);
+                    response.Result = projects;
+                }
+
                 response.Message = Constants.Messages.Success;
-                response.Result = projects;
             }
             catch (Exception ex)
             {
                 response.HandleException(ex);
             }
+
             return response;
         }
 

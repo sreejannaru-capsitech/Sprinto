@@ -14,7 +14,7 @@ import {
   UsersIcon,
 } from "~/lib/icons";
 
-import { useAssignedProjectsQuery } from "~/lib/server/services";
+import { useProjectsQuery } from "~/lib/server/services";
 import "~/styles/sidebar.css";
 import { menuItemStyle } from ".";
 import ToolTip from "../ui/tooltip";
@@ -25,7 +25,7 @@ import SidebarHeader from "./sidebar-header";
  * @returns {ReactNode} The EmployeeSidebar component
  */
 const EmployeeSidebar = (): ReactNode => {
-  const { data: projs } = useAssignedProjectsQuery();
+  const { data: projs } = useProjectsQuery();
 
   const [staticSelectedKey, setStaticSelectedKey] = useState<string[]>([]);
   const [dynamicSelectedKey, setDynamicSelectedKey] = useState<string[]>([]);
