@@ -1,10 +1,12 @@
 import { Space, Typography } from "antd";
-import type { FC, ReactNode } from "react";
+import type { Dispatch, FC, ReactNode, SetStateAction } from "react";
 
 import "~/styles/items.css";
+import TaskItem from "./task-item";
 
 interface TaskContainerProps {
-  children: ReactNode;
+  tasks: Task[] | undefined;
+  setTask: Dispatch<SetStateAction<Task | undefined>>;
   text: string;
 }
 
@@ -14,22 +16,29 @@ interface TaskContainerProps {
  * @returns {ReactNode} The TaskContainer component
  */
 const TaskContainer: FC<TaskContainerProps> = ({
-  children,
+  tasks,
+  setTask,
   text,
 }: TaskContainerProps): ReactNode => {
   return (
-    <div>
-      <Typography.Title
-        level={4}
-        className="font-bold"
-        style={{ marginLeft: 10 }}
-      >
-        {text}
-      </Typography.Title>
-      <Space direction="vertical" size={16} className="task-container">
-        {children}
-      </Space>
-    </div>
+    <>
+      {tasks !== undefined && tasks.length > 0 ? (
+        <div>
+          <Typography.Title
+            level={4}
+            className="font-bold"
+            style={{ marginLeft: 10 }}
+          >
+            {text}
+          </Typography.Title>
+          <Space direction="vertical" size={16} className="task-container">
+            {tasks.map((task) => (
+              <TaskItem key={task.id} task={task} setTask={setTask} />
+            ))}
+          </Space>
+        </div>
+      ) : null}
+    </>
   );
 };
 

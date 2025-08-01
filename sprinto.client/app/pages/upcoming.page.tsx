@@ -4,7 +4,6 @@ import TaskForm from "~/components/forms/task-form";
 import NoData from "~/components/ui/no-data";
 import Spinner from "~/components/ui/spinner";
 import TaskContainer from "~/components/ui/task-container";
-import TaskItem from "~/components/ui/task-item";
 import { useUpcomingTasksQuery } from "~/lib/server/services";
 
 /**
@@ -14,7 +13,7 @@ import { useUpcomingTasksQuery } from "~/lib/server/services";
 const UpcomingPageComponent = (): ReactNode => {
   const { data, isPending } = useUpcomingTasksQuery();
   // const { data: projects, isPending: projectsPending } =
-  //   useAssignedProjectsQuery();
+  //   useProjectsQuery();
 
   const [editingTask, setEditingTask] = useState<Task | undefined>(undefined);
 
@@ -57,7 +56,7 @@ const UpcomingPageComponent = (): ReactNode => {
       {!data?.result?.length ? (
         <NoData text="You don't have any upcoming task" />
       ) : (
-        <Flex style={{ marginTop: "2rem" }} gap={40}>
+        <Flex style={{ marginTop: "2rem" }} gap={30}>
           <TaskForm
             onClose={() => setEditingTask(undefined)}
             open={!!editingTask}
@@ -65,11 +64,12 @@ const UpcomingPageComponent = (): ReactNode => {
           />
 
           {data.result.map((group) => (
-            <TaskContainer text={group.projectTitle} key={group.projectId}>
-              {group.tasks.map((task) => (
-                <TaskItem key={task.id} task={task} setTask={setEditingTask} />
-              ))}
-            </TaskContainer>
+            <TaskContainer
+              text={group.projectTitle}
+              tasks={group.tasks}
+              setTask={setEditingTask}
+              key={group.projectId}
+            />
           ))}
         </Flex>
       )}

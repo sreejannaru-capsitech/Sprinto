@@ -4,7 +4,6 @@ import TaskForm from "~/components/forms/task-form";
 import NoData from "~/components/ui/no-data";
 import Spinner from "~/components/ui/spinner";
 import TaskContainer from "~/components/ui/task-container";
-import TaskItem from "~/components/ui/task-item";
 import { useTodayTaskQuery } from "~/lib/server/services";
 
 /**
@@ -16,43 +15,31 @@ const TodayPageComponent = (): ReactNode => {
 
   const [editingTask, setEditingTask] = useState<Task | undefined>(undefined);
 
-  const isEmpty = useMemo(() => {
-    return (
-      data?.result?.today.length === 0 && data?.result?.overdue.length === 0
-    );
+  const { overdue, today } = useMemo(() => {
+    return {
+      overdue: data?.result?.overdue ?? [],
+      today: data?.result?.today ?? [],
+    };
   }, [data]);
 
   return (
     <Spinner isActive={isPending}>
-      {isEmpty ? (
+      {overdue.length === 0 && today.length === 0 ? (
         <NoData text="You don't have any task today" />
       ) : (
-        <Flex style={{ marginTop: "1rem" }} gap={50}>
+        <Flex style={{ marginTop: "1rem" }} gap={30}>
           <TaskForm
             onClose={() => setEditingTask(undefined)}
             open={!!editingTask}
             task={editingTask}
           />
-          {/* Don't show overdue tasks section if there are none */}
-          {data?.result?.overdue.length ? (
-            <TaskContainer text="Overdue">
-              {data?.result?.overdue.map((task) => (
-                <TaskItem key={task.id} task={task} setTask={setEditingTask} />
-              ))}
-            </TaskContainer>
-          ) : null}
-          {data?.result?.today.length ? (
-            <TaskContainer text="Today">
-              {data?.result?.today.map((task) => (
-                <TaskItem
-                  key={task.id}
-                  task={task}
-                  isToday
-                  setTask={setEditingTask}
-                />
-              ))}
-            </TaskContainer>
-          ) : null}
+
+          <TaskContainer
+            text="Overdue"
+            tasks={overdue}
+            setTask={setEditingTask}
+          />
+          <TaskContainer text="Today" tasks={today} setTask={setEditingTask} />
         </Flex>
       )}
     </Spinner>
