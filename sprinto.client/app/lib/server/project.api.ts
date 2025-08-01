@@ -14,8 +14,8 @@ export const getProjects = async () => {
 };
 
 export const getProjectActivities = async (projectId: string) => {
-  const { data } = await axiosApi.get<ApiResponse<Activity[]>>(
-    `/projects/${projectId}/tasks`
+  const { data } = await axiosApi.get<ApiResponse<TaskActivity[]>>(
+    `/projects/${projectId}/activities`
   );
   return data;
 };

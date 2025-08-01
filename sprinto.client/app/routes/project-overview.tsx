@@ -1,19 +1,32 @@
-import type { ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
 import { useParams } from "react-router";
-import { useProjectActivitiesQuery } from "~/lib/server/services";
+import Spinner from "~/components/ui/spinner";
+import { useProjectsQuery } from "~/lib/server/services";
+import { isValidMongoId } from "~/lib/utils";
+import ProjectOverview from "~/pages/project-overview.page";
 
 /**
  * This component renders project-overview section
- * @returns {ReactNode} The ProjectOverview component
+ * @returns {ReactNode} The Overview component
  */
-const ProjectOverview = (): ReactNode => {
+const Overview = (): ReactNode => {
   const { projectId } = useParams();
+  const { data, isPending } = useProjectsQuery();
 
-  const { data: activities } = useProjectActivitiesQuery(projectId!);
+  const project = useMemo(() => {
+    if (!isValidMongoId(projectId)) return undefined;
+    return data?.result?.find((p) => p.id === projectId);
+  }, [data]);
 
-  console.log(activities);
-
-  return <div>ProjectOverview {projectId}</div>;
+  return (
+    <Spinner isActive={isPending}>
+      {project ? (
+        <ProjectOverview proj={project} />
+      ) : (
+        <div>Project not found</div>
+      )}
+    </Spinner>
+  );
 };
 
-export default ProjectOverview;
+export default Overview;

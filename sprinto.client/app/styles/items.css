@@ -4,10 +4,20 @@
   width: 350px;
 }
 
+.activity-item {
+  max-width: 333px;
+  border-radius: 16px;
+  background-color: white !important;
+}
+
+.activity-item.ant-card-bordered:hover {
+  border: 1px solid var(--border-color) !important;
+}
+
 .project-item {
- border-radius: 20px;
+  border-radius: 20px;
   background-color: var(--primary-light-color) !important;
-  width: 400px; 
+  width: 400px;
 }
 
 .small-text {

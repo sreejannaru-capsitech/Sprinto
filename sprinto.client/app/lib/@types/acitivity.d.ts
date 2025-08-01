@@ -18,7 +18,7 @@ interface Activity {
     current: string;
   } | null;
   description: {
-    previous: string;
+    previous: string | null;
     current: string;
   } | null;
   dueDate: {
@@ -37,4 +37,12 @@ interface Activity {
     previous: TaskPriority;
     current: TaskPriority;
   } | null;
+}
+
+interface TaskActivity {
+  sequence: number;
+  projectAlias: string;
+  taskId: string;
+  projectId: string;
+  activity: Activity;
 }

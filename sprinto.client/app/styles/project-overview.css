@@ -1,0 +1,42 @@
+h2.ant-typography {
+  margin-block: 0 !important;
+}
+
+.activity-container {
+  position: relative;
+  margin-top: 20px;
+  background-color: #eaeaed !important;
+  border-radius: 18px !important;
+  padding: 10px 4px 12px 12px !important;
+  width: 100%;
+  min-height: 770px;
+  max-height: 770px;
+  overflow-y: hidden;
+}
+
+.activity-container-inner {
+  width: 100%;
+  min-height: 748px;
+  max-height: 748px;
+  overflow-y: hidden;
+
+  &:hover {
+    overflow-y: auto;
+  }
+}
+
+.project-description {
+  margin-top: 20px;
+  padding: 28px;
+  background-color: var(--primary-light-color) !important;
+  border-radius: 18px !important;
+  min-height: 200px;
+  max-height: 200px;
+}
+
+.value-container {
+  padding: 2px 4px;
+  background-color: #eaeaed !important;
+  border-radius: 4px !important;
+  margin: 0 4px;
+}

@@ -19,7 +19,7 @@ export const getInitials = (fullName: string): string => {
 
 /**
  * Extracts 3-letter initials from a name string.
- * 
+ *
  * @param name - Full name string to extract initials from.
  * @returns A string of 3 uppercase letters based on name structure.
  *
@@ -40,19 +40,11 @@ export const getAliasFromTitle = (name: string): string => {
       : word.toUpperCase();
   } else if (words.length === 2) {
     const [first, second] = words;
-    return (
-      first[0] +
-      second[0] +
-      second[second.length - 1]
-    ).toUpperCase();
+    return (first[0] + second[0] + second[second.length - 1]).toUpperCase();
   } else {
     const [first, second] = words;
     const last = words[words.length - 1];
-    return (
-      first[0] +
-      second[0] +
-      last[last.length - 1]
-    ).toUpperCase();
+    return (first[0] + second[0] + last[last.length - 1]).toUpperCase();
   }
 };
 
@@ -88,4 +80,14 @@ export const handleApiError = (
 export const truncateText = (text: string, limit: number): string => {
   if (text.length <= limit) return text;
   return text.slice(0, limit).trimEnd() + "...";
+};
+
+/**
+ * This function checks if a given string is a valid MongoDB ObjectId.
+ * @param {string} id The string to check.
+ * @returns {boolean} True if the string is a valid MongoDB ObjectId, false otherwise.
+ */
+export const isValidMongoId = (id: string | undefined): boolean => {
+  if (typeof id !== "string") return false;
+  return /^[a-fA-F0-9]{24}$/.test(id);
 };
