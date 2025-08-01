@@ -157,7 +157,7 @@ const ActivityItem: FC<ActivityItemProps> = ({
   };
 
   return (
-    <Card size="small" className="activity-item">
+    <Card size="small" className="activity-item" hoverable>
       <Row gutter={4} justify={"space-between"}>
         <Col span={2}>
           <Avatar>{getInitials(item.activity.createdBy.userName)}</Avatar>

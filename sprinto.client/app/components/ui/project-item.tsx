@@ -1,13 +1,14 @@
 import { Avatar, Card, Col, Flex, Row, Tag, Typography } from "antd";
-import type { FC, ReactNode } from "react";
 import advancedFormat from "dayjs/plugin/advancedFormat";
 import utc from "dayjs/plugin/utc";
-import ToolTip from "./tooltip";
+import type { FC, ReactNode } from "react";
+import { ArchiveIcon } from "~/lib/icons";
 import { getInitials, truncateText } from "~/lib/utils";
-import { ArchiveIcon, CalenderIcon, HourGlassIcon } from "~/lib/icons";
+import ToolTip from "./tooltip";
 
-import "~/styles/items.css";
 import dayjs from "dayjs";
+import "~/styles/items.css";
+import ProjectTiming from "./project-timing";
 
 dayjs.extend(utc);
 dayjs.extend(advancedFormat);
@@ -55,24 +56,7 @@ const ProjectItem: FC<ProjectItemProps> = ({
           </Typography.Paragraph>
           <Flex align="center" justify="space-between">
             <Tag style={{ display: "flex", alignItems: "center", gap: 2 }}>
-              <CalenderIcon size={15} />
-              {project.startDate || project.deadline ? (
-                <>
-                  <span>
-                    {project.startDate
-                      ? dayjs.utc(project.startDate).format("Do MMMM")
-                      : "Not Started"}
-                  </span>
-                  <span style={{ margin: "0 4px" }}>—</span>
-                  <span>
-                    {project.deadline
-                      ? dayjs.utc(project.deadline).format("Do MMMM")
-                      : "Not Decided"}
-                  </span>
-                </>
-              ) : (
-                <span>Not Started Yet</span>
-              )}
+              <ProjectTiming proj={project} />
             </Tag>
             <Flex align="center">
               {project.assignees.map((assignee) => (

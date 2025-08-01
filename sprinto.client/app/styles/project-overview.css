@@ -7,7 +7,7 @@ h2.ant-typography {
   margin-top: 20px;
   background-color: #eaeaed !important;
   border-radius: 18px !important;
-  padding: 10px 4px 12px 12px !important;
+  padding: 10px 4px 12px 0 !important;
   width: 100%;
   min-height: 770px;
   max-height: 770px;
@@ -19,6 +19,7 @@ h2.ant-typography {
   min-height: 748px;
   max-height: 748px;
   overflow-y: hidden;
+  padding: 0 0 14px 12px !important;
 
   &:hover {
     overflow-y: auto;
