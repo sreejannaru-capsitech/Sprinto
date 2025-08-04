@@ -70,4 +70,28 @@ namespace Sprinto.Server.Models
         public string TaskId { get; set; } = null!;
         public Activity Activity { get; set; } = null!;
     }
+
+    public class TaskGroup
+    {
+        public string Group { get; set; } = null!;
+        public long Count {  get; set; }
+    }
+
+
+    public class ProjectOverview
+    {
+        public long Totaltasks { get; set; }
+
+        // Tasks whose status is marked as done.
+        public long PendingTasks { get; set; }
+
+        // Task count grouped by status
+        public List<TaskGroup> StatusGroups { get; set; } = [];
+
+        // Task count grouped by assignee
+        public List<TaskGroup> AssigneeGroups { get; set; } = [];
+
+        // last completed tasks
+        public List<TaskItem> LastCompleted { get; set; } = [];
+    }
 }

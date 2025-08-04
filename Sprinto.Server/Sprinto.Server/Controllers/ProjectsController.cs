@@ -137,6 +137,26 @@ namespace Sprinto.Server.Controllers
             return response;
         }
 
+        // Get overview statistics of a project
+        [HttpGet("{id}/overview")]
+        [Authorize]
+        public async Task<ApiResponse<ProjectOverview>>
+            GetProjectOverview(string id)
+        {
+            var response = new ApiResponse<ProjectOverview>();
+            try
+            {
+                var tasks = await _projectService.GetProjectOverviewAsync(id);
+                response.Message = Constants.Messages.Success;
+                response.Result = tasks;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
         [HttpGet("{id}/activities")]
         [Authorize]
         public async Task<ApiResponse<List<TaskActivity>>>

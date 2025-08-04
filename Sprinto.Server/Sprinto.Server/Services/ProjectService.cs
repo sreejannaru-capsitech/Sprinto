@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using Sprinto.Server.Common;
 using Sprinto.Server.DTOs;
@@ -184,6 +185,81 @@ namespace Sprinto.Server.Services
             {
                 _logger.LogError(ex, "Error retrieving tasks for project with id {ProjectId}", id);
                 throw new Exception("Could retrieve tasks for project");
+            }
+        }
+
+
+        // Get project overview stats
+        public async Task<ProjectOverview> GetProjectOverviewAsync(string id)
+        {
+            var res = new ProjectOverview();
+
+            try
+            {
+                var allTasks = await GetTaskItemsAsync(id);
+                res.Totaltasks = allTasks.Count;
+
+                // Completed tasks
+                var doneItems = allTasks
+                    .Where(t => t.Status.Title == "Done")
+                    .ToList();
+                res.PendingTasks = allTasks.Count - doneItems.Count;
+
+                // Status groups
+                res.StatusGroups = allTasks
+                    .GroupBy(t => t.Status.Title)
+                    .Select(g => new TaskGroup
+                    {
+                        Group = g.Key,
+                        Count = g.LongCount()
+                    })
+                    .ToList();
+
+                // Assignee groups (flattened from list)
+                res.AssigneeGroups = allTasks
+                    .SelectMany(t => t.Assignees)
+                    .Where(a => !string.IsNullOrWhiteSpace(a.Name))
+                    .GroupBy(a => a.Name)
+                    .Select(g => new TaskGroup
+                    {
+                        Group = g.Key,
+                        Count = g.LongCount()
+                    })
+                    .ToList();
+
+                // Last completed tasks based on status change to "Done"
+                res.LastCompleted = doneItems
+                    .Select(t =>
+                    {
+                        var doneActivity = t.Activities?
+                            .Where(a => a.Action == ActivityAction.StatusUpdated &&
+                                        a.Status?.Current?.Title == "Done")
+                            .OrderByDescending(a => ObjectId.Parse(a.Id).CreationTime)
+                            .FirstOrDefault();
+
+                        return new
+                        {
+                            Task = t,
+                            CompletedAt = doneActivity != null
+                                ? ObjectId.Parse(doneActivity.Id).CreationTime
+                                : DateTime.MinValue
+                        };
+                    })
+                    .OrderByDescending(x => x.CompletedAt)
+                    .Take(5)
+                    .Select(x => x.Task)
+                    .ToList();
+
+                return res;
+            }
+            catch (KeyNotFoundException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving overview for project with id {ProjectId}", id);
+                throw new Exception("Could not retrieve overview for project");
             }
         }
 
