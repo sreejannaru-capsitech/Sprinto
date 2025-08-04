@@ -40,10 +40,10 @@ const ActivityItem: FC<ActivityItemProps> = ({
         text += "changed the project from";
         break;
       case "AssigneeAdded":
-        text += "added assignee from";
+        text += "added";
         break;
       case "AssigneeRemoved":
-        text += "removed assignee from";
+        text += "removed";
         break;
       case "DuedateUpdated":
         text += "changed the due date from";
@@ -77,7 +77,9 @@ const ActivityItem: FC<ActivityItemProps> = ({
       case "DescUpdated":
         if (!activity.description) return "No description info";
         return isPrev
-          ? activity.description.previous ? truncateText(activity.description.previous, 20) : "No description"
+          ? activity.description.previous
+            ? truncateText(activity.description.previous, 20)
+            : "No description"
           : truncateText(activity.description.current, 20);
 
       case "ProjectUpdated":
@@ -127,18 +129,24 @@ const ActivityItem: FC<ActivityItemProps> = ({
     if (action === "AssigneeAdded") {
       // Show current only
       return (
-        <span className="value-container smaller-text">
-          {getValueText(action, activity, false)}
-        </span>
+        <>
+          <span className="value-container smaller-text">
+            {getValueText(action, activity, false)}
+          </span>
+          <span>to assignee</span>
+        </>
       );
     }
 
     if (action === "AssigneeRemoved") {
       // Show previous only
       return (
-        <span className="value-container smaller-text">
-          {getValueText(action, activity, true)}
-        </span>
+        <>
+          <span className="value-container smaller-text">
+            {getValueText(action, activity, true)}
+          </span>
+          <span>from assignee</span>
+        </>
       );
     }
 
@@ -176,10 +184,10 @@ const ActivityItem: FC<ActivityItemProps> = ({
             {getActivityText(item.activity, item.activity.createdBy.userName)}
             {renderActivityValue(item.activity)}
           </Typography.Paragraph>
-          <div style={{textAlign: "right"}}>
+          <div style={{ textAlign: "right" }}>
             <span className="smaller-text text-primary-dark">
               {dayjs(item.activity.createdBy.time).format(
-                "hh:mm A: Do MMM, YYYY"
+                "hh:mm A - Do MMM YYYY"
               )}
             </span>
           </div>
