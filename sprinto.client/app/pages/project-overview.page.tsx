@@ -1,13 +1,12 @@
 import {
   Avatar,
-  Card,
   Col,
   Flex,
   Row,
   Space,
   Statistic,
   Tag,
-  Typography,
+  Typography
 } from "antd";
 import dayjs from "dayjs";
 import { useMemo, type FC, type ReactNode } from "react";
@@ -21,8 +20,7 @@ import TaskContainer from "~/components/ui/task-container";
 import ToolTip from "~/components/ui/tooltip";
 import {
   useProjectActivitiesQuery,
-  useProjectOverviewQuery,
-  useProjectTasksQuery,
+  useProjectOverviewQuery
 } from "~/lib/server/services";
 import { getInitials } from "~/lib/utils";
 

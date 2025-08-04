@@ -6,7 +6,7 @@ h2.ant-typography {
   position: relative;
   margin-top: 20px;
   background-color: #eaeaed !important;
-  border-radius: 18px !important;
+  border-radius: 24px !important;
   padding: 10px 4px 12px 0 !important;
   width: 100%;
   min-height: 770px;
@@ -16,8 +16,8 @@ h2.ant-typography {
 
 .activity-container-inner {
   width: 100%;
-  min-height: 748px;
-  max-height: 748px;
+  min-height: 740px;
+  max-height: 740px;
   overflow-y: hidden;
   padding: 0 0 14px 12px !important;
 
@@ -30,7 +30,7 @@ h2.ant-typography {
   margin-top: 20px;
   padding: 28px;
   background-color: var(--primary-light-color) !important;
-  border-radius: 18px !important;
+  border-radius: 24px !important;
   max-height: 220px;
   min-height: 220px;
 }

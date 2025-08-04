@@ -121,10 +121,12 @@ const TaskItem: FC<TaskItemProps> = ({
                 }}
               >
                 <CalenderIcon
-                  fill={isOverdue ? "#e05151" : "#141B34"}
+                  // fill={isOverdue ? "#e05151" : "#141B34"}
                   size={16}
                 />
-                <span style={{ color: isOverdue ? "#e05151" : "" }}>
+                <span
+                // style={{ color: isOverdue ? "#e05151" : "" }}
+                >
                   {dueDate}
                 </span>
               </Tag>
