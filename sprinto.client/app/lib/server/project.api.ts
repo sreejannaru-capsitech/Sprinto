@@ -26,3 +26,10 @@ export const getProjectTasks = async (projectId: string) => {
   );
   return data;
 };
+
+export const getProjectOverview = async (projectId: string) => {
+  const { data } = await axiosApi.get<ApiResponse<ProjectOverview>>(
+    `/projects/${projectId}/overview`
+  );
+  return data;
+};

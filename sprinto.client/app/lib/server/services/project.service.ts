@@ -1,12 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import {
   PROJECT_ACTIVITIES_KEY,
+  PROJECT_OVERVIEW_KEY,
   PROJECT_TASKS_KEY,
   PROJECTS_KEY,
   STALE_TIME,
 } from "~/lib/const";
 import {
   getProjectActivities,
+  getProjectOverview,
   getProjects,
   getProjectTasks,
 } from "../project.api";
@@ -31,6 +33,14 @@ export const useProjectTasksQuery = (projectId: string) => {
   return useQuery({
     queryKey: [PROJECT_TASKS_KEY, projectId],
     queryFn: () => getProjectTasks(projectId),
+    staleTime: STALE_TIME,
+  });
+};
+
+export const useProjectOverviewQuery = (projectId: string) => {
+  return useQuery({
+    queryKey: [PROJECT_OVERVIEW_KEY, projectId],
+    queryFn: () => getProjectOverview(projectId),
     staleTime: STALE_TIME,
   });
 };
