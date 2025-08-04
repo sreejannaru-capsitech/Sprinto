@@ -1,23 +1,24 @@
-import { Button, Flex } from "antd";
+import { Button, Flex, Typography } from "antd";
 import { useMemo, type ReactNode } from "react";
 import { useParams, type MetaArgs } from "react-router";
 import Spinner from "~/components/ui/spinner";
+import { TaskIcon } from "~/lib/icons";
 import { useProjectsQuery } from "~/lib/server/services";
 import { isValidMongoId } from "~/lib/utils";
-import ProjectOverview from "~/pages/project-overview.page";
+import ProjectTasksPage from "~/pages/project-tasks.page";
 
 export const meta = ({}: MetaArgs) => {
   return [
-    { title: "Overview — Sprinto" },
-    { name: "description", content: "View and manage your project overview" },
+    { title: "Tasks — Sprinto" },
+    { name: "description", content: "View and manage tasks for your project" },
   ];
 };
 
 /**
- * This component renders project-overview section
- * @returns {ReactNode} The Overview component
+ * This component renders project-tasks section
+ * @returns {ReactNode} The ProjectTasks component
  */
-const Overview = (): ReactNode => {
+const ProjectTasks = (): ReactNode => {
   const { projectId } = useParams();
   const { data, isPending } = useProjectsQuery();
 
@@ -29,7 +30,19 @@ const Overview = (): ReactNode => {
   return (
     <Spinner isActive={isPending}>
       {project ? (
-        <ProjectOverview proj={project} />
+        <>
+          <Flex align="center" gap={6}>
+            <TaskIcon size={36} />
+            <Typography.Title
+              level={2}
+              className="text-primary-dark"
+              style={{ margin: 0 }}
+            >
+              Tasks
+            </Typography.Title>
+          </Flex>
+          <ProjectTasksPage proj={project} />
+        </>
       ) : (
         <Flex align="center" gap={10}>
           <Button onClick={() => window.history.back()}>Back</Button>
@@ -40,4 +53,4 @@ const Overview = (): ReactNode => {
   );
 };
 
-export default Overview;
+export default ProjectTasks;

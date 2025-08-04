@@ -14,6 +14,7 @@ export default [
     route("upcoming", "routes/upcoming.tsx"),
     route("projects", "routes/projects.tsx"),
     route("projects/:projectId", "routes/project-overview.tsx"),
+    route("projects/:projectId/tasks", "routes/project-tasks.tsx"),
     // route("projects/:id/tasks", "routes/project-tasks.tsx"),
     // route("projects/:id/teams", "routes/project-teams.tsx"),
   ]),
