@@ -94,4 +94,10 @@ namespace Sprinto.Server.Models
         // last completed tasks
         public List<TaskItem> LastCompleted { get; set; } = [];
     }
+
+    public class ProjectTeam
+    {
+        public UserResponse TeamLead { get; set; } = null!;
+        public List<UserResponse> Employees { get; set; } = [];
+    }
 }

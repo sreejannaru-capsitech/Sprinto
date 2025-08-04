@@ -3,6 +3,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using Sprinto.Server.Common;
 using Sprinto.Server.DTOs;
+using Sprinto.Server.Extensions;
 using Sprinto.Server.Models;
 
 namespace Sprinto.Server.Services
@@ -11,6 +12,7 @@ namespace Sprinto.Server.Services
     {
         private readonly IMongoCollection<Project> _projects;
         private readonly IMongoCollection<TaskItem> _tasks;
+        private readonly IMongoCollection<User> _users;
         private readonly ILogger<ProjectService> _logger;
 
         public ProjectService(IMongoClient mongoCLient,
@@ -21,6 +23,7 @@ namespace Sprinto.Server.Services
 
             _projects = mongoDB.GetCollection<Project>(dbsettings.Value.ProjectsCollection);
             _tasks = mongoDB.GetCollection<TaskItem>(dbsettings.Value.TasksCollection);
+            _users = mongoDB.GetCollection<User>(dbsettings.Value.UsersCollection);
             _logger = logger;
         }
 
@@ -297,6 +300,33 @@ namespace Sprinto.Server.Services
             }
         }
 
+        // Get project team informations
+        public async Task<ProjectTeam> GetProjectTeamAsync(string id)
+        {
+            try
+            {
+                var project = await GetAsync(id)
+                    ?? throw new KeyNotFoundException(Constants.Messages.NotFound);
+
+                var res = new ProjectTeam();
+
+                var assigneeIds = project.Assignees.Select(a => a.Id).ToList();
+
+                var filter = Builders<User>.Filter.In(u => u.Id, assigneeIds);
+                var users = await _users.Find(filter).ToListAsync();
+                var tl = await _users.Find(a => a.Id == project.TeamLead.Id).FirstOrDefaultAsync();
+
+                res.TeamLead = tl.ToUserResponse();
+                res.Employees = [.. users.Select(u => u.ToUserResponse())];
+
+                return res;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving team for project with id {id}", id);
+                throw new Exception("Could not retrieve the project team");
+            }
+        }
 
         /// <summary>
         /// Deletes the project with the specified ID.

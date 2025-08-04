@@ -157,6 +157,27 @@ namespace Sprinto.Server.Controllers
             return response;
         }
 
+        // Get project team informations
+        [HttpGet("{id}/team")]
+        [Authorize]
+        public async Task<ApiResponse<ProjectTeam>>
+            GetProjectTeam(string id)
+        {
+            var response = new ApiResponse<ProjectTeam>();
+            try
+            {
+                var team = await _projectService.GetProjectTeamAsync(id);
+                response.Message = Constants.Messages.Success;
+                response.Result = team;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
+
         [HttpGet("{id}/activities")]
         [Authorize]
         public async Task<ApiResponse<List<TaskActivity>>>
