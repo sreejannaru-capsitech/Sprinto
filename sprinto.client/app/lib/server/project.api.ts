@@ -33,3 +33,10 @@ export const getProjectOverview = async (projectId: string) => {
   );
   return data;
 };
+
+export const getProjectTeam = async (projectId: string) => {
+  const { data } = await axiosApi.get<ApiResponse<ProjectTeam>>(
+    `/projects/${projectId}/team`
+  );
+  return data;
+};

@@ -10,6 +10,14 @@
   background-color: white !important;
 }
 
+.member-item {
+  border-radius: 18px;
+  background-color: var(--primary-light-color) !important;
+  width: 600px;
+  padding-left: 5px;
+  padding-right: 10px;
+}
+
 .activity-item.ant-card-bordered:hover {
   border: 1px solid var(--border-color) !important;
 }
@@ -63,6 +71,19 @@
   max-height: 680px;
   overflow-y: hidden;
   padding: 6px 10px 14px 10px;
+
+  &:hover {
+    overflow-y: auto;
+  }
+}
+
+.team-member-container {
+  min-width : 630px;
+  max-width : 630px;
+  max-height: 600px;
+  overflow-y: hidden;
+  padding: 6px 10px 14px 10px;
+  margin-left: -10px;
 
   &:hover {
     overflow-y: auto;

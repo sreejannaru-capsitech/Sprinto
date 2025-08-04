@@ -157,13 +157,13 @@ const EmployeeSidebar = (): ReactNode => {
           icon: <TaskIcon size={20} />,
         },
         {
-          key: `${project.id}-teams`,
+          key: `${project.id}-team`,
           label: (
             <NavLink
               style={menuItemStyle}
-              to={"/projects/" + project.id + "/teams"}
+              to={"/projects/" + project.id + "/team"}
             >
-              Teams
+              Team
             </NavLink>
           ),
           icon: <UsersIcon size={20} />,

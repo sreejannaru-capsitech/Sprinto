@@ -40,3 +40,8 @@ interface ProjectOverview {
   assigneeGroups: TaskGroup[];
   lastCompleted: Task[];
 }
+
+interface ProjectTeam {
+  teamLead: User;
+  employees: User[];
+}
