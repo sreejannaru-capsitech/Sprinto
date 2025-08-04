@@ -28,7 +28,7 @@ h1.ant-typography {
 /* Avatar */
 
 .ant-avatar {
-  background: var(--solid-gray-light) !important;
+  background: #5f5f5f !important;
 }
 
 /* Modal Styles */
@@ -175,7 +175,7 @@ h1.ant-typography {
 }
 
 .animate-spin {
-  animation: spin 0.75s linear infinite;
+  animation: spin 0.65s linear infinite;
 }
 
 /* Scrollbar */

@@ -31,8 +31,8 @@ h2.ant-typography {
   padding: 28px;
   background-color: var(--primary-light-color) !important;
   border-radius: 18px !important;
-  min-height: 200px;
-  max-height: 200px;
+  max-height: 220px;
+  min-height: 220px;
 }
 
 .value-container {

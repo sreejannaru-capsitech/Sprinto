@@ -8,6 +8,7 @@ interface TaskContainerProps {
   tasks: Task[] | undefined;
   setTask: Dispatch<SetStateAction<Task | undefined>>;
   text: string;
+  height?: number;
 }
 
 /**
@@ -19,6 +20,7 @@ const TaskContainer: FC<TaskContainerProps> = ({
   tasks,
   setTask,
   text,
+  height = 680,
 }: TaskContainerProps): ReactNode => {
   return (
     <>
@@ -31,7 +33,12 @@ const TaskContainer: FC<TaskContainerProps> = ({
           >
             {text}
           </Typography.Title>
-          <Space direction="vertical" size={16} className="task-container">
+          <Space
+            direction="vertical"
+            size={16}
+            style={{ maxHeight: `${height}px` }}
+            className="task-container"
+          >
             {tasks.map((task) => (
               <TaskItem key={task.id} task={task} setTask={setTask} />
             ))}

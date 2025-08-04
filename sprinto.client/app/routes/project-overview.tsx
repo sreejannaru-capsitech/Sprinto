@@ -1,9 +1,17 @@
+import { Button, Flex } from "antd";
 import { useMemo, type ReactNode } from "react";
-import { useParams } from "react-router";
+import { useParams, type MetaArgs } from "react-router";
 import Spinner from "~/components/ui/spinner";
 import { useProjectsQuery } from "~/lib/server/services";
 import { isValidMongoId } from "~/lib/utils";
 import ProjectOverview from "~/pages/project-overview.page";
+
+export const meta = ({}: MetaArgs) => {
+  return [
+    { title: "Project Overview — Sprinto" },
+    { name: "description", content: "View and manage your project overview" },
+  ];
+};
 
 /**
  * This component renders project-overview section
@@ -23,7 +31,10 @@ const Overview = (): ReactNode => {
       {project ? (
         <ProjectOverview proj={project} />
       ) : (
-        <div>Project not found</div>
+        <Flex align="center" gap={10}>
+          <Button onClick={() => window.history.back()}>Back</Button>
+          <div>The project does not exist</div>
+        </Flex>
       )}
     </Spinner>
   );
