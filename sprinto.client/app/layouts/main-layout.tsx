@@ -1,10 +1,13 @@
 import { Breadcrumb, Layout, Space, Tag } from "antd";
-import { type FC, type ReactNode } from "react";
+import { useEffect, type FC, type ReactNode } from "react";
+import { useDispatch } from "react-redux";
 import { Navigate, Outlet } from "react-router";
 import AdminSidebar from "~/components/sidebar/admin-sidebar";
 import EmployeeSidebar from "~/components/sidebar/employee-sidebar";
 import Spinner from "~/components/ui/spinner";
 import { useProfileQuery, useProjectsQuery } from "~/lib/server/services";
+import type { AppDispatch } from "~/lib/store/store";
+import { setToken, setUser } from "~/lib/store/userSlice";
 import NoProject from "~/pages/no-project";
 
 const { Header, Content, Sider } = Layout;
@@ -21,6 +24,17 @@ interface ProjectCheckerProps {
 const MainLayout = (): ReactNode => {
   // Fetch the profile and access token from the server
   const { data, isPending } = useProfileQuery();
+
+  const dispatch: AppDispatch = useDispatch();
+
+  // Set the user and token in the store
+  useEffect(() => {
+    if (isPending || !data?.result) {
+      return;
+    }
+    dispatch(setUser(data?.result?.user));
+    dispatch(setToken(data?.result?.accessToken));
+  }, [data?.result, isPending]);
 
   const role = data?.result?.user.role;
 

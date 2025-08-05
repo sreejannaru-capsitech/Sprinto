@@ -7,15 +7,14 @@ import {
   ScrollRestoration,
 } from "react-router";
 
-import {
-  QueryClientProvider
-} from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 
 import { ConfigProvider } from "antd";
 import "~/styles/main.css";
 import type { Route } from "./+types/root";
 import { queryClient } from "./lib/server";
-
+import { Provider } from "react-redux";
+import { store } from "./lib/store/store";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -60,7 +59,9 @@ export default function App() {
       }}
     >
       <QueryClientProvider client={queryClient}>
-        <Outlet />
+        <Provider store={store}>
+          <Outlet />
+        </Provider>
       </QueryClientProvider>
     </ConfigProvider>
   );
