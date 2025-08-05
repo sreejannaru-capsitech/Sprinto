@@ -35,6 +35,15 @@ h2.ant-typography {
   min-height: 220px;
 }
 
+.task-description {
+  margin-top: 20px;
+  padding: 28px;
+  background-color: var(--primary-light-color) !important;
+  border-radius: 24px !important;
+  max-height: 180px;
+  min-height: 180px;
+}
+
 .value-container {
   padding: 2px 4px;
   background-color: #eaeaed !important;

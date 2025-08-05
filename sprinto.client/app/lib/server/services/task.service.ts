@@ -3,19 +3,20 @@ import type { NotificationApi } from "~/hooks/useAntNotification";
 import {
   INBOX_TASKS_KEY,
   STALE_TIME,
-  TASKS_KEY,
+  TASK_ACTIVITIES_KEY,
   TODAY_TASKS_KEY,
   UPCOMING_TASKS_KEY,
 } from "~/lib/const";
 // import { queryClient } from "../queryClient";
+import { handleApiError } from "~/lib/utils";
 import {
   createTask,
   getInboxTasks,
+  getTaskActivities,
   getTodayTasks,
   getUpcomingTasks,
   updateTask,
 } from "../task.api";
-import { handleApiError } from "~/lib/utils";
 
 export const useCreateTask = (_api: NotificationApi) => {
   const queryClient = useQueryClient();
@@ -74,6 +75,14 @@ export const useUpcomingTasksQuery = () => {
   return useQuery({
     queryKey: [UPCOMING_TASKS_KEY],
     queryFn: getUpcomingTasks,
+    staleTime: STALE_TIME,
+  });
+};
+
+export const useTaskActivitiesQuery = (taskId: string) => {
+  return useQuery({
+    queryKey: [TASK_ACTIVITIES_KEY, taskId],
+    queryFn: () => getTaskActivities(taskId),
     staleTime: STALE_TIME,
   });
 };

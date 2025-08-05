@@ -8,6 +8,7 @@ export const TEAM_LEADS_KEY = "teamLeads" as const;
 export const ADMINS_KEY = "admins" as const;
 export const STATUSES_KEY = "statuses" as const;
 export const TASKS_KEY = "tasks" as const;
+export const TASK_ACTIVITIES_KEY = "taskActivities" as const;
 export const TODAY_TASKS_KEY = "todayTasks" as const;
 export const INBOX_TASKS_KEY = "inboxTasks" as const;
 export const UPCOMING_TASKS_KEY = "upcomingTasks" as const;

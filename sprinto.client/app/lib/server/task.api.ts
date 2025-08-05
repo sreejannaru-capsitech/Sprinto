@@ -26,6 +26,15 @@ export const getInboxTasks = async () => {
 };
 
 export const getUpcomingTasks = async () => {
-  const { data } = await axiosApi.get<ApiResponse<ProjectTaskGroup[]>>("/tasks/upcoming");
+  const { data } = await axiosApi.get<ApiResponse<ProjectTaskGroup[]>>(
+    "/tasks/upcoming"
+  );
+  return data;
+};
+
+export const getTaskActivities = async (taskId: string) => {
+  const { data } = await axiosApi.get<ApiResponse<Activity[]>>(
+    `/tasks/${taskId}/activities`
+  );
   return data;
 };
