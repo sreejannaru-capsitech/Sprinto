@@ -26,3 +26,10 @@ export const getAdmins = async () => {
   );
   return data;
 };
+
+export const searchUsers = async (query: string) => {
+  const { data } = await axiosApi.get<ApiResponse<User[]>>(
+    `/users/search?name=${query}`
+  );
+  return data;
+};

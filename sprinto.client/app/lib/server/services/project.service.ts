@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
+import type { NotificationApi } from "~/hooks/useAntNotification";
 import {
   PROJECT_ACTIVITIES_KEY,
   PROJECT_OVERVIEW_KEY,
@@ -7,7 +8,9 @@ import {
   PROJECTS_KEY,
   STALE_TIME,
 } from "~/lib/const";
+import { handleApiError } from "~/lib/utils";
 import {
+  addMembers,
   getProjectActivities,
   getProjectOverview,
   getProjects,
@@ -15,9 +18,6 @@ import {
   getProjectTeam,
   removeMember,
 } from "../project.api";
-import { handleApiError } from "~/lib/utils";
-import type { NotificationApi } from "~/hooks/useAntNotification";
-import type { A } from "node_modules/react-router/dist/development/route-data-DjzmHYNR.mjs";
 
 export const useProjectsQuery = () => {
   return useQuery({
@@ -47,7 +47,7 @@ export const useProjectOverviewQuery = (projectId: string) => {
   return useQuery({
     queryKey: [PROJECT_OVERVIEW_KEY, projectId],
     queryFn: () => getProjectOverview(projectId),
-    
+
     staleTime: STALE_TIME,
   });
 };
@@ -75,6 +75,25 @@ export const useRemoveMember = (_api: NotificationApi) => {
     },
     onError: (error) => {
       handleApiError(error, _api, "Could not remove member");
+    },
+  });
+};
+
+type MemberAddPayload = {
+  projectId: string;
+  memberIds: string[];
+};
+
+export const useAddMembers = (_api: NotificationApi) => {
+  return useMutation<ApiResponse<null>, Error, MemberAddPayload>({
+    mutationFn: async ({ projectId, memberIds }) => {
+      return await addMembers(projectId, memberIds);
+    },
+    onSuccess: () => {
+      _api({ message: "Members added successfully", type: "success" });
+    },
+    onError: (error) => {
+      handleApiError(error, _api, "Could not add members");
     },
   });
 };

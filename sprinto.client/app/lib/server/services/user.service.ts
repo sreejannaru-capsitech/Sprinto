@@ -5,8 +5,9 @@ import {
   PROFILE_KEY,
   STALE_TIME,
   TEAM_LEADS_KEY,
+  USERS_SEARCH_KEY,
 } from "~/lib/const";
-import { getEmployees, getTeamLeads } from "../user.api";
+import { getEmployees, getTeamLeads, searchUsers } from "../user.api";
 
 export const useProfileQuery = () => {
   return useQuery({
@@ -29,5 +30,12 @@ export const useTeamLeadsQuery = () => {
     queryKey: [TEAM_LEADS_KEY],
     queryFn: getTeamLeads,
     staleTime: STALE_TIME,
+  });
+};
+
+export const useUserSearchQuery = (query: string) => {
+  return useQuery({
+    queryKey: [USERS_SEARCH_KEY, query],
+    queryFn: () => searchUsers(query),
   });
 };

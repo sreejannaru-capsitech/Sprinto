@@ -21,13 +21,13 @@ const ProjectTiming: FC<ProjectTimingProps> = ({
         <>
           <span>
             {proj.startDate
-              ? dayjs.utc(proj.startDate).format("Do MMMM")
+              ? dayjs.utc(proj.startDate).format("Do MMM YYYY")
               : "Not Started"}
           </span>
           <span style={{ margin: "0 4px" }}>—</span>
           <span>
             {proj.deadline
-              ? dayjs.utc(proj.deadline).format("Do MMMM")
+              ? dayjs.utc(proj.deadline).format("Do MMM YYYY")
               : "Not Decided"}
           </span>
         </>

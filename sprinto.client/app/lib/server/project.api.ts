@@ -49,3 +49,12 @@ export const removeMember = async (projectId: string, memberId: string) => {
   );
   return data;
 };
+
+export const addMembers = async (projectId: string, memberIds: string[]) => {
+  const { data } = await axiosApi.post<ApiResponse<null>>(
+    `/projects/${projectId}/team`,
+    memberIds,
+    { headers: { "Content-Type": "application/json" } }
+  );
+  return data;
+};

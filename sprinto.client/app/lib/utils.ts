@@ -91,3 +91,15 @@ export const isValidMongoId = (id: string | undefined): boolean => {
   if (typeof id !== "string") return false;
   return /^[a-fA-F0-9]{24}$/.test(id);
 };
+
+/**
+ * This function converts user objects to SelectOption objects.
+ * @param {User[]} users - An array of user objects.
+ * @returns {SelectOptions[]} An array of SelectOption objects representing the users.
+ */
+export const getOptionsFromUsers = (users: User[]): SelectOptions[] => {
+  return users.map((user) => ({
+    label: user.name,
+    value: user.id,
+  }));
+};
