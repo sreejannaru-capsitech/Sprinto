@@ -61,7 +61,6 @@ const ProjectTasksPage: FC<ProjectTasksProps> = ({
               key={g.status}
               text={g.status}
               tasks={g.tasks}
-              setTask={() => {}}
             />
           ))}
         </Flex>

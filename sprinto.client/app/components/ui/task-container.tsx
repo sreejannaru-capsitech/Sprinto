@@ -1,12 +1,11 @@
 import { Space, Typography } from "antd";
-import type { Dispatch, FC, ReactNode, SetStateAction } from "react";
+import type { FC, ReactNode } from "react";
 
 import "~/styles/items.css";
 import TaskItem from "./task-item";
 
 interface TaskContainerProps {
   tasks: Task[] | undefined;
-  setTask: Dispatch<SetStateAction<Task | undefined>>;
   text: string;
   height?: number;
 }
@@ -18,7 +17,6 @@ interface TaskContainerProps {
  */
 const TaskContainer: FC<TaskContainerProps> = ({
   tasks,
-  setTask,
   text,
   height = 680,
 }: TaskContainerProps): ReactNode => {
@@ -40,7 +38,7 @@ const TaskContainer: FC<TaskContainerProps> = ({
             className="task-container"
           >
             {tasks.map((task) => (
-              <TaskItem key={task.id} task={task} setTask={setTask} />
+              <TaskItem key={task.id} task={task} />
             ))}
           </Space>
         </div>

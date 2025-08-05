@@ -1,6 +1,5 @@
 import { Flex } from "antd";
-import { useMemo, useState, type ReactNode } from "react";
-import TaskForm from "~/components/forms/task-form";
+import { useMemo, type ReactNode } from "react";
 import NoData from "~/components/ui/no-data";
 import Spinner from "~/components/ui/spinner";
 import TaskContainer from "~/components/ui/task-container";
@@ -12,8 +11,6 @@ import { useTodayTaskQuery } from "~/lib/server/services";
  */
 const TodayPageComponent = (): ReactNode => {
   const { data, isPending } = useTodayTaskQuery();
-
-  const [editingTask, setEditingTask] = useState<Task | undefined>(undefined);
 
   const { overdue, today } = useMemo(() => {
     return {
@@ -28,18 +25,12 @@ const TodayPageComponent = (): ReactNode => {
         <NoData text="You don't have any task today" />
       ) : (
         <Flex style={{ marginTop: "1rem" }} gap={30}>
-          <TaskForm
-            onClose={() => setEditingTask(undefined)}
-            open={!!editingTask}
-            task={editingTask}
-          />
 
           <TaskContainer
             text="Overdue"
             tasks={overdue}
-            setTask={setEditingTask}
           />
-          <TaskContainer text="Today" tasks={today} setTask={setEditingTask} />
+          <TaskContainer text="Today" tasks={today} />
         </Flex>
       )}
     </Spinner>

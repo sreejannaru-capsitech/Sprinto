@@ -2,13 +2,7 @@ import { Avatar, Card, Col, Flex, Row, Tag, Typography } from "antd";
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
 import utc from "dayjs/plugin/utc";
-import {
-  useMemo,
-  type Dispatch,
-  type FC,
-  type ReactNode,
-  type SetStateAction,
-} from "react";
+import { useMemo, type FC, type ReactNode } from "react";
 import { CalenderIcon, HighIcon, LowIcon, MediumIcon } from "~/lib/icons";
 import { getInitials, truncateText } from "~/lib/utils";
 
@@ -17,11 +11,11 @@ dayjs.extend(advancedFormat);
 
 import "~/styles/items.css";
 import ToolTip from "./tooltip";
+import { NavLink } from "react-router";
 
 interface TaskItemProps {
   task: Task;
   isToday?: boolean;
-  setTask: Dispatch<SetStateAction<Task | undefined>>;
 }
 
 /**
@@ -32,7 +26,6 @@ interface TaskItemProps {
 const TaskItem: FC<TaskItemProps> = ({
   task,
   isToday = false,
-  setTask,
 }: TaskItemProps): ReactNode => {
   const dueDate = useMemo(() => {
     if (dayjs.utc(task.dueDate).isSame(dayjs.utc(), "day")) {
@@ -46,95 +39,98 @@ const TaskItem: FC<TaskItemProps> = ({
   }, [task.dueDate]);
 
   return (
-    <Card
-      hoverable
-      size="small"
-      className="task-item"
-      onClick={() => setTask(task)}
-    >
-      <Flex align="center" justify="space-between" className="task-item-header">
-        <Typography.Text className="text-primary font-bolder smaller-text">
-          {task.projectAlias}-{task.sequence}
-        </Typography.Text>
+    <NavLink to={`/projects/${task.projectId}/tasks/${task.id}`}>
+      <Card hoverable size="small" className="task-item">
+        <Flex
+          align="center"
+          justify="space-between"
+          className="task-item-header"
+        >
+          <Typography.Text className="text-primary font-bolder smaller-text">
+            {task.projectAlias}-{task.sequence}
+          </Typography.Text>
 
-        <div>
-          {task.assignees.map((assignee) => (
-            <Avatar.Group
-              key={assignee.id}
-              max={{
-                count: 2,
-                style: { color: "black", backgroundColor: "white" },
-              }}
-            >
-              <Avatar size={18}>
-                <ToolTip title={assignee.name}>
-                  <span className="small-text">
-                    {getInitials(assignee.name)}
-                  </span>
-                </ToolTip>
-              </Avatar>
-            </Avatar.Group>
-          ))}
-        </div>
-      </Flex>
-      <Row gutter={0}>
-        <Col span={2}>
-          <ToolTip
-            title={
-              task.priority.charAt(0).toUpperCase() +
-              task.priority.slice(1) +
-              " Priority"
-            }
-          >
-            <span>
-              {task.priority === "low" ? (
-                <LowIcon size={22} />
-              ) : task.priority === "medium" ? (
-                <MediumIcon size={22} />
-              ) : (
-                <HighIcon size={22} />
-              )}
-            </span>
-          </ToolTip>
-        </Col>
-        <Col span={21}>
-          <Typography.Text className="font-bold">{task.title}</Typography.Text>
-          <Typography.Paragraph className="text-primary">
-            {task.description ? (
-              <ToolTip title={task.description}>
-                <span>{truncateText(task.description, 35)}</span>
-              </ToolTip>
-            ) : (
-              ""
-            )}
-          </Typography.Paragraph>
-          <Flex align="center" gap={4}>
-            <Tag>{task.status.title}</Tag>
-
-            {!isToday && (
-              <Tag
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 2,
-                  borderColor: isOverdue ? "" : "",
+          <div>
+            {task.assignees.map((assignee) => (
+              <Avatar.Group
+                key={assignee.id}
+                max={{
+                  count: 2,
+                  style: { color: "black", backgroundColor: "white" },
                 }}
               >
-                <CalenderIcon
-                  // fill={isOverdue ? "#e05151" : "#141B34"}
-                  size={16}
-                />
-                <span
-                // style={{ color: isOverdue ? "#e05151" : "" }}
+                <Avatar size={18}>
+                  <ToolTip title={assignee.name}>
+                    <span className="small-text">
+                      {getInitials(assignee.name)}
+                    </span>
+                  </ToolTip>
+                </Avatar>
+              </Avatar.Group>
+            ))}
+          </div>
+        </Flex>
+        <Row gutter={0}>
+          <Col span={2}>
+            <ToolTip
+              title={
+                task.priority.charAt(0).toUpperCase() +
+                task.priority.slice(1) +
+                " Priority"
+              }
+            >
+              <span>
+                {task.priority === "low" ? (
+                  <LowIcon size={22} />
+                ) : task.priority === "medium" ? (
+                  <MediumIcon size={22} />
+                ) : (
+                  <HighIcon size={22} />
+                )}
+              </span>
+            </ToolTip>
+          </Col>
+          <Col span={21}>
+            <Typography.Text className="font-bold">
+              {task.title}
+            </Typography.Text>
+            <Typography.Paragraph className="text-primary">
+              {task.description ? (
+                <ToolTip title={task.description}>
+                  <span>{truncateText(task.description, 35)}</span>
+                </ToolTip>
+              ) : (
+                ""
+              )}
+            </Typography.Paragraph>
+            <Flex align="center" gap={4}>
+              <Tag>{task.status.title}</Tag>
+
+              {!isToday && (
+                <Tag
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 2,
+                    borderColor: isOverdue ? "" : "",
+                  }}
                 >
-                  {dueDate}
-                </span>
-              </Tag>
-            )}
-          </Flex>
-        </Col>
-      </Row>
-    </Card>
+                  <CalenderIcon
+                    // fill={isOverdue ? "#e05151" : "#141B34"}
+                    size={16}
+                  />
+                  <span
+                  // style={{ color: isOverdue ? "#e05151" : "" }}
+                  >
+                    {dueDate}
+                  </span>
+                </Tag>
+              )}
+            </Flex>
+          </Col>
+        </Row>
+      </Card>
+    </NavLink>
   );
 };
 

@@ -1,8 +1,7 @@
 import { Flex, Row } from "antd";
 import dayjs from "dayjs";
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
 import { useSelector } from "react-redux";
-import TaskForm from "~/components/forms/task-form";
 import NoData from "~/components/ui/no-data";
 import ProjectItem from "~/components/ui/project-item";
 import ProjectsContainer from "~/components/ui/projects-container";
@@ -19,8 +18,6 @@ const UpcomingPageComponent = (): ReactNode => {
   const { data, isPending } = useUpcomingTasksQuery();
   const { data: projects } = useProjectsQuery();
   const user = useSelector((state: RootState) => state.user.user);
-
-  const [editingTask, setEditingTask] = useState<Task | undefined>(undefined);
 
   const upcomingProjects = useMemo(() => {
     if (!data?.result?.length || !projects?.result?.length) {
@@ -57,18 +54,11 @@ const UpcomingPageComponent = (): ReactNode => {
             style={{ marginTop: `${user?.role !== "employee" ? 1 : 2}rem` }}
             gap={30}
           >
-            <TaskForm
-              onClose={() => setEditingTask(undefined)}
-              open={!!editingTask}
-              task={editingTask}
-            />
-
             {data.result.map((group) => (
               <TaskContainer
                 height={user?.role !== "employee" ? 410 : undefined}
                 text={group.projectTitle}
                 tasks={group.tasks}
-                setTask={setEditingTask}
                 key={group.projectId}
               />
             ))}

@@ -147,7 +147,7 @@ const ProjectOverview: FC<ProjectOverviewProps> = ({
                       100
                     : 0
                 }
-                precision={2}
+                precision={1}
                 suffix={` %`}
               />
             </Flex>
@@ -158,7 +158,6 @@ const ProjectOverview: FC<ProjectOverviewProps> = ({
                 <TaskContainer
                   text="Last Completed Tasks"
                   tasks={overview?.result?.lastCompleted ?? []}
-                  setTask={() => {}}
                   height={320}
                 />
               ) : (
