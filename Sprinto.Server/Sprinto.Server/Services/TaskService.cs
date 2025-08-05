@@ -266,6 +266,7 @@ namespace Sprinto.Server.Services
                         { "as", "project" }
                     }),
                     new("$unwind", "$project"),
+                    new("$sort", new BsonDocument("due_date", 1)),
                     new("$group", new BsonDocument
                     {
                         { "_id", "$project_id" },
