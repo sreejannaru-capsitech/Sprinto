@@ -1,9 +1,5 @@
-import { Button, Flex } from "antd";
-import { useMemo, type ReactNode } from "react";
-import { useParams, type MetaArgs } from "react-router";
-import Spinner from "~/components/ui/spinner";
-import { useProjectsQuery } from "~/lib/server/services";
-import { isValidMongoId } from "~/lib/utils";
+import { type ReactNode } from "react";
+import { type MetaArgs } from "react-router";
 import ProjectOverview from "~/pages/project-overview.page";
 
 export const meta = ({}: MetaArgs) => {
@@ -18,26 +14,7 @@ export const meta = ({}: MetaArgs) => {
  * @returns {ReactNode} The Overview component
  */
 const Overview = (): ReactNode => {
-  const { projectId } = useParams();
-  const { data, isPending } = useProjectsQuery();
-
-  const project = useMemo(() => {
-    if (!isValidMongoId(projectId)) return undefined;
-    return data?.result?.find((p) => p.id === projectId);
-  }, [data, projectId]);
-
-  return (
-    <Spinner isActive={isPending}>
-      {project ? (
-        <ProjectOverview proj={project} />
-      ) : (
-        <Flex align="center" gap={10}>
-          <Button onClick={() => window.history.back()}>Back</Button>
-          <div>The project does not exist</div>
-        </Flex>
-      )}
-    </Spinner>
-  );
+  return <ProjectOverview />;
 };
 
 export default Overview;

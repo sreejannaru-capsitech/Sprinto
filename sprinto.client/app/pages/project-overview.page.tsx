@@ -10,6 +10,7 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 import { useMemo, type FC, type ReactNode } from "react";
+import { useSelector } from "react-redux";
 import type { BarData, PieData } from "~/components/charts";
 import BarChart from "~/components/charts/bar.chart";
 import TaskStatusChart from "~/components/charts/pie.chart";
@@ -22,25 +23,22 @@ import {
   useProjectActivitiesQuery,
   useProjectOverviewQuery,
 } from "~/lib/server/services";
+import type { RootState } from "~/lib/store/store";
 import { getInitials } from "~/lib/utils";
 
 import "~/styles/project-overview.css";
-
-interface ProjectOverviewProps {
-  proj: Project;
-}
 
 /**
  * This component renders project-overview.page section
  * @param {ProjectOverviewProps} props
  * @returns {ReactNode} The ProjectOverview component
  */
-const ProjectOverview: FC<ProjectOverviewProps> = ({
-  proj,
-}: ProjectOverviewProps): ReactNode => {
-  const { data: activities } = useProjectActivitiesQuery(proj.id);
+const ProjectOverview = (): ReactNode => {
+  const proj = useSelector((state: RootState) => state.project.project);
+
+  const { data: activities } = useProjectActivitiesQuery(proj!.id);
   const { data: overview, isPending: overviewPending } =
-    useProjectOverviewQuery(proj.id);
+    useProjectOverviewQuery(proj!.id);
 
   const statusData: PieData[] = useMemo(() => {
     if (!overview?.result?.statusGroups) return [];
@@ -65,13 +63,13 @@ const ProjectOverview: FC<ProjectOverviewProps> = ({
           {/* Title and Timing */}
           <Flex align="center" gap={20}>
             <Typography.Title level={2}>
-              {proj.title}
+              {proj!.title}
               <span> — </span>
-              <span className="text-primary-dark">{proj.alias}</span>
+              <span className="text-primary-dark">{proj!.alias}</span>
             </Typography.Title>
 
             <Flex gap={4} align="center" justify="center">
-              <ProjectTiming proj={proj} />
+              <ProjectTiming proj={proj!} />
             </Flex>
           </Flex>
 
@@ -84,7 +82,7 @@ const ProjectOverview: FC<ProjectOverviewProps> = ({
                   style: { color: "black", backgroundColor: "white" },
                 }}
               >
-                {proj.assignees.map((assignee) => (
+                {proj!.assignees.map((assignee) => (
                   <Avatar key={assignee.id}>
                     <ToolTip title={assignee.name}>
                       <span className="small-text">
@@ -93,22 +91,22 @@ const ProjectOverview: FC<ProjectOverviewProps> = ({
                     </ToolTip>
                   </Avatar>
                 ))}
-                <Avatar key={proj.teamLead.id}>
-                  <ToolTip title={proj.teamLead.name}>
+                <Avatar key={proj!.teamLead.id}>
+                  <ToolTip title={proj!.teamLead.name}>
                     <span className="small-text">
-                      {getInitials(proj.teamLead.name)}
+                      {getInitials(proj!.teamLead.name)}
                     </span>
                   </ToolTip>
                 </Avatar>
               </Avatar.Group>
             </Flex>
             <Tag style={{ padding: "4px 8px", fontSize: 14, borderRadius: 9 }}>
-              Team Lead - {proj.teamLead.name}
+              Team Lead - {proj!.teamLead.name}
             </Tag>
           </Flex>
         </Flex>
         <div className="project-description">
-          <Typography.Paragraph>{proj.description}</Typography.Paragraph>
+          <Typography.Paragraph>{proj!.description}</Typography.Paragraph>
         </div>
 
         {/* Statistics Section */}

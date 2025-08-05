@@ -8,18 +8,14 @@ import { AlertIcon, UserRemoveIcon } from "~/lib/icons";
 import { useProjectTeamQuery, useRemoveMember } from "~/lib/server/services";
 import type { RootState } from "~/lib/store/store";
 
-interface ProjectTeamProps {
-  proj: Project;
-}
-
 /**
  * This component renders project-team.page section
  * @returns {ReactNode} The ProjectTeamPage component
  */
-const ProjectTeamPage: FC<ProjectTeamProps> = ({
-  proj,
-}: ProjectTeamProps): ReactNode => {
-  const { data, isPending } = useProjectTeamQuery(proj.id);
+const ProjectTeamPage = (): ReactNode => {
+  const proj = useSelector((state: RootState) => state.project.project);
+
+  const { data, isPending } = useProjectTeamQuery(proj!.id);
 
   const user = useSelector((state: RootState) => state.user.user);
 
@@ -29,6 +25,7 @@ const ProjectTeamPage: FC<ProjectTeamProps> = ({
 
   return (
     <Spinner isActive={isPending}>
+      {contextHolder}
       <div style={{ marginTop: "3rem" }}>
         <TeamMember member={data?.result?.teamLead!} />
         <Typography.Title
@@ -53,7 +50,7 @@ const ProjectTeamPage: FC<ProjectTeamProps> = ({
                     title="Are you sure you want to remove this member?"
                     icon={<AlertIcon size={18} />}
                     onConfirm={() =>
-                      removeMember({ projectId: proj.id, memberId: member.id })
+                      removeMember({ projectId: proj!.id, memberId: member.id })
                     }
                   >
                     <Button

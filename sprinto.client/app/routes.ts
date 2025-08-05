@@ -13,8 +13,12 @@ export default [
     route("inbox", "routes/inbox.tsx"),
     route("upcoming", "routes/upcoming.tsx"),
     route("projects", "routes/projects.tsx"),
-    route("projects/:projectId", "routes/project-overview.tsx"),
-    route("projects/:projectId/tasks", "routes/project-tasks.tsx"),
-    route("projects/:projectId/team", "routes/project-team.tsx"), 
+
+    layout("layouts/project-layout.tsx", [
+      route("projects/:projectId", "routes/project-overview.tsx"),
+      route("projects/:projectId/tasks", "routes/project-tasks.tsx"),
+      route("projects/:projectId/tasks/:taskId", "routes/task-details.tsx"),
+      route("projects/:projectId/team", "routes/project-team.tsx"),
+    ]),
   ]),
 ] satisfies RouteConfig;

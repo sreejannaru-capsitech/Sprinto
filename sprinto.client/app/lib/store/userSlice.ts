@@ -1,4 +1,3 @@
-// src/features/counter/counterSlice.ts
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface UserState {

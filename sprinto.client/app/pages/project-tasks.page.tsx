@@ -1,13 +1,11 @@
 import { Flex } from "antd";
-import { useMemo, type FC, type ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
+import { useSelector } from "react-redux";
 import NoData from "~/components/ui/no-data";
 import Spinner from "~/components/ui/spinner";
 import TaskContainer from "~/components/ui/task-container";
 import { useProjectTasksQuery } from "~/lib/server/services";
-
-interface ProjectTasksProps {
-  proj: Project;
-}
+import type { RootState } from "~/lib/store/store";
 
 interface TaskStatusGroup {
   status: string;
@@ -40,10 +38,10 @@ const groupTasksByStatus = (tasks: Task[]): TaskStatusGroup[] => {
  * @param {ProjectTasksProps} props
  * @returns {ReactNode} The ProjectTasks component
  */
-const ProjectTasksPage: FC<ProjectTasksProps> = ({
-  proj,
-}: ProjectTasksProps): ReactNode => {
-  const { data, isPending } = useProjectTasksQuery(proj.id);
+const ProjectTasksPage = (): ReactNode => {
+  const proj = useSelector((state: RootState) => state.project.project);
+
+  const { data, isPending } = useProjectTasksQuery(proj!.id);
 
   const group = useMemo(() => {
     if (!data?.result) return [];
@@ -57,11 +55,7 @@ const ProjectTasksPage: FC<ProjectTasksProps> = ({
       ) : (
         <Flex style={{ marginTop: "2rem" }} gap={30}>
           {group.map((g) => (
-            <TaskContainer
-              key={g.status}
-              text={g.status}
-              tasks={g.tasks}
-            />
+            <TaskContainer key={g.status} text={g.status} tasks={g.tasks} />
           ))}
         </Flex>
       )}
