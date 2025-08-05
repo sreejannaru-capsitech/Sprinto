@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using Sprinto.Server.Common;
 using Sprinto.Server.DTOs;
 using Sprinto.Server.Extensions;
 using Sprinto.Server.Models;
@@ -474,5 +475,24 @@ namespace Sprinto.Server.Services
             }
         }
 
+        // Get activities of a task
+        public async Task<List<Activity>> GetTaskActivities(string id)
+        {
+            try
+            {
+                var task = await _tasks.Find(a => a.Id == id).FirstOrDefaultAsync()
+                    ?? throw new KeyNotFoundException(Constants.Messages.NotFound);
+                return task.Activities;
+            }
+            catch (KeyNotFoundException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving activity for task {TaskId}", id);
+                throw new Exception("Could not retrieve task activity");
+            }
+        }
     }
 }

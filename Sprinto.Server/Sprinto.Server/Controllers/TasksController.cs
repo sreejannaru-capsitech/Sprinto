@@ -81,6 +81,26 @@ namespace Sprinto.Server.Controllers
             return response;
         }
 
+
+        [HttpGet("{id}/activities")]
+        public async Task<ApiResponse<List<Activity>>>
+            GetTaskActivities(string id)
+        {
+            var res = new ApiResponse<List<Activity>>();
+            
+            try
+            {
+                var result = await _taskService.GetTaskActivities(id);
+                res.Message = Constants.Messages.Success;
+                res.Result = result;
+            }
+            catch (Exception ex)
+            {
+                res.HandleException(ex);
+            }
+            return res;
+        }
+
         // Get today tasks
         [HttpGet("today")]
         public async Task<ApiResponse<TodayTasksResponse>>
