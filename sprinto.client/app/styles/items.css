@@ -66,8 +66,8 @@
 }
 
 .project-container {
-  min-width: 420px;
-  max-width: 420px;
+  min-width: 1420px;
+  max-width: 1420px;
   max-height: 680px;
   overflow-y: hidden;
   padding: 6px 10px 14px 10px;

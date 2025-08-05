@@ -31,6 +31,7 @@ const ProjectsContainer: FC<TaskContainerProps> = ({
       <Space
         direction={horizontal ? "horizontal" : "vertical"}
         size={16}
+        align="baseline"
         className="project-container"
       >
         {children}
