@@ -50,3 +50,27 @@ h2.ant-typography {
   border-radius: 4px !important;
   margin: 0 4px;
 }
+
+.comment-section {
+  padding: 10px 0;
+  min-width: 750px;
+  max-width: 750px;
+}
+
+.comment-container {
+  margin-top: 20px;
+}
+
+.comment-card {
+  padding: 6px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background-color: var(--primary-light-color);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.comment-text {
+  margin-block-start: 5px !important;
+}

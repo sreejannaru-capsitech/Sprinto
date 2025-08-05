@@ -1,17 +1,40 @@
-import { Avatar, Button, Col, Flex, Input, Row, Tag, Typography } from "antd";
+import {
+  Avatar,
+  Button,
+  Col,
+  Flex,
+  Form,
+  Input,
+  Row,
+  Space,
+  Tag,
+  Typography,
+} from "antd";
 import dayjs from "dayjs";
 import { useMemo, useState, type FC, type ReactNode } from "react";
 import TaskForm from "~/components/forms/task-form";
 import TimeLineSection from "~/components/timeline-section";
+import CommentItem from "~/components/ui/comment-item";
+import Spinner from "~/components/ui/spinner";
 import ToolTip from "~/components/ui/tooltip";
-import { CalenderIcon, PencilIcon } from "~/lib/icons";
-import { useTaskActivitiesQuery } from "~/lib/server/services";
+import { useAntNotification } from "~/hooks";
+import { CalenderIcon, PencilIcon, PlusIcon } from "~/lib/icons";
+import {
+  useCommentsQuery,
+  useCreateComment,
+  useTaskActivitiesQuery,
+} from "~/lib/server/services";
 import { getInitials } from "~/lib/utils";
+import { getRequiredStringRule } from "~/lib/validators";
 
 import "~/styles/project-overview.css";
 
 interface TaskDetailsPageProps {
   task: Task;
+}
+
+interface FormType {
+  content: string;
 }
 
 /**
@@ -26,7 +49,18 @@ const TaskDetailsPage: FC<TaskDetailsPageProps> = ({
     task.id
   );
 
+  const { _api, contextHolder } = useAntNotification();
+  const [form] = Form.useForm<FormType>();
+
+  const { data: _comments, isPending: _commentsPending } = useCommentsQuery(
+    _api,
+    task.id
+  );
+
+  const { mutateAsync: createComment } = useCreateComment(_api);
+
   const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const dueDate = useMemo(() => {
     if (dayjs.utc(task.dueDate).isSame(dayjs.utc(), "day")) {
@@ -46,6 +80,22 @@ const TaskDetailsPage: FC<TaskDetailsPageProps> = ({
       activity: a,
     }));
   }, [_act, _actPending]);
+
+  const onSubmit = async (values: FormType) => {
+    setLoading(true);
+    try {
+      await createComment({
+        comment: {
+          content: values.content,
+        },
+        taskId: task.id,
+      });
+      form.resetFields();
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Row gutter={50} wrap={false}>
@@ -106,6 +156,7 @@ const TaskDetailsPage: FC<TaskDetailsPageProps> = ({
             </Flex>
           </Flex>
         </Flex>
+        {contextHolder}
 
         <Typography.Title level={4} className="font-bold">
           {task.title}
@@ -119,7 +170,31 @@ const TaskDetailsPage: FC<TaskDetailsPageProps> = ({
           Comments
         </Typography.Title>
 
-        <Input />
+        <div className="comment-section">
+          <Form requiredMark="optional" onFinish={onSubmit} form={form}>
+            <Flex align="flex-start" gap={10}>
+              <Form.Item<FormType>
+                name="content"
+                rules={[getRequiredStringRule("comment")]}
+                style={{ flex: 1 }}
+              >
+                <Input.TextArea rows={1} placeholder="Add a comment..." />
+              </Form.Item>
+              <Button htmlType="submit" type="primary" loading={loading}>
+                <PlusIcon size={20} />
+                <span>Add Comment</span>
+              </Button>
+            </Flex>
+          </Form>
+
+          <Spinner isActive={_commentsPending}>
+            <Space direction="vertical" size={16} className="comment-container">
+              {_comments?.result?.map((comment) => (
+                <CommentItem key={comment.id} item={comment} />
+              ))}
+            </Space>
+          </Spinner>
+        </div>
       </Col>
 
       {/* Timeline Section */}
