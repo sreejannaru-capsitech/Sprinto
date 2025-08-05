@@ -146,6 +146,9 @@ namespace Sprinto.Server.Controllers
             var response = new ApiResponse<ProjectOverview>();
             try
             {
+                if (!ObjectId.TryParse(id, out _))
+                    throw new Exception("Please provide valid id");
+
                 var tasks = await _projectService.GetProjectOverviewAsync(id);
                 response.Message = Constants.Messages.Success;
                 response.Result = tasks;
@@ -166,6 +169,9 @@ namespace Sprinto.Server.Controllers
             var response = new ApiResponse<ProjectTeam>();
             try
             {
+                if (!ObjectId.TryParse(id, out _))
+                    throw new Exception("Please provide valid id");
+
                 var team = await _projectService.GetProjectTeamAsync(id);
                 response.Message = Constants.Messages.Success;
                 response.Result = team;
@@ -187,9 +193,68 @@ namespace Sprinto.Server.Controllers
 
             try
             {
+                if (!ObjectId.TryParse(id, out _))
+                    throw new Exception("Please provide valid id");
+
                 var activities = await _projectService.GetActivitiesAsync(id);
                 response.Message = Constants.Messages.Success;
                 response.Result = activities;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
+
+        // Add new assignees to project team
+        [HttpPost("{id}/team")]
+        [Authorize(Roles = "admin,teamLead")]
+        public async Task<ApiResponse<object>> 
+            AddAssignee(string id, [FromBody] IEnumerable<string> UserIds)
+        {
+            var response = new ApiResponse<object>();
+
+            var _result = ValidateModelState;
+            if (_result != null) return response.HandleValidationError(_result);
+
+            try
+            {
+                if (!ObjectId.TryParse(id, out _))
+                    throw new Exception("Please provide valid id");
+
+                await _projectService.AddAssignees(id, UserIds);
+                response.Message = Constants.Messages.Success;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
+        // Remove an Assignee fro Project Team
+        [HttpPost("{id}/team/remove")]
+        [Authorize(Roles = "admin,teamLead")]
+        public async Task<ApiResponse<object>>
+            RemoveAssignee(string id, [FromBody] string UserId)
+        {
+            var response = new ApiResponse<object>();
+
+            var _result = ValidateModelState;
+            if (_result != null) return response.HandleValidationError(_result);
+
+            try
+            {
+                if (!ObjectId.TryParse(id, out _))
+                    throw new Exception("Please provide valid project id");
+
+                if (!ObjectId.TryParse(UserId, out _))
+                    throw new Exception("Please provide valid member id");
+
+                await _projectService.RemoveAssignee(id, UserId);
+                response.Message = Constants.Messages.Success;
             }
             catch (Exception ex)
             {
@@ -206,6 +271,9 @@ namespace Sprinto.Server.Controllers
             var response = new ApiResponse<Project>();
             try
             {
+                if (!ObjectId.TryParse(id, out _))
+                    throw new Exception("Please provide valid id");
+
                 var project = await _projectService.DeleteAsync(id);
                 response.Message = Constants.Messages.Deleted;
                 response.Result = project;

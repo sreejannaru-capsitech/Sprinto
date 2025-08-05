@@ -195,6 +195,9 @@ namespace Sprinto.Server.Services
         // Get project overview stats
         public async Task<ProjectOverview> GetProjectOverviewAsync(string id)
         {
+            var project = await GetAsync(id) 
+                ?? throw new KeyNotFoundException(Constants.Messages.NotFound);
+
             var res = new ProjectOverview();
 
             try
@@ -253,6 +256,9 @@ namespace Sprinto.Server.Services
                     .Select(x => x.Task)
                     .ToList();
 
+                var team = await GetProjectTeamAsync(id);
+                EnsureOverviewDefaults(res, team);
+
                 return res;
             }
             catch (KeyNotFoundException)
@@ -264,6 +270,39 @@ namespace Sprinto.Server.Services
                 _logger.LogError(ex, "Error retrieving overview for project with id {ProjectId}", id);
                 throw new Exception("Could not retrieve overview for project");
             }
+        }
+
+        private static void EnsureOverviewDefaults(ProjectOverview overview, ProjectTeam team)
+        {
+            // Ensure status groups contain default statuses
+            var defaultStatuses = new[] { "Todo", "In Progress", "Done" };
+            var existingStatusSet = overview.StatusGroups.Select(s => s.Group).ToHashSet();
+
+            var missingStatuses = defaultStatuses
+                .Where(status => !existingStatusSet.Contains(status))
+                .Select(status => new TaskGroup
+                {
+                    Group = status,
+                    Count = 0
+                });
+
+            overview.StatusGroups.AddRange(missingStatuses);
+
+            // Ensure assignee groups contain all team members including team lead
+            var existingAssigneeSet = overview.AssigneeGroups.Select(a => a.Group).ToHashSet();
+
+            var allTeamMembers = new List<UserResponse> { team.TeamLead };
+            allTeamMembers.AddRange(team.Employees);
+
+            var missingAssignees = allTeamMembers
+                .Where(member => !existingAssigneeSet.Contains(member.Name))
+                .Select(member => new TaskGroup
+                {
+                    Group = member.Name,
+                    Count = 0
+                });
+
+            overview.AssigneeGroups.AddRange(missingAssignees);
         }
 
         // Get all activities in a project
@@ -321,10 +360,121 @@ namespace Sprinto.Server.Services
 
                 return res;
             }
+            catch (KeyNotFoundException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving team for project with id {id}", id);
                 throw new Exception("Could not retrieve the project team");
+            }
+        }
+
+        // Add new assignees to project team
+        public async Task AddAssignees(string Id, IEnumerable<string> UserIds)
+        {
+            try
+            {
+                var project = await GetAsync(Id)
+                    ?? throw new KeyNotFoundException(Constants.Messages.NotFound);
+
+                // Fetch user details from _users collection
+                var userFilter = Builders<User>.Filter.In(u => u.Id, UserIds);
+                var users = await _users.Find(userFilter).ToListAsync();
+
+                if (users.Count == 0)
+                {
+                    throw new KeyNotFoundException("No valid users found for the provided IDs.");
+                }
+
+                // Create Assignee objects
+                var newAssignees = users.Select(u => new Assignee
+                {
+                    Id = u.Id,
+                    Name = u.Name
+                });
+
+                // Avoid duplicates
+                var existingIds = project.Assignees.Select(a => a.Id).ToHashSet();
+                var assigneesToAdd = newAssignees
+                    .Where(a => !existingIds.Contains(a.Id))
+                    .ToList();
+
+                if (assigneesToAdd.Count == 0)
+                {
+                    throw new InvalidOperationException("All provided users are already assigned to the project.");
+                }
+
+                // Update the project
+                project.Assignees.AddRange(assigneesToAdd);
+
+                var filter = Builders<Project>.Filter.Eq(p => p.Id, Id);
+                var update = Builders<Project>.Update.Set(p => p.Assignees, project.Assignees);
+
+                var result = await _projects.UpdateOneAsync(filter, update);
+
+                if (result.ModifiedCount == 0)
+                {
+                    throw new Exception("Failed to update project assignees.");
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                throw;
+            }
+            catch (KeyNotFoundException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error adding assignees to project with id {id}", Id);
+                throw new Exception("Could not add assignees to project");
+            }
+        }
+
+        // Remove an assignee from project
+        public async Task RemoveAssignee(string Id, string UserId)
+        {
+            try
+            {
+                var project = await GetAsync(Id)
+                    ?? throw new KeyNotFoundException(Constants.Messages.NotFound);
+
+                // Remove the assignee from the list
+                var originalCount = project.Assignees.Count;
+                project.Assignees = [.. project.Assignees.Where(a => a.Id != UserId)];
+
+                // If no change, throw to indicate user wasn't assigned
+                if (project.Assignees.Count == originalCount)
+                {
+                    throw new InvalidOperationException("User is not an assignee of this project.");
+                }
+
+                // Update the project in the database
+                var filter = Builders<Project>.Filter.Eq(p => p.Id, Id);
+                var update = Builders<Project>.Update.Set(p => p.Assignees, project.Assignees);
+
+                var result = await _projects.UpdateOneAsync(filter, update);
+
+                if (result.ModifiedCount == 0)
+                {
+                    throw new Exception("Failed to update project assignees.");
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                throw;
+            }
+            catch (KeyNotFoundException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error removing assignee from project with id {id}", Id);
+                throw new Exception("Could not remove assignee from project");
             }
         }
 
