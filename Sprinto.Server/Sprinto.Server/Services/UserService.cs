@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using Sprinto.Server.Common;
 using Sprinto.Server.DTOs;
@@ -98,6 +99,12 @@ namespace Sprinto.Server.Services
             }
         }
 
+        /// <summary>
+        /// Get an user by his ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>The user object <see cref="User"/></returns>
+        /// <exception cref="Exception"></exception>
         public async Task<User> GetAsync(string id)
         {
             try
@@ -110,6 +117,40 @@ namespace Sprinto.Server.Services
                 throw new Exception("Could not retrieve the user from database");
             }
         }
+
+
+        /// <summary>
+        /// Searches users by name using a case-insensitive regular expression.
+        /// </summary>
+        /// <param name="regex">The regex pattern to match user names.</param>
+        /// <returns>A list of <see cref="UserResponse"/> objects matching the search criteria.</returns>
+        /// <exception cref="Exception">Thrown when the search operation fails.</exception>
+        public async Task<List<UserResponse>> SearchAsync(string regex)
+        {
+            try
+            {
+                var regexQuery = new BsonDocument
+                {
+                    { "name", new BsonDocument
+                        {
+                            { "$regex", regex },
+                            { "$options", "i" }
+                        } 
+                    },
+                    { "role", new BsonDocument("$ne", "admin") }
+                };
+
+                var users = await _users.Find(regexQuery).Limit(10).ToListAsync();
+
+                return [.. users.Select(x => x.ToUserResponse())];
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error searching users by regex {regex}", regex);
+                throw new Exception("Could not search the users");
+            }
+        }
+
 
         /// <summary>
         /// Validates the user's login credentials against the database records.

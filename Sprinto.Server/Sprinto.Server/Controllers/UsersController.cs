@@ -263,6 +263,32 @@ namespace Sprinto.Server.Controllers
             return response;
         }
 
+
+        // Search users by name
+        //[Authorize(Roles = "admin,teamLead")]
+        [HttpGet("search")]
+        public async Task<ApiResponse<List<UserResponse>>> SearchUser([FromQuery] string? name)
+        {
+            var response = new ApiResponse<List<UserResponse>>();
+            try
+            {
+                // If no query provided, return global list
+                if (string.IsNullOrEmpty(name))
+                {
+                    name = "";
+                }
+
+                var result = await _userService.SearchAsync(name);
+                response.Message = Constants.Messages.Success;
+                response.Result = result;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
         private object? ValidateModelState
         {
             get
