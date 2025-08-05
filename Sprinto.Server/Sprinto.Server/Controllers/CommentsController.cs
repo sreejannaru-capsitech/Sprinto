@@ -76,8 +76,7 @@ namespace Sprinto.Server.Controllers
                 if (!ObjectId.TryParse(commentId, out _))
                     throw new Exception("Please provide valid id");
 
-                dto.Id = commentId;
-                await _service.UpdateCommentAsync(taskId, dto);
+                await _service.UpdateCommentAsync(taskId, commentId, dto);
                 res.Result = "Comment updated";
                 res.Message = Messages.Success;
             }

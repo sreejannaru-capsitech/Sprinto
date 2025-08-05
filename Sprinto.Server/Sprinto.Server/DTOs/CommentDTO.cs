@@ -7,10 +7,6 @@ namespace Sprinto.Server.DTOs
     public class CommentDTO
     {
         private string _content = null!;
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        [BsonElement("_id")]
-        public string? Id { get; set; }
 
         [Required (ErrorMessage = "Please provide comment content")]
         [BsonElement("content")]

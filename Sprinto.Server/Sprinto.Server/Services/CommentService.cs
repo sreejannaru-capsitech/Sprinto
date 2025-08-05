@@ -60,13 +60,13 @@ namespace Sprinto.Server.Services
             }
         }
 
-        public async Task UpdateCommentAsync(string taskId, CommentDTO dto)
+        public async Task UpdateCommentAsync(string taskId, string commentId, CommentDTO dto)
         {
             try
             {
                 var filter = Builders<TaskItem>.Filter.And(
                     Builders<TaskItem>.Filter.Eq(t => t.Id, taskId),
-                    Builders<TaskItem>.Filter.ElemMatch(t => t.Comments, c => c.Id == dto.Id)
+                    Builders<TaskItem>.Filter.ElemMatch(t => t.Comments, c => c.Id == commentId)
                 );
 
                 var update = Builders<TaskItem>.Update
@@ -81,7 +81,7 @@ namespace Sprinto.Server.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Could not update comment {commentId} in task {taskId}", dto.Id, taskId);
+                _logger.LogError(ex, "Could not update comment {commentId} in task {taskId}", commentId, taskId);
                 throw new Exception("Could not update comment");
             }
         }
