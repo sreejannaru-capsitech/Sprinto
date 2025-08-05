@@ -3,18 +3,17 @@ import {
   Col,
   Flex,
   Row,
-  Space,
   Statistic,
   Tag,
-  Typography,
+  Typography
 } from "antd";
 import dayjs from "dayjs";
-import { useMemo, type FC, type ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
 import { useSelector } from "react-redux";
 import type { BarData, PieData } from "~/components/charts";
 import BarChart from "~/components/charts/bar.chart";
 import TaskStatusChart from "~/components/charts/pie.chart";
-import ActivityItem from "~/components/ui/activity-item";
+import TimeLineSection from "~/components/timeline-section";
 import ProjectTiming from "~/components/ui/project-timing";
 import Spinner from "~/components/ui/spinner";
 import TaskContainer from "~/components/ui/task-container";
@@ -177,28 +176,7 @@ const ProjectOverview = (): ReactNode => {
       </Col>
 
       {/* Timeline Section */}
-      <Col flex={"410px"}>
-        <Typography.Title level={2}>Timeline</Typography.Title>
-        <div className="activity-container">
-          <Space
-            direction="vertical"
-            size={16}
-            className="activity-container-inner"
-          >
-            {activities?.result?.length ? (
-              <>
-                {activities?.result?.map((a) => (
-                  <ActivityItem key={a.activity.id} item={a} />
-                ))}
-              </>
-            ) : (
-              <p style={{ margin: 10 }} className="text-primary-dark">
-                No activity so far
-              </p>
-            )}
-          </Space>
-        </div>
-      </Col>
+      <TimeLineSection activities={activities?.result ?? []} />
     </Row>
   );
 };
