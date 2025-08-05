@@ -6,7 +6,7 @@ import {
   Space,
   Statistic,
   Tag,
-  Typography
+  Typography,
 } from "antd";
 import dayjs from "dayjs";
 import { useMemo, type FC, type ReactNode } from "react";
@@ -20,7 +20,7 @@ import TaskContainer from "~/components/ui/task-container";
 import ToolTip from "~/components/ui/tooltip";
 import {
   useProjectActivitiesQuery,
-  useProjectOverviewQuery
+  useProjectOverviewQuery,
 } from "~/lib/server/services";
 import { getInitials } from "~/lib/utils";
 
@@ -122,9 +122,13 @@ const ProjectOverview: FC<ProjectOverviewProps> = ({
 
               <Statistic
                 title="Last Activity"
-                value={dayjs(
-                  activities?.result![0].activity.createdBy.time
-                ).format("Do MMM")}
+                value={
+                  activities?.result?.length
+                    ? dayjs(
+                        activities?.result![0].activity.createdBy.time
+                      ).format("Do MMM")
+                    : "No activity yet"
+                }
               />
 
               <Statistic
@@ -136,10 +140,12 @@ const ProjectOverview: FC<ProjectOverviewProps> = ({
               <Statistic
                 title="Task Completion"
                 value={
-                  ((overview?.result?.totaltasks! -
-                    overview?.result?.pendingTasks!) /
-                    overview?.result?.totaltasks!) *
-                  100
+                  overview?.result?.totaltasks
+                    ? ((overview?.result?.totaltasks! -
+                        overview?.result?.pendingTasks!) /
+                        overview?.result?.totaltasks!) *
+                      100
+                    : 0
                 }
                 precision={2}
                 suffix={` %`}
@@ -182,9 +188,17 @@ const ProjectOverview: FC<ProjectOverviewProps> = ({
             size={16}
             className="activity-container-inner"
           >
-            {activities?.result?.map((a) => (
-              <ActivityItem key={a.activity.id} item={a} />
-            ))}
+            {activities?.result?.length ? (
+              <>
+                {activities?.result?.map((a) => (
+                  <ActivityItem key={a.activity.id} item={a} />
+                ))}
+              </>
+            ) : (
+              <p style={{ margin: 10 }} className="text-primary-dark">
+                No activity so far
+              </p>
+            )}
           </Space>
         </div>
       </Col>

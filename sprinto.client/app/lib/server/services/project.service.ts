@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   PROJECT_ACTIVITIES_KEY,
   PROJECT_OVERVIEW_KEY,
@@ -13,7 +13,11 @@ import {
   getProjects,
   getProjectTasks,
   getProjectTeam,
+  removeMember,
 } from "../project.api";
+import { handleApiError } from "~/lib/utils";
+import type { NotificationApi } from "~/hooks/useAntNotification";
+import type { A } from "node_modules/react-router/dist/development/route-data-DjzmHYNR.mjs";
 
 export const useProjectsQuery = () => {
   return useQuery({
@@ -43,6 +47,7 @@ export const useProjectOverviewQuery = (projectId: string) => {
   return useQuery({
     queryKey: [PROJECT_OVERVIEW_KEY, projectId],
     queryFn: () => getProjectOverview(projectId),
+    
     staleTime: STALE_TIME,
   });
 };
@@ -52,5 +57,24 @@ export const useProjectTeamQuery = (projectId: string) => {
     queryKey: [PROJECT_TEAM_KEY, projectId],
     queryFn: () => getProjectTeam(projectId),
     staleTime: STALE_TIME,
+  });
+};
+
+type MemberRemovePayload = {
+  projectId: string;
+  memberId: string;
+};
+
+export const useRemoveMember = (_api: NotificationApi) => {
+  return useMutation<ApiResponse<null>, Error, MemberRemovePayload>({
+    mutationFn: async ({ projectId, memberId }) => {
+      return await removeMember(projectId, memberId);
+    },
+    onSuccess: () => {
+      _api({ message: "Member removed successfully", type: "success" });
+    },
+    onError: (error) => {
+      handleApiError(error, _api, "Could not remove member");
+    },
   });
 };

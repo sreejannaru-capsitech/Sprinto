@@ -40,3 +40,12 @@ export const getProjectTeam = async (projectId: string) => {
   );
   return data;
 };
+
+export const removeMember = async (projectId: string, memberId: string) => {
+  const { data } = await axiosApi.post<ApiResponse<null>>(
+    `/projects/${projectId}/team/remove`,
+    memberId,
+    { headers: { "Content-Type": "application/json" } }
+  );
+  return data;
+};

@@ -25,7 +25,7 @@ const ProjectTasks = (): ReactNode => {
   const project = useMemo(() => {
     if (!isValidMongoId(projectId)) return undefined;
     return data?.result?.find((p) => p.id === projectId);
-  }, [data]);
+  }, [data, projectId]);
 
   return (
     <Spinner isActive={isPending}>

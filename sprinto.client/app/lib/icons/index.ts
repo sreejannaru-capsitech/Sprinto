@@ -22,3 +22,4 @@ export { default as ArchiveIcon } from "./archive.icon";
 export { default as HourGlassIcon } from "./hourglass.icon";
 export { default as DashboardIcon } from "./dashboard.icon";
 export { default as AlertIcon } from "./alert.icon";
+export { default as UserRemoveIcon } from "./userRemove.icon";
