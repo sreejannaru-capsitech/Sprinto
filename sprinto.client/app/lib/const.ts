@@ -15,6 +15,7 @@ export const UPCOMING_TASKS_KEY = "upcomingTasks" as const;
 export const PROJECT_OVERVIEW_KEY = "projectOverview" as const;
 export const PROJECT_TEAM_KEY = "projectTeam" as const;
 export const USERS_SEARCH_KEY = "usersSearch" as const;
+export const COMMENTS_KEY = "comments" as const;
 
 export const PROJECT_ACTIVITIES_KEY = "projectActivities" as const;
 export const PROJECT_TASKS_KEY = "projectTasks" as const;

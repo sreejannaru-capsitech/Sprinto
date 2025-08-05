@@ -11,7 +11,7 @@ interface Task {
   dueDate: string;
   status: StatusEntity;
   priority: TaskPriority;
-  comments: [];
+  comments: Comment[];
   createdBy: Creation;
 }
 
