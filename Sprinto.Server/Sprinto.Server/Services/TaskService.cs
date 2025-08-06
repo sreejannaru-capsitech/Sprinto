@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Sprinto.Server.Common;

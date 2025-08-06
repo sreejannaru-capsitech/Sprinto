@@ -177,7 +177,25 @@ namespace Sprinto.Server.Services
             {
                 var project = GetAsync(id) ?? throw new KeyNotFoundException("Project not found");
 
-                var tasks = await _tasks.Find(a => a.ProjectId == id).ToListAsync();
+                // Find by project
+                var projectFilter = Builders<TaskItem>.Filter.Eq(
+                    t => t.ProjectId,
+                    id
+                );
+
+                // Exclude deleted tasks
+                var deleteFilter = Builders<TaskItem>.Filter.Ne(
+                    t => t.IsDeleted,
+                    true
+                );
+
+                // Combine filters
+                var userFilter = Builders<TaskItem>.Filter.And(
+                    projectFilter,
+                    deleteFilter
+                );
+
+                var tasks = await _tasks.Find(userFilter).ToListAsync();
                 return tasks;
             }
             catch (KeyNotFoundException)
