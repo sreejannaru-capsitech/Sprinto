@@ -24,3 +24,4 @@ export { default as DashboardIcon } from "./dashboard.icon";
 export { default as AlertIcon } from "./alert.icon";
 export { default as UserRemoveIcon } from "./userRemove.icon";
 export { default as DeleteIcon } from "./delete.icon";
+export { default as UploadIcon } from "./upload.icon";

@@ -3,6 +3,7 @@ type UserRole = "admin" | "employee" | "teamLead";
 interface User {
   id: string;
   name: string;
+  displayPic?: string;
   email: string;
   role: UserRole;
   createdBy: Creation;
@@ -22,4 +23,9 @@ interface UserRequest {
 interface PasswordChangeRequest {
   oldPassword?: string;
   newPassword?: string;
+}
+
+interface UserUpdateRequest {
+  name: string;
+  displayPic?: string;
 }

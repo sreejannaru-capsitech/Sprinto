@@ -15,6 +15,14 @@ export const getMe = async () => {
   return (await _axiosApi.get<ApiResponse<LoginResponse>>("/auth/me")).data;
 };
 
+export const updateMe = async (user: UserUpdateRequest) => {
+  const { data } = await axiosApi.post<ApiResponse<string>>(
+    "/users/update",
+    user
+  );
+  return data;
+};
+
 export const logOut = async () => {
   return (await _axiosApi.post<ApiResponse<null>>("/auth/me")).data;
 };

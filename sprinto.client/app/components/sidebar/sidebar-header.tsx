@@ -1,10 +1,11 @@
 import { Avatar, Dropdown, Flex, Modal, Space, type MenuProps } from "antd";
 import { isAxiosError } from "axios";
 import { useState, type ReactNode } from "react";
+import { useSelector } from "react-redux";
 import { useAntNotification } from "~/hooks";
 import { DownArrow } from "~/lib/icons";
 import { logOut } from "~/lib/server/auth.api";
-import { useProfileQuery } from "~/lib/server/services";
+import type { RootState } from "~/lib/store/store";
 import { getInitials } from "~/lib/utils";
 import CreateTask from "../create-task";
 import PasswordForm from "../forms/password-form";
@@ -15,7 +16,7 @@ import ProfileFormModal from "../forms/profile-form";
  * @returns {ReactNode} The SidebarHeader component
  */
 const SidebarHeader = (): ReactNode => {
-  const { data } = useProfileQuery();
+  const user = useSelector((state: RootState) => state.user.user) as User;
   const [visible, setVisible] = useState<boolean>(false);
   const [passwordOpen, setPasswordOpen] = useState<boolean>(false);
   const [profileOpen, setProfileOpen] = useState<boolean>(false);
@@ -70,12 +71,15 @@ const SidebarHeader = (): ReactNode => {
     <Flex align="center" justify="space-between">
       {contextHolder}
       <Space>
-        <Avatar style={{ backgroundColor: "var(--primary-color)" }}>
-          {getInitials(data?.result?.user.name ?? "")}
+        <Avatar
+          src={user.displayPic}
+          style={{ backgroundColor: "var(--primary-color)" }}
+        >
+          {getInitials(user.name ?? "")}
         </Avatar>
         <Dropdown trigger={["click"]} menu={{ items }} placement="bottomRight">
           <Flex align="center" style={{ cursor: "pointer" }}>
-            <span>{data?.result?.user.name}</span>
+            <span>{user.name}</span>
 
             <DownArrow size={16} />
           </Flex>
@@ -100,7 +104,7 @@ const SidebarHeader = (): ReactNode => {
         />
       </Space>
       {/* Do not show create task button for admins */}
-      {data?.result?.user.role !== "admin" && <CreateTask />}
+      {user.role !== "admin" && <CreateTask />}
     </Flex>
   );
 };

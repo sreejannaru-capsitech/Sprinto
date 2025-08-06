@@ -26,7 +26,7 @@ const TeamMember: FC<TeamMemberProps> = ({
     <Card size="small" hoverable className="member-item">
       <Flex align="center" justify="space-between">
         <Flex align="center" gap={10}>
-          <Avatar size={36}>{getInitials(member.name)}</Avatar>
+          <Avatar src={member.displayPic} size={36}>{getInitials(member.name)}</Avatar>
           <div>
             <p style={p_style}>{member.name}</p>
             <p style={p_style} className="text-primary-dark smaller-text">
