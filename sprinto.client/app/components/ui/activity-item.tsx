@@ -7,6 +7,7 @@ import advancedFormat from "dayjs/plugin/advancedFormat";
 import utc from "dayjs/plugin/utc";
 
 import "~/styles/items.css";
+import { DeleteIcon } from "~/lib/icons";
 
 dayjs.extend(utc);
 dayjs.extend(advancedFormat);
@@ -53,6 +54,9 @@ const ActivityItem: FC<ActivityItemProps> = ({
         break;
       case "PriorityUpdated":
         text += "changed the priority from";
+        break;
+      case "TaskDeleted":
+        text += "deleted the task";
         break;
       default:
         text += "Unknown";
@@ -124,7 +128,7 @@ const ActivityItem: FC<ActivityItemProps> = ({
   const renderActivityValue = (activity: Activity): JSX.Element | null => {
     const { action } = activity;
 
-    if (action === "TaskCreated") return null;
+    if (action === "TaskCreated" || action === "TaskDeleted") return null;
 
     if (action === "AssigneeAdded") {
       // Show current only
@@ -173,8 +177,19 @@ const ActivityItem: FC<ActivityItemProps> = ({
         <Col span={21}>
           <Flex align="center" justify="space-between">
             <p style={{ marginBlock: 0 }}>{item.activity.createdBy.userName}</p>
-            <NavLink to={`/projects/${item.projectId}/tasks/${item.taskId}`}>
-              <Tag>{`${item.projectAlias}-${item.sequence}`}</Tag>
+            <NavLink
+              to={
+                item.activity.action === "TaskDeleted"
+                  ? "#"
+                  : `/projects/${item.projectId}/tasks/${item.taskId}`
+              }
+            >
+              <Tag className="activity-task-tag">
+                {item.activity.action === "TaskDeleted" && (
+                  <DeleteIcon size={14} />
+                )}
+                {`${item.projectAlias}-${item.sequence}`}
+              </Tag>
             </NavLink>
           </Flex>
           <Typography.Paragraph

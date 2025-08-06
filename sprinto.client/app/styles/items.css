@@ -29,6 +29,12 @@
   border: 1px solid var(--border-color) !important;
 }
 
+.activity-task-tag>svg {
+  margin-bottom: -2px;
+  margin-left: -2px;
+  margin-right: 2px;
+}
+
 .project-item {
   border-radius: 20px;
   background-color: var(--primary-light-color) !important;

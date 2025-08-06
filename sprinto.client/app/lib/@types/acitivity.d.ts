@@ -7,7 +7,8 @@ type ActivityType =
   | "AssigneeRemoved"
   | "DuedateUpdated"
   | "StatusUpdated"
-  | "PriorityUpdated";
+  | "PriorityUpdated"
+  | "TaskDeleted";
 
 interface Activity {
   id: string;
