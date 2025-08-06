@@ -68,11 +68,11 @@ const EmployeeSidebar = (): ReactNode => {
   };
 
   const menuItems: MenuProps["items"] = [
-    {
-      icon: <SearchIcon size={22} />,
-      label: <span style={menuItemStyle}>Search</span>,
-      key: "search",
-    },
+    // {
+    //   icon: <SearchIcon size={22} />,
+    //   label: <span style={menuItemStyle}>Search</span>,
+    //   key: "search",
+    // },
     {
       icon: <TodayIcon size={22} />,
       label: (

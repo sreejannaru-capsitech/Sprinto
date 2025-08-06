@@ -98,7 +98,7 @@ const ProjectOverview = (): ReactNode => {
           </Flex>
         </Flex>
         
-        <Spinner isActive={overviewPending}>
+        <Spinner isActive={overviewPending} fullscreen>
           <div className="project-description">
             <Typography.Paragraph>{proj!.description}</Typography.Paragraph>
           </div>
