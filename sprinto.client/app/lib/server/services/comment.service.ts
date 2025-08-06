@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { NotificationApi } from "~/hooks/useAntNotification";
 import { COMMENTS_KEY, STALE_TIME } from "~/lib/const";
 import { handleApiError } from "~/lib/utils";
@@ -26,12 +26,15 @@ type CommentDeletePayload = {
 };
 
 export const useCreateComment = (_api: NotificationApi) => {
+  const query = useQueryClient();
+
   return useMutation<ApiResponse<string>, Error, CommentCreatePayload>({
     mutationFn: async ({ comment, taskId }) => {
       return await createComment(comment, taskId);
     },
-    onSuccess: () => {
+    onSuccess: (_res, variables) => {
       _api({ message: "Comment created successfully", type: "success" });
+      query.invalidateQueries({ queryKey: [COMMENTS_KEY, variables.taskId] });
     },
     onError: (error) => {
       handleApiError(error, _api, "Could not create comment");
@@ -48,12 +51,15 @@ export const useCommentsQuery = (_api: NotificationApi, taskId: string) => {
 };
 
 export const useUpdateComment = (_api: NotificationApi) => {
+  const query = useQueryClient();
+
   return useMutation<ApiResponse<string>, Error, CommentUpdatePayload>({
     mutationFn: async ({ comment, taskId, commentId }) => {
       return await updateComment(comment, taskId, commentId);
     },
-    onSuccess: () => {
+    onSuccess: (_res, variables) => {
       _api({ message: "Comment updated successfully", type: "success" });
+      query.invalidateQueries({ queryKey: [COMMENTS_KEY, variables.taskId] });
     },
     onError: (error) => {
       handleApiError(error, _api, "Could not update comment");
@@ -62,12 +68,15 @@ export const useUpdateComment = (_api: NotificationApi) => {
 };
 
 export const useDeleteComment = (_api: NotificationApi) => {
+  const query = useQueryClient();
+
   return useMutation<ApiResponse<string>, Error, CommentDeletePayload>({
     mutationFn: async ({ taskId, commentId }) => {
       return await deleteComment(taskId, commentId);
     },
-    onSuccess: () => {
+    onSuccess: (_res, variables) => {
       _api({ message: "Comment deleted successfully", type: "success" });
+      query.invalidateQueries({ queryKey: [COMMENTS_KEY, variables.taskId] });
     },
     onError: (error) => {
       handleApiError(error, _api, "Could not delete comment");

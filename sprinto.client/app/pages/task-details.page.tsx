@@ -18,11 +18,17 @@ import CommentItem from "~/components/ui/comment-item";
 import Spinner from "~/components/ui/spinner";
 import ToolTip from "~/components/ui/tooltip";
 import { useAntNotification } from "~/hooks";
-import { CalenderIcon, PencilIcon, PlusIcon } from "~/lib/icons";
+import {
+  CalenderIcon,
+  PencilIcon,
+  PlusIcon,
+  TickRoundedIcon,
+} from "~/lib/icons";
 import {
   useCommentsQuery,
   useCreateComment,
   useTaskActivitiesQuery,
+  useUpdateComment,
 } from "~/lib/server/services";
 import { getInitials } from "~/lib/utils";
 import { getRequiredStringRule } from "~/lib/validators";
@@ -58,9 +64,13 @@ const TaskDetailsPage: FC<TaskDetailsPageProps> = ({
   );
 
   const { mutateAsync: createComment } = useCreateComment(_api);
+  const { mutateAsync: updateComment } = useUpdateComment(_api);
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+
+  // Editing is used to identify the comment ID which is being edited
+  const [editing, setEditing] = useState<string | undefined>(undefined);
 
   const dueDate = useMemo(() => {
     if (dayjs.utc(task.dueDate).isSame(dayjs.utc(), "day")) {
@@ -81,18 +91,35 @@ const TaskDetailsPage: FC<TaskDetailsPageProps> = ({
     }));
   }, [_act, _actPending]);
 
+  const setEdit = (content: string, id: string) => {
+    form.setFieldsValue({
+      content,
+    });
+    setEditing(id);
+  };
+
   const onSubmit = async (values: FormType) => {
     setLoading(true);
     try {
-      await createComment({
-        comment: {
-          content: values.content,
-        },
-        taskId: task.id,
-      });
+      if (editing)
+        await updateComment({
+          comment: {
+            content: values.content,
+          },
+          taskId: task.id,
+          commentId: editing,
+        });
+      else
+        await createComment({
+          comment: {
+            content: values.content,
+          },
+          taskId: task.id,
+        });
       form.resetFields();
     } catch (error) {
     } finally {
+      setEditing(undefined);
       setLoading(false);
     }
   };
@@ -171,26 +198,61 @@ const TaskDetailsPage: FC<TaskDetailsPageProps> = ({
         </Typography.Title>
 
         <div className="comment-section">
-          <Form requiredMark="optional" onFinish={onSubmit} form={form}>
+          <Form
+            requiredMark="optional"
+            className="comment-form"
+            onFinish={onSubmit}
+            form={form}
+          >
             <Flex align="flex-start" gap={10}>
               <Form.Item<FormType>
                 name="content"
                 rules={[getRequiredStringRule("comment")]}
-                style={{ flex: 1 }}
+                style={{ flex: 1, maxWidth: editing ? 530 : 570 }}
               >
-                <Input.TextArea rows={1} placeholder="Add a comment..." />
+                <Input.TextArea
+                  rows={1}
+                  placeholder="Add a comment..."
+                  autoSize={{ minRows: 1, maxRows: 5 }}
+                />
               </Form.Item>
-              <Button htmlType="submit" type="primary" loading={loading}>
-                <PlusIcon size={20} />
-                <span>Add Comment</span>
+              <Button
+                htmlType="submit"
+                type="primary"
+                loading={loading}
+                icon={
+                  editing ? (
+                    <TickRoundedIcon size={20} />
+                  ) : (
+                    <PlusIcon size={20} />
+                  )
+                }
+              >
+                <span>{editing ? "Update" : "Add Comment"}</span>
               </Button>
+              {/* Edit Cancel Button */}
+              {editing && (
+                <Button
+                  onClick={() => {
+                    setEditing(undefined);
+                    form.resetFields();
+                  }}
+                >
+                  Cancel
+                </Button>
+              )}
             </Flex>
           </Form>
 
           <Spinner isActive={_commentsPending}>
             <Space direction="vertical" size={16} className="comment-container">
               {_comments?.result?.map((comment) => (
-                <CommentItem key={comment.id} item={comment} />
+                <CommentItem
+                  key={comment.id}
+                  taskId={task.id}
+                  item={comment}
+                  setEdit={setEdit}
+                />
               ))}
             </Space>
           </Spinner>
@@ -198,7 +260,7 @@ const TaskDetailsPage: FC<TaskDetailsPageProps> = ({
       </Col>
 
       {/* Timeline Section */}
-      <TimeLineSection activities={activities} />
+      <TimeLineSection activities={activities} isPending={_actPending} />
     </Row>
   );
 };

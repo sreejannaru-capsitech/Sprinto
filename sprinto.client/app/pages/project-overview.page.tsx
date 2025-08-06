@@ -1,12 +1,4 @@
-import {
-  Avatar,
-  Col,
-  Flex,
-  Row,
-  Statistic,
-  Tag,
-  Typography
-} from "antd";
+import { Avatar, Col, Flex, Row, Statistic, Tag, Typography } from "antd";
 import dayjs from "dayjs";
 import { useMemo, type ReactNode } from "react";
 import { useSelector } from "react-redux";
@@ -35,7 +27,8 @@ import "~/styles/project-overview.css";
 const ProjectOverview = (): ReactNode => {
   const proj = useSelector((state: RootState) => state.project.project);
 
-  const { data: activities } = useProjectActivitiesQuery(proj!.id);
+  const { data: activities, isPending: _actPending } =
+    useProjectActivitiesQuery(proj!.id);
   const { data: overview, isPending: overviewPending } =
     useProjectOverviewQuery(proj!.id);
 
@@ -176,7 +169,10 @@ const ProjectOverview = (): ReactNode => {
       </Col>
 
       {/* Timeline Section */}
-      <TimeLineSection activities={activities?.result ?? []} />
+      <TimeLineSection
+        activities={activities?.result ?? []}
+        isPending={_actPending}
+      />
     </Row>
   );
 };

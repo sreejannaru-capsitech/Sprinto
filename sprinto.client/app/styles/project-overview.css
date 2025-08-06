@@ -52,13 +52,32 @@ h2.ant-typography {
 }
 
 .comment-section {
-  padding: 10px 0;
+  padding-bottom: 10px;
   min-width: 750px;
   max-width: 750px;
+
+  height: 470px;
+  overflow-y: hidden;
+  overflow-x: hidden;
+
+  &:hover {
+    overflow-y: auto;
+  }
+}
+
+.comment-form {
+  padding-top: 10px;
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 1;
+  padding-left: 2px;
 }
 
 .comment-container {
   margin-top: 20px;
+  min-width: 750px;
+  max-width: 750px;
 }
 
 .comment-card {
@@ -73,4 +92,14 @@ h2.ant-typography {
 
 .comment-text {
   margin-block-start: 5px !important;
+}
+
+.comment-content {
+  max-width: 520px;
+}
+
+.comment-edit-button {
+  padding: 2px;
+  margin-top: -2px;
+  margin-right: -4px;
 }

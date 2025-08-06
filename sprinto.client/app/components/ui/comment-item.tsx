@@ -1,10 +1,19 @@
-import { Avatar, Card, Flex } from "antd";
+import { Avatar, Button, Flex, Popconfirm } from "antd";
 import dayjs from "dayjs";
 import type { FC, ReactNode } from "react";
+import { useSelector } from "react-redux";
+import { useAntNotification } from "~/hooks";
+import { AlertIcon, DeleteIcon, PencilIcon } from "~/lib/icons";
+import { useDeleteComment } from "~/lib/server/services";
+import type { RootState } from "~/lib/store/store";
 import { getInitials } from "~/lib/utils";
+
+import "~/styles/project-overview.css";
 
 interface CommentItemProps {
   item: Comment;
+  taskId: string;
+  setEdit: (content: string, id: string) => void;
 }
 
 /**
@@ -14,21 +23,62 @@ interface CommentItemProps {
  */
 const CommentItem: FC<CommentItemProps> = ({
   item,
+  taskId,
+  setEdit,
 }: CommentItemProps): ReactNode => {
+  const user = useSelector((state: RootState) => state.user.user);
+
+  const { _api, contextHolder } = useAntNotification();
+
+  const { mutateAsync: deleteComment } = useDeleteComment(_api);
+
   return (
     <Flex align="flex-start" gap={8}>
-      <Avatar>{getInitials(item.createdBy.userName)}</Avatar>
+      {contextHolder}
+      <Avatar size={30}>{getInitials(item.createdBy.userName)}</Avatar>
       <div className="comment-card">
-        <p className="text-primary-dark no-margin smaller-text">
-          {item.createdBy.userName}
-        </p>
-        <p className="no-margin">{item.content}</p>
+        <Flex align="center" justify="space-between">
+          <p className="text-primary-dark no-margin smaller-text">
+            {item.createdBy.userName}
+          </p>
+          {user?.id === item.createdBy.userId ? (
+            <Flex align="center" gap={4}>
+              <Button
+                className="comment-edit-button"
+                size="small"
+                type="text"
+                icon={<PencilIcon size={14} />}
+                onClick={() => setEdit(item.content, item.id)}
+              />
+              <Popconfirm
+                icon={<AlertIcon size={18} />}
+                title="Delete this comment ?"
+                onConfirm={async () =>
+                  await deleteComment({ taskId, commentId: item.id })
+                }
+              >
+                <Button
+                  className="comment-edit-button"
+                  size="small"
+                  type="text"
+                  icon={<DeleteIcon size={14} />}
+                />
+              </Popconfirm>
+            </Flex>
+          ) : null}
+        </Flex>
+        <p className="no-margin comment-content">{item.content}</p>
       </div>
-      <Flex align="center" gap={4}>
+      <div>
         <p className="text-primary-dark no-margin smaller-text">
-          {dayjs(item.createdBy.time).format("hh:mm A - Do MMM")}
+          {dayjs(item.isEdited ? item.updatedAt : item.createdBy.time).format(
+            "hh:mm A - Do MMM"
+          )}
         </p>
-      </Flex>
+        {item.isEdited ? (
+          <p className="text-primary-dark no-margin smaller-text">(Edited)</p>
+        ) : null}
+      </div>
     </Flex>
   );
 };
