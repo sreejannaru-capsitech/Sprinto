@@ -1,4 +1,6 @@
 ﻿using MongoDB.Bson;
+using System;
+using System.Buffers.Text;
 using System.Collections;
 using System.ComponentModel.DataAnnotations;
 
@@ -29,4 +31,15 @@ namespace Sprinto.Server.Validation
         }
     }
 
+    public class ValidBase64StringAttribute : ValidationAttribute
+    {
+        public override bool IsValid(object? value)
+        {
+            if (value is not string str || string.IsNullOrWhiteSpace(str))
+                return false;
+
+            Span<byte> buffer = new Span<byte>(new byte[str.Length]);
+            return Convert.TryFromBase64String(str, buffer, out _);
+        }
+    }
 }

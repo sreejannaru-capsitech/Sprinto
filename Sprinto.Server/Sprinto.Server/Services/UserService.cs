@@ -119,6 +119,27 @@ namespace Sprinto.Server.Services
         }
 
 
+        // Update an user
+        public async Task UpdateUserAsync(string id, UserUpdateReq req)
+        {
+            try
+            {
+                var filter = Builders<User>.Filter.Eq(u => u.Id, id);
+                var update = Builders<User>.Update.Set(u => u.DisplayPic, req.DisplayPic).Set(u => u.Name, req.Name);
+
+                var res = await _users.UpdateOneAsync(filter, update);
+                if (res.ModifiedCount == 0)
+                {
+                    throw new Exception(Constants.Messages.InvalidToken);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Could not update user {id}", id);
+                throw new Exception("Could not update user");
+            }
+        }
+
         /// <summary>
         /// Searches users by name using a case-insensitive regular expression.
         /// </summary>
@@ -135,7 +156,7 @@ namespace Sprinto.Server.Services
                         {
                             { "$regex", regex },
                             { "$options", "i" }
-                        } 
+                        }
                     },
                     { "role", new BsonDocument("$ne", "admin") }
                 };

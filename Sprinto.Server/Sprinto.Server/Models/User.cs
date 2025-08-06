@@ -23,6 +23,10 @@ namespace Sprinto.Server.Models
         [BsonElement("password_hash")]
         public string Password { get; set; } = null!;
 
+        [BsonElement("display_picture")]
+        [BsonIgnoreIfNull]
+        public string? DisplayPic { get; set; }
+
         [BsonElement("role")]
         public string Role { get; set; } = null!;
 

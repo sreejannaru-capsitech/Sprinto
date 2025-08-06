@@ -1,6 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Sprinto.Server.Models;
+using Sprinto.Server.Validation;
 using System.ComponentModel.DataAnnotations;
 
 namespace Sprinto.Server.DTOs
@@ -40,6 +41,24 @@ namespace Sprinto.Server.DTOs
         }
     }
 
+    public class UserUpdateReq
+    {
+        private string _name = null!;
+
+        [Required(ErrorMessage = "Name is required")]
+        [MinLength(3, ErrorMessage = "Name should have at least 3 characters")]
+        [StringLength(100, ErrorMessage = "Name must not exceed 100 characters")]
+        [BsonElement("name")]
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value?.Trim() ?? string.Empty; }
+        }
+
+        [ValidBase64String(ErrorMessage = "Invalid image string")]
+        public string? DisplayPic { get; set; }
+    }
+
     public class UserResponse
     {
         [BsonId]
@@ -49,6 +68,8 @@ namespace Sprinto.Server.DTOs
 
         [BsonElement("name")]
         public string Name { get; set; } = null!;
+
+        public string? DisplayPic { get; set; }
 
         [EmailAddress]
         [BsonElement("email")]
@@ -104,5 +125,4 @@ namespace Sprinto.Server.DTOs
             set => _new_password = value?.Trim() ?? string.Empty;
         }
     }
-
 }

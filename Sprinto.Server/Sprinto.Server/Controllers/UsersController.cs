@@ -122,6 +122,29 @@ namespace Sprinto.Server.Controllers
         }
 
 
+        // Update user ( name and display picture )
+        [HttpPost("update")]
+        [Authorize]
+        public async Task<ApiResponse<object>> UpdateUser([FromBody] UserUpdateReq dto)
+        {
+            var response = new ApiResponse<object>();
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userId))
+                    throw new Exception(Constants.Messages.InvalidToken);
+
+                await _userService.UpdateUserAsync(userId, dto);
+
+                response.Message = Constants.Messages.Updated;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
         // Access Token Refresh route and used to get profile information
         [HttpGet("/api/auth/me")]
         public async Task<ApiResponse<LoginResponse>> RefreshAccessToken()

@@ -11,6 +11,7 @@ namespace Sprinto.Server.Extensions
             {
                 Id = user.Id,
                 Name = user.Name,
+                DisplayPic = user.DisplayPic,
                 CreatedBy = user.CreatedBy,
                 Email = user.Email,
                 Role = user.Role,
