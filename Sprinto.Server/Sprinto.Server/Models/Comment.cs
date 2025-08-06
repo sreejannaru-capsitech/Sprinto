@@ -9,7 +9,7 @@ namespace Sprinto.Server.Models
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         [BsonElement("_id")]
-        public string? Id { get; set; }
+        public string Id { get; set; } = null!;
 
         [BsonElement("content")]
         public string Content { get; set; } = null!;
@@ -28,6 +28,7 @@ namespace Sprinto.Server.Models
         // Custom Constructor
         public Comment(CommentDTO dto, string id, string name)
         {
+            Id = ObjectId.GenerateNewId().ToString();
             Content = dto.Content;
             IsEdited = dto.IsEdited;
             CreatedBy = new Creation

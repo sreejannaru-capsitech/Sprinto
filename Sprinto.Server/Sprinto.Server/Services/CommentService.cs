@@ -28,7 +28,8 @@ namespace Sprinto.Server.Services
                 var task = await _tasks.Find(t => t.Id == taskId).FirstOrDefaultAsync()
                     ?? throw new KeyNotFoundException(Messages.NotFound);
 
-                return task.Comments;
+                return [.. task.Comments.OrderByDescending(c => c.CreatedBy.Time)];
+
             }
             catch (KeyNotFoundException)
             {
