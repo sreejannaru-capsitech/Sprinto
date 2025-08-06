@@ -483,7 +483,7 @@ namespace Sprinto.Server.Services
             {
                 var task = await _tasks.Find(a => a.Id == id).FirstOrDefaultAsync()
                     ?? throw new KeyNotFoundException(Constants.Messages.NotFound);
-                return task.Activities;
+                return [.. task.Activities.OrderByDescending(c => c.CreatedBy.Time)];
             }
             catch (KeyNotFoundException)
             {
