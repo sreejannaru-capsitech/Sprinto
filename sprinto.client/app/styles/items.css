@@ -4,6 +4,13 @@
   width: 350px;
 }
 
+.task-delete-btn {
+  padding: 2px !important;
+  margin-top: -5px;
+  margin-left: 4px;
+  margin-right: -6px;
+}
+
 .activity-item {
   max-width: 333px;
   border-radius: 16px;
@@ -48,8 +55,24 @@
   border: 1px solid var(--border-color) !important;
 
   &:hover {
-    border: transparent !important;
+    border: 1px solid var(--primary-light-color) !important;
   }
+}
+
+/* Popconfirm */
+
+.ant-popconfirm-message {
+  display: flex;
+  align-items: center !important;
+}
+
+span.ant-popconfirm-message-icon {
+  display: grid;
+  place-content: center;
+}
+
+.ant-popconfirm-title {
+  margin-left: 6px;
 }
 
 /* Task & Project Container */

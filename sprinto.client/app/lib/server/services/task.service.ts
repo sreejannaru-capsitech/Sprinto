@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { NotificationApi } from "~/hooks/useAntNotification";
 import {
   INBOX_TASKS_KEY,
+  PROJECT_TASKS_KEY,
   STALE_TIME,
   TASK_ACTIVITIES_KEY,
   TODAY_TASKS_KEY,
@@ -11,12 +12,20 @@ import {
 import { handleApiError } from "~/lib/utils";
 import {
   createTask,
+  deleteTask,
   getInboxTasks,
   getTaskActivities,
   getTodayTasks,
   getUpcomingTasks,
   updateTask,
 } from "../task.api";
+
+const invalidateKeys = [
+  TODAY_TASKS_KEY,
+  INBOX_TASKS_KEY,
+  UPCOMING_TASKS_KEY,
+  PROJECT_TASKS_KEY,
+];
 
 export const useCreateTask = (_api: NotificationApi) => {
   const queryClient = useQueryClient();
@@ -26,7 +35,9 @@ export const useCreateTask = (_api: NotificationApi) => {
     },
     onSuccess: () => {
       _api({ message: "Task created successfully", type: "success" });
-      queryClient.invalidateQueries({ queryKey: [TODAY_TASKS_KEY] });
+      invalidateKeys.forEach((key) => {
+        queryClient.invalidateQueries({ queryKey: [key]});
+      });
     },
     onError: (error) => {
       handleApiError(error, _api, "Could not create task");
@@ -47,10 +58,31 @@ export const useUpdateTask = (_api: NotificationApi) => {
     },
     onSuccess: () => {
       _api({ message: "Task updated successfully", type: "success" });
-      queryClient.invalidateQueries({ queryKey: [TODAY_TASKS_KEY] });
+      invalidateKeys.forEach((key) => {
+        queryClient.invalidateQueries({ queryKey: [key] });
+      });
     },
     onError: (error) => {
       handleApiError(error, _api, "Could not update task");
+    },
+  });
+};
+
+export const useDeleteTask = (_api: NotificationApi) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<ApiResponse<string>, Error, string>({
+    mutationFn: async (taskId) => {
+      return await deleteTask(taskId);
+    },
+    onSuccess: () => {
+      _api({ message: "Task deleted successfully", type: "success" });
+      invalidateKeys.forEach((key) => {
+        queryClient.invalidateQueries({ queryKey: [key] });
+      });
+    },
+    onError: (error) => {
+      handleApiError(error, _api, "Could not delete task");
     },
   });
 };

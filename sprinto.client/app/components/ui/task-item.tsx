@@ -1,9 +1,26 @@
-import { Avatar, Card, Col, Flex, Row, Tag, Typography } from "antd";
+import {
+  Avatar,
+  Button,
+  Card,
+  Col,
+  Flex,
+  Popconfirm,
+  Row,
+  Tag,
+  Typography,
+} from "antd";
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
 import utc from "dayjs/plugin/utc";
 import { useMemo, type FC, type ReactNode } from "react";
-import { CalenderIcon, HighIcon, LowIcon, MediumIcon } from "~/lib/icons";
+import {
+  AlertIcon,
+  CalenderIcon,
+  DeleteIcon,
+  HighIcon,
+  LowIcon,
+  MediumIcon,
+} from "~/lib/icons";
 import { getInitials, truncateText } from "~/lib/utils";
 
 dayjs.extend(utc);
@@ -12,6 +29,8 @@ dayjs.extend(advancedFormat);
 import "~/styles/items.css";
 import ToolTip from "./tooltip";
 import { NavLink } from "react-router";
+import { useAntNotification } from "~/hooks";
+import { useDeleteTask } from "~/lib/server/services";
 
 interface TaskItemProps {
   task: Task;
@@ -38,38 +57,49 @@ const TaskItem: FC<TaskItemProps> = ({
     return dayjs.utc(task.dueDate).isBefore(dayjs.utc(), "day");
   }, [task.dueDate]);
 
-  return (
-    <NavLink to={`/projects/${task.projectId}/tasks/${task.id}`}>
-      <Card hoverable size="small" className="task-item">
-        <Flex
-          align="center"
-          justify="space-between"
-          className="task-item-header"
-        >
-          <Typography.Text className="text-primary font-bolder smaller-text">
-            {task.projectAlias}-{task.sequence}
-          </Typography.Text>
+  const { _api, contextHolder } = useAntNotification();
 
-          <div>
+  const { mutateAsync: deleteTask } = useDeleteTask(_api);
+
+  return (
+    <Card hoverable size="small" className="task-item">
+      {contextHolder}
+      <Flex align="center" justify="space-between" className="task-item-header">
+        <Typography.Text className="text-primary font-bolder smaller-text">
+          {task.projectAlias}-{task.sequence}
+        </Typography.Text>
+
+        <div>
+          <Avatar.Group
+            max={{
+              count: 2,
+              style: { color: "black", backgroundColor: "white" },
+            }}
+          >
             {task.assignees.map((assignee) => (
-              <Avatar.Group
-                key={assignee.id}
-                max={{
-                  count: 2,
-                  style: { color: "black", backgroundColor: "white" },
-                }}
-              >
-                <Avatar size={18}>
-                  <ToolTip title={assignee.name}>
-                    <span className="small-text">
-                      {getInitials(assignee.name)}
-                    </span>
-                  </ToolTip>
-                </Avatar>
-              </Avatar.Group>
+              <Avatar size={18} key={assignee.id}>
+                <ToolTip title={assignee.name}>
+                  <span className="small-text">
+                    {getInitials(assignee.name)}
+                  </span>
+                </ToolTip>
+              </Avatar>
             ))}
-          </div>
-        </Flex>
+          </Avatar.Group>
+          <Popconfirm
+            title="Delete this task?"
+            onConfirm={async () => await deleteTask(task.id)}
+            icon={<AlertIcon size={18} />}
+          >
+            <Button
+              type="text"
+              className="task-delete-btn"
+              icon={<DeleteIcon size={16} />}
+            />
+          </Popconfirm>
+        </div>
+      </Flex>
+      <NavLink to={`/projects/${task.projectId}/tasks/${task.id}`}>
         <Row gutter={0}>
           <Col span={2}>
             <ToolTip
@@ -129,8 +159,8 @@ const TaskItem: FC<TaskItemProps> = ({
             </Flex>
           </Col>
         </Row>
-      </Card>
-    </NavLink>
+      </NavLink>
+    </Card>
   );
 };
 

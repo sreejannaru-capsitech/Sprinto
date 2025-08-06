@@ -5,6 +5,7 @@ import {
   Flex,
   Form,
   Input,
+  Popconfirm,
   Row,
   Space,
   Tag,
@@ -12,6 +13,7 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 import { useMemo, useState, type FC, type ReactNode } from "react";
+import { Navigate, useNavigate } from "react-router";
 import TaskForm from "~/components/forms/task-form";
 import TimeLineSection from "~/components/timeline-section";
 import CommentItem from "~/components/ui/comment-item";
@@ -19,7 +21,9 @@ import Spinner from "~/components/ui/spinner";
 import ToolTip from "~/components/ui/tooltip";
 import { useAntNotification } from "~/hooks";
 import {
+  AlertIcon,
   CalenderIcon,
+  DeleteIcon,
   PencilIcon,
   PlusIcon,
   TickRoundedIcon,
@@ -27,6 +31,7 @@ import {
 import {
   useCommentsQuery,
   useCreateComment,
+  useDeleteTask,
   useTaskActivitiesQuery,
   useUpdateComment,
 } from "~/lib/server/services";
@@ -55,6 +60,8 @@ const TaskDetailsPage: FC<TaskDetailsPageProps> = ({
     task.id
   );
 
+  const navigate = useNavigate();
+
   const { _api, contextHolder } = useAntNotification();
   const [form] = Form.useForm<FormType>();
 
@@ -65,6 +72,7 @@ const TaskDetailsPage: FC<TaskDetailsPageProps> = ({
 
   const { mutateAsync: createComment } = useCreateComment(_api);
   const { mutateAsync: updateComment } = useUpdateComment(_api);
+  const { mutateAsync: deleteTask } = useDeleteTask(_api);
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -124,6 +132,11 @@ const TaskDetailsPage: FC<TaskDetailsPageProps> = ({
     }
   };
 
+  const onDelete = async () => {
+    await deleteTask(task.id);
+    navigate("/inbox");
+  };
+
   return (
     <Row gutter={50} wrap={false}>
       <Col flex={"auto"}>
@@ -154,8 +167,19 @@ const TaskDetailsPage: FC<TaskDetailsPageProps> = ({
 
           {/* Task Assignees & Edit Button */}
           <Flex align="center" gap={20}>
-            <Button onClick={() => setModalOpen(true)}>
-              <PencilIcon size={20} />
+            <Popconfirm
+              title="Delete this task ?"
+              icon={<AlertIcon size={18} />}
+              onConfirm={onDelete}
+            >
+              <Button icon={<DeleteIcon size={20} />}>
+                <span>Delete</span>
+              </Button>
+            </Popconfirm>
+            <Button
+              icon={<PencilIcon size={20} />}
+              onClick={() => setModalOpen(true)}
+            >
               <span>Edit</span>
             </Button>
             <TaskForm

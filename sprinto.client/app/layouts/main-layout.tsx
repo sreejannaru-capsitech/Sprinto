@@ -72,7 +72,7 @@ const MainLayout = (): ReactNode => {
                       },
                     ]}
                   />
-                  <Tag className="capitalize">
+                  <Tag className="capitalize" style={{ padding: "4px 8px", fontSize: 14, borderRadius: 9 }}>
                     {role === "teamLead" ? "Team Lead" : role}
                   </Tag>
                 </Space>

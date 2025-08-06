@@ -38,3 +38,10 @@ export const getTaskActivities = async (taskId: string) => {
   );
   return data;
 };
+
+export const deleteTask = async (taskId: string) => {
+  const { data } = await axiosApi.post<ApiResponse<string>>(
+    `/tasks/${taskId}/delete`
+  );
+  return data;
+};
