@@ -55,6 +55,7 @@ const PasswordForm: FC<PasswordFormProps> = ({
     <Modal
       open={open}
       onCancel={onClose}
+      centered
       onOk={handleSubmit}
       confirmLoading={loading}
       okText="Change"

@@ -132,6 +132,7 @@ const ProjectForm: FC<ProjectFormProps> = ({
     <Modal
       title="CREATE NEW PROJECT"
       okText="Create"
+      centered
       open={open}
       onCancel={() => {
         onClose();

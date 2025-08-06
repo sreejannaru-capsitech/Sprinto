@@ -79,6 +79,7 @@ const UserForm: FC<UserFormProps> = ({
       onCancel={() => {
         onClose();
       }}
+      centered
       afterOpenChange={() => {
         if (open) return;
         form.resetFields();

@@ -6,8 +6,9 @@ import { DownArrow } from "~/lib/icons";
 import { logOut } from "~/lib/server/auth.api";
 import { useProfileQuery } from "~/lib/server/services";
 import { getInitials } from "~/lib/utils";
-import PasswordForm from "../forms/password-form";
 import CreateTask from "../create-task";
+import PasswordForm from "../forms/password-form";
+import ProfileFormModal from "../forms/profile-form";
 
 /**
  * This component renders sidebar-header section
@@ -17,6 +18,7 @@ const SidebarHeader = (): ReactNode => {
   const { data } = useProfileQuery();
   const [visible, setVisible] = useState<boolean>(false);
   const [passwordOpen, setPasswordOpen] = useState<boolean>(false);
+  const [profileOpen, setProfileOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const { _api, contextHolder } = useAntNotification();
 
@@ -45,11 +47,8 @@ const SidebarHeader = (): ReactNode => {
 
   const items: MenuProps["items"] = [
     {
-      label: (
-        <a href="/profile" rel="noopener noreferrer">
-          Profile
-        </a>
-      ),
+      label: "Profile",
+      onClick: () => setProfileOpen(true),
       key: "0",
       style: { width: "150px" },
     },
@@ -81,6 +80,10 @@ const SidebarHeader = (): ReactNode => {
             <DownArrow size={16} />
           </Flex>
         </Dropdown>
+        <ProfileFormModal
+          open={profileOpen}
+          onClose={() => setProfileOpen(false)}
+        />
         <Modal
           title="Do you want to log out?"
           okText="Log out"
