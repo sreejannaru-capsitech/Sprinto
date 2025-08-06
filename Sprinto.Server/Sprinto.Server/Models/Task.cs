@@ -58,6 +58,9 @@ namespace Sprinto.Server.Models
         [BsonElement("created_by")]
         public Creation CreatedBy { get; set; } = null!;
 
+        [BsonElement("is_deleted")]
+        [BsonIgnoreIfDefault]
+        public bool? IsDeleted { get; set; }
 
         // Custom Constructor
         public TaskItem

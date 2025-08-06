@@ -52,7 +52,7 @@ namespace Sprinto.Server.Controllers
 
                 await _service.AddCommentAsync(taskId, dto, userId, userName);
                 res.Result = "Comment added";
-                res.Message = Messages.Success;
+                res.Message = Messages.Created;
             }
             catch (Exception ex)
             {
@@ -78,7 +78,7 @@ namespace Sprinto.Server.Controllers
 
                 await _service.UpdateCommentAsync(taskId, commentId, dto);
                 res.Result = "Comment updated";
-                res.Message = Messages.Success;
+                res.Message = Messages.Updated;
             }
             catch (Exception ex)
             {
@@ -100,7 +100,7 @@ namespace Sprinto.Server.Controllers
 
                 await _service.DeleteCommentAsync(taskId, commentId);
                 res.Result = "Comment deleted";
-                res.Message = Messages.Success;
+                res.Message = Messages.Deleted;
             }
             catch (Exception ex)
             {

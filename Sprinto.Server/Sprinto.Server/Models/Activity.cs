@@ -54,6 +54,7 @@ namespace Sprinto.Server.Models
         AssigneeRemoved,
         DuedateUpdated,
         StatusUpdated,
-        PriorityUpdated
+        PriorityUpdated,
+        TaskDeleted
     }
 }

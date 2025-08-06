@@ -71,7 +71,7 @@ namespace Sprinto.Server.Controllers
 
                 var updatedTask = await _taskService.UpdateAsync(id, taskDTO, userId, userName);
 
-                response.Message = Constants.Messages.Success;
+                response.Message = Constants.Messages.Updated;
                 response.Result = updatedTask.ToTaskResponse();
             }
             catch (Exception ex)
@@ -152,31 +152,6 @@ namespace Sprinto.Server.Controllers
         }
 
         // Get all upcoming tasks
-        //[HttpGet("upcoming")]
-        //public async Task<ApiResponse<List<TaskResponse>>>
-        //    GetUpcomingTasks()
-        //{
-        //    var response = new ApiResponse<List<TaskResponse>>();
-
-        //    try
-        //    {
-        //        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //        if (string.IsNullOrEmpty(userId))
-        //            throw new Exception(Constants.Messages.InvalidToken);
-
-        //        var tasks = await _taskService.GetUpcomingTasks(userId);
-
-        //        response.Message = Constants.Messages.Success;
-        //        response.Result = tasks;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        response.HandleException(ex);
-        //    }
-        //    return response;
-        //}
-
-        // Get all upcoming tasks
         [HttpGet("upcoming")]
         public async Task<ApiResponse<List<ProjectTaskGroup>>>
             GetUpcomingGroupedTasks()
@@ -193,6 +168,36 @@ namespace Sprinto.Server.Controllers
 
                 response.Message = Constants.Messages.Success;
                 response.Result = tasks;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
+        // Delete a task item
+        [HttpPost("{id}/delete")]
+        public async Task<ApiResponse<TaskResponse>> DeleteTask(string id)
+        {
+            var response = new ApiResponse<TaskResponse>();
+
+            try
+            {
+                if (!ObjectId.TryParse(id, out _))
+                    throw new Exception("Please provide valid id");
+
+                // Extract ID and Name of current admin
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userName = User.FindFirstValue(ClaimTypes.Name);
+
+                if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(userName))
+                    throw new Exception(Constants.Messages.InvalidToken);
+
+                var task = await _taskService.DeleteAsync(id, userId, userName);
+
+                response.Message = Constants.Messages.Deleted;
+                response.Result = task.ToTaskResponse();
             }
             catch (Exception ex)
             {

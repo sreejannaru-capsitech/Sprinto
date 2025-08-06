@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Sprinto.Server.Common;
@@ -109,6 +110,12 @@ namespace Sprinto.Server.Services
                     a => a.Id == userId
                 );
 
+                // Exclude deleted tasks
+                var deleteFilter = Builders<TaskItem>.Filter.Ne(
+                    t => t.IsDeleted,
+                    true
+                );
+
                 // Exclude "Done" status
                 var statusFilter = Builders<TaskItem>.Filter.Ne(
                     t => t.Status.Title,
@@ -117,6 +124,7 @@ namespace Sprinto.Server.Services
 
                 // Combine filters
                 var userFilter = Builders<TaskItem>.Filter.And(
+                    deleteFilter,
                     assigneeFilter,
                     statusFilter
                 );
@@ -160,6 +168,12 @@ namespace Sprinto.Server.Services
                     a => a.Id == userId
                 );
 
+                // Exclude deleted tasks
+                var deleteFilter = Builders<TaskItem>.Filter.Ne(
+                    t => t.IsDeleted,
+                    true
+                );
+
                 // Exclude "Done" status
                 var statusFilter = Builders<TaskItem>.Filter.Ne(
                     t => t.Status.Title,
@@ -168,6 +182,7 @@ namespace Sprinto.Server.Services
 
                 // Combine filters
                 var userFilter = Builders<TaskItem>.Filter.And(
+                    deleteFilter,
                     assigneeFilter,
                     statusFilter
                 );
@@ -215,6 +230,12 @@ namespace Sprinto.Server.Services
                     a => a.Id == userId
                 );
 
+                // Exclude deleted tasks
+                var deleteFilter = Builders<TaskItem>.Filter.Ne(
+                    t => t.IsDeleted,
+                    true
+                );
+
                 // Exclude "Done" status
                 var statusFilter = Builders<TaskItem>.Filter.Ne(
                     t => t.Status.Title,
@@ -226,6 +247,7 @@ namespace Sprinto.Server.Services
                 // Combine filters
                 var userFilter = Builders<TaskItem>.Filter.And(
                     assigneeFilter,
+                    deleteFilter,
                     statusFilter,
                     dateFilter
                 );
@@ -256,6 +278,7 @@ namespace Sprinto.Server.Services
                     {
                         { "assignees", new BsonDocument("$elemMatch", new BsonDocument("_id", new ObjectId(userId))) },
                         { "status.title", new BsonDocument("$ne", "Done") },
+                        { "is_deleted", new BsonDocument("$ne", true) }, 
                         { "due_date", new BsonDocument("$gt",  DateTime.Today) } // FIXME: Fix the date check
                     }),
                     new("$lookup", new BsonDocument
@@ -493,6 +516,54 @@ namespace Sprinto.Server.Services
             {
                 _logger.LogError(ex, "Error retrieving activity for task {TaskId}", id);
                 throw new Exception("Could not retrieve task activity");
+            }
+        }
+
+
+        //Soft delete a Task Item
+        public async Task<TaskItem> DeleteAsync(string id, string userId, string userName)
+        {
+            try
+            {
+                var options = new FindOneAndUpdateOptions<TaskItem>
+                {
+                    ReturnDocument = ReturnDocument.After
+                };
+
+                var deletion = new Activity
+                {
+                    Action = ActivityAction.TaskDeleted,
+                    CreatedBy = new Creation
+                    {
+                        UserId = userId,
+                        UserName = userName
+                    }
+                };
+
+                var update = Builders<TaskItem>.Update.Combine(
+                    Builders<TaskItem>.Update.Set(t => t.IsDeleted, true),
+                    Builders<TaskItem>.Update.Push(t => t.Activities, deletion)
+                );
+
+
+                var updatedTask = await _tasks.FindOneAndUpdateAsync(
+                    x => x.Id == id,
+                    update,
+                    options
+                );
+
+                return updatedTask ?? throw new KeyNotFoundException($"Task with id {id} not found");
+            }
+            catch (KeyNotFoundException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                {
+                    _logger.LogError(ex, "Error retrieving activity for task {TaskId}", id);
+                    throw new Exception("Could not retrieve task activity");
+                }
             }
         }
     }
