@@ -42,7 +42,7 @@ const CommentItem: FC<CommentItemProps> = ({
             {item.createdBy.userName}
           </p>
           {user?.id === item.createdBy.userId ? (
-            <Flex align="center" gap={4}>
+            <Flex align="center" gap={4} className="comment-btns">
               <Button
                 className="comment-edit-button"
                 size="small"

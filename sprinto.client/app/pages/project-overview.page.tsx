@@ -97,12 +97,13 @@ const ProjectOverview = (): ReactNode => {
             </Tag>
           </Flex>
         </Flex>
-        <div className="project-description">
-          <Typography.Paragraph>{proj!.description}</Typography.Paragraph>
-        </div>
-
-        {/* Statistics Section */}
+        
         <Spinner isActive={overviewPending}>
+          <div className="project-description">
+            <Typography.Paragraph>{proj!.description}</Typography.Paragraph>
+          </div>
+
+          {/* Statistics Section */}
           <div style={{ padding: "40px 10px" }}>
             <Flex align="center" gap={200} justify="space-around">
               <Statistic
