@@ -385,7 +385,7 @@ namespace Sprinto.Server.Services
 
                 if (users.Count == 0)
                 {
-                    throw new KeyNotFoundException("No valid users found for the provided IDs.");
+                    throw new KeyNotFoundException("No valid users found for the provided IDs");
                 }
 
                 // Create Assignee objects
@@ -397,13 +397,14 @@ namespace Sprinto.Server.Services
 
                 // Avoid duplicates
                 var existingIds = project.Assignees.Select(a => a.Id).ToHashSet();
+                existingIds.Add(project.TeamLead.Id);
                 var assigneesToAdd = newAssignees
                     .Where(a => !existingIds.Contains(a.Id))
                     .ToList();
 
                 if (assigneesToAdd.Count == 0)
                 {
-                    throw new InvalidOperationException("All provided users are already assigned to the project.");
+                    throw new InvalidOperationException("Users already belong to the project");
                 }
 
                 // Update the project
