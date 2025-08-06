@@ -1,12 +1,13 @@
 import { Button } from "antd";
 import { useMemo, type ReactNode } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useParams, type MetaArgs } from "react-router";
 import Spinner from "~/components/ui/spinner";
 import CenteredLayout from "~/layouts/centered-layout";
 import { AlertIcon } from "~/lib/icons";
 import { useProjectTasksQuery } from "~/lib/server/services";
-import type { RootState } from "~/lib/store/store";
+import type { AppDispatch, RootState } from "~/lib/store/store";
+import { setTask } from "~/lib/store/taskSlice";
 import { isValidMongoId } from "~/lib/utils";
 import TaskDetailsPage from "~/pages/task-details.page";
 
@@ -23,6 +24,7 @@ export const meta = ({}: MetaArgs) => {
  */
 const TaskDetails = (): ReactNode => {
   const { taskId } = useParams();
+  const dispatch: AppDispatch = useDispatch();
 
   const proj = useSelector((state: RootState) => state.project.project);
 
@@ -30,7 +32,9 @@ const TaskDetails = (): ReactNode => {
 
   const taskItem = useMemo(() => {
     if (!isValidMongoId(taskId)) return undefined;
-    return data?.result?.find((t) => t.id === taskId);
+    var _task = data?.result?.find((t) => t.id === taskId);
+    if (_task) dispatch(setTask(_task));
+    return _task;
   }, [data?.result, taskId, proj]);
 
   return (

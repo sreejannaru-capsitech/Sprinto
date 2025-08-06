@@ -92,7 +92,7 @@ const ProjectOverview = (): ReactNode => {
                 </Avatar>
               </Avatar.Group>
             </Flex>
-            <Tag style={{ padding: "4px 8px", fontSize: 14, borderRadius: 9 }}>
+            <Tag style={{ padding: "4px 8px", fontSize: 14, borderRadius: 8 }}>
               Team Lead - {proj!.teamLead.name}
             </Tag>
           </Flex>

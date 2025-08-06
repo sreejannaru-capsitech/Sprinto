@@ -1,13 +1,13 @@
-import { Flex, Button } from "antd";
+import { Button } from "antd";
 import { useMemo, type ReactNode } from "react";
 import { useDispatch } from "react-redux";
 import { NavLink, Outlet, useParams } from "react-router";
+import { AlertIcon } from "~/lib/icons";
 import { useProjectsQuery } from "~/lib/server/services";
 import { setProject } from "~/lib/store/projectSlice";
 import type { AppDispatch } from "~/lib/store/store";
 import { isValidMongoId } from "~/lib/utils";
 import CenteredLayout from "./centered-layout";
-import { AlertIcon } from "~/lib/icons";
 
 /**
  * This component renders project-layout section

@@ -1,7 +1,8 @@
-import { Breadcrumb, Layout, Space, Tag } from "antd";
+import { Layout } from "antd";
 import { useEffect, type FC, type ReactNode } from "react";
 import { useDispatch } from "react-redux";
 import { Navigate, Outlet } from "react-router";
+import Header from "~/components/header";
 import AdminSidebar from "~/components/sidebar/admin-sidebar";
 import EmployeeSidebar from "~/components/sidebar/employee-sidebar";
 import Spinner from "~/components/ui/spinner";
@@ -10,7 +11,7 @@ import type { AppDispatch } from "~/lib/store/store";
 import { setToken, setUser } from "~/lib/store/userSlice";
 import NoProject from "~/pages/no-project";
 
-const { Header, Content, Sider } = Layout;
+const { Content, Sider } = Layout;
 
 interface ProjectCheckerProps {
   children: ReactNode;
@@ -56,27 +57,7 @@ const MainLayout = (): ReactNode => {
               {role === "admin" ? <AdminSidebar /> : <EmployeeSidebar />}
             </Sider>
             <Layout>
-              <Header>
-                <Space
-                  align="center"
-                  style={{ width: "100%", justifyContent: "space-between" }}
-                  size={24}
-                >
-                  <Breadcrumb
-                    items={[
-                      {
-                        title: "Home",
-                      },
-                      {
-                        title: <a href="/today">Today</a>,
-                      },
-                    ]}
-                  />
-                  <Tag className="capitalize" style={{ padding: "4px 8px", fontSize: 14, borderRadius: 9 }}>
-                    {role === "teamLead" ? "Team Lead" : role}
-                  </Tag>
-                </Space>
-              </Header>
+              <Header />
               <Content style={{ display: "flex", flexDirection: "column" }}>
                 <Outlet />
               </Content>

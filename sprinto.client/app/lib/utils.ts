@@ -110,11 +110,19 @@ export const getOptionsFromUsers = (
     }));
 };
 
-export const getOptionsFromTeam = (
-  users: User[]
-): SelectOptions[] => {
+export const getOptionsFromTeam = (users: User[]): SelectOptions[] => {
   return users.map((user) => ({
     label: user.name,
     value: user.id,
   }));
+};
+
+/**
+ * This function capitalizes the first letter of a given string.
+ * @param {string} word - The input string to capitalize.
+ * @returns {string} The capitalized string.
+ */
+export const capitalizeFirst = (word: string): string => {
+  if (!word) return "";
+  return word.charAt(0).toUpperCase() + word.slice(1);
 };
