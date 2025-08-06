@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { NotificationApi } from "~/hooks/useAntNotification";
 import {
   PROJECT_ACTIVITIES_KEY,
@@ -66,12 +66,15 @@ type MemberRemovePayload = {
 };
 
 export const useRemoveMember = (_api: NotificationApi) => {
+  const query = useQueryClient();
   return useMutation<ApiResponse<null>, Error, MemberRemovePayload>({
     mutationFn: async ({ projectId, memberId }) => {
       return await removeMember(projectId, memberId);
     },
     onSuccess: () => {
-      _api({ message: "Member removed successfully", type: "success" });
+      _api({ message: "Member removed from project", type: "success" });
+      query.invalidateQueries({ queryKey: [PROJECT_TEAM_KEY] });
+      query.invalidateQueries({ queryKey: [PROJECTS_KEY] });
     },
     onError: (error) => {
       handleApiError(error, _api, "Could not remove member");
@@ -85,12 +88,15 @@ type MemberAddPayload = {
 };
 
 export const useAddMembers = (_api: NotificationApi) => {
+  const query = useQueryClient();
   return useMutation<ApiResponse<null>, Error, MemberAddPayload>({
     mutationFn: async ({ projectId, memberIds }) => {
       return await addMembers(projectId, memberIds);
     },
     onSuccess: () => {
-      _api({ message: "Members added successfully", type: "success" });
+      _api({ message: "Members added to the project", type: "success" });
+      query.invalidateQueries({ queryKey: [PROJECT_TEAM_KEY] });
+      query.invalidateQueries({ queryKey: [PROJECTS_KEY] });
     },
     onError: (error) => {
       handleApiError(error, _api, "Could not add members");

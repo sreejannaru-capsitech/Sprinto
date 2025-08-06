@@ -97,7 +97,22 @@ export const isValidMongoId = (id: string | undefined): boolean => {
  * @param {User[]} users - An array of user objects.
  * @returns {SelectOptions[]} An array of SelectOption objects representing the users.
  */
-export const getOptionsFromUsers = (users: User[]): SelectOptions[] => {
+export const getOptionsFromUsers = (
+  users: User[],
+  exclude: Assignee[]
+): SelectOptions[] => {
+  var excludeIds = exclude.map((a) => a.id);
+  return users
+    .filter((user) => !excludeIds?.includes(user.id))
+    .map((user) => ({
+      label: user.name,
+      value: user.id,
+    }));
+};
+
+export const getOptionsFromTeam = (
+  users: User[]
+): SelectOptions[] => {
   return users.map((user) => ({
     label: user.name,
     value: user.id,

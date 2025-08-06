@@ -1,8 +1,14 @@
 import { Form, Modal, Select } from "antd";
 import { useState, type FC, type ReactNode } from "react";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router";
 import { useAntNotification } from "~/hooks";
-import { useAddMembers, useUserSearchQuery } from "~/lib/server/services";
+import {
+  useAddMembers,
+  useProjectTeamQuery,
+  useUserSearchQuery,
+} from "~/lib/server/services";
+import type { RootState } from "~/lib/store/store";
 import { getOptionsFromUsers } from "~/lib/utils";
 import { getRequiredSelectRule } from "~/lib/validators";
 
@@ -25,7 +31,10 @@ const AddMemberForm: FC<AddMemberFormProps> = ({
 }): ReactNode => {
   const { _api, contextHolder } = useAntNotification();
   const [form] = Form.useForm<MemberFormType>();
-  const { projectId } = useParams();
+
+  const proj = useSelector(
+    (state: RootState) => state.project.project
+  ) as Project;
 
   const [query, setQuery] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -49,7 +58,7 @@ const AddMemberForm: FC<AddMemberFormProps> = ({
 
     setLoading(true);
     try {
-      await addMembers({ projectId: projectId!, memberIds: values.members });
+      await addMembers({ projectId: proj.id, memberIds: values.members });
       onClose();
     } catch (error) {
     } finally {
@@ -83,7 +92,10 @@ const AddMemberForm: FC<AddMemberFormProps> = ({
             showSearch
             allowClear
             loading={isPending || isFetching}
-            options={getOptionsFromUsers(data?.result ?? [])}
+            options={getOptionsFromUsers(data?.result ?? [], [
+              ...proj.assignees, // Exclude assignees from the list
+              proj.teamLead, // Team lead is also an assignee
+            ])}
             onSearch={onSearch}
             optionFilterProp="label"
             mode="multiple"
