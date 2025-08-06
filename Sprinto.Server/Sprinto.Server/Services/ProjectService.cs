@@ -171,31 +171,25 @@ namespace Sprinto.Server.Services
         }
 
         // Get all tasks referenced to a project
-        public async Task<List<TaskItem>> GetTaskItemsAsync(string id)
+        public async Task<List<TaskItem>> GetTaskItemsAsync(string id, bool isIncluded = false)
         {
             try
             {
-                var project = GetAsync(id) ?? throw new KeyNotFoundException("Project not found");
+                var project = await GetAsync(id)
+                    ?? throw new KeyNotFoundException("Project not found");
 
-                // Find by project
-                var projectFilter = Builders<TaskItem>.Filter.Eq(
-                    t => t.ProjectId,
-                    id
-                );
+                // Filter by project ID
+                var projectFilter = Builders<TaskItem>.Filter.Eq(t => t.ProjectId, id);
 
-                // Exclude deleted tasks
-                var deleteFilter = Builders<TaskItem>.Filter.Ne(
-                    t => t.IsDeleted,
-                    true
-                );
+                // Conditionally exclude deleted tasks
+                var filter = isIncluded
+                    ? projectFilter
+                    : Builders<TaskItem>.Filter.And(
+                        projectFilter,
+                        Builders<TaskItem>.Filter.Ne(t => t.IsDeleted, true)
+                      );
 
-                // Combine filters
-                var userFilter = Builders<TaskItem>.Filter.And(
-                    projectFilter,
-                    deleteFilter
-                );
-
-                var tasks = await _tasks.Find(userFilter).ToListAsync();
+                var tasks = await _tasks.Find(filter).ToListAsync();
                 return tasks;
             }
             catch (KeyNotFoundException)
@@ -205,7 +199,7 @@ namespace Sprinto.Server.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving tasks for project with id {ProjectId}", id);
-                throw new Exception("Could retrieve tasks for project");
+                throw new Exception("Could not retrieve tasks for project");
             }
         }
 
@@ -328,7 +322,7 @@ namespace Sprinto.Server.Services
         {
             try
             {
-                var tasks = await GetTaskItemsAsync(id);
+                var tasks = await GetTaskItemsAsync(id, true);
 
                 var taskActivities = tasks
                     .SelectMany(task =>
