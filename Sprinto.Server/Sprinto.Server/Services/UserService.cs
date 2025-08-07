@@ -146,19 +146,24 @@ namespace Sprinto.Server.Services
         /// <param name="regex">The regex pattern to match user names.</param>
         /// <returns>A list of <see cref="UserResponse"/> objects matching the search criteria.</returns>
         /// <exception cref="Exception">Thrown when the search operation fails.</exception>
-        public async Task<List<UserResponse>> SearchAsync(string regex)
+        public async Task<List<UserResponse>>
+            SearchAsync(string name, string role = Constants.Roles.Employee)
         {
+            // Validate user role, don't allow admin or invalid string
+            if (!Constants.userRoles.Contains(role) || role == Constants.Roles.Admin)
+                role = Constants.Roles.Employee;
+
             try
             {
                 var regexQuery = new BsonDocument
                 {
                     { "name", new BsonDocument
                         {
-                            { "$regex", regex },
+                            { "$regex", name },
                             { "$options", "i" }
                         }
                     },
-                    { "role", new BsonDocument("$ne", "admin") }
+                    { "role", new BsonDocument("$eq", role) }
                 };
 
                 var users = await _users.Find(regexQuery).Limit(10).ToListAsync();
@@ -167,7 +172,7 @@ namespace Sprinto.Server.Services
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Error searching users by regex {regex}", regex);
+                _logger.LogError(e, "Error searching users by regex {regex}", name);
                 throw new Exception("Could not search the users");
             }
         }

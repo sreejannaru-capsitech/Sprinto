@@ -18,6 +18,7 @@
             public const string JwtNotConfigured = "JWT secret key is not configured";
         }
 
+
         public static class Roles
         {
             public const string Admin = "admin";
@@ -25,7 +26,7 @@
             public const string Employee = "employee";
         }
 
-        
+        public static string[] userRoles = [Roles.Employee, Roles.Admin, Roles.TeamLead];
 
         public static class Config
         {

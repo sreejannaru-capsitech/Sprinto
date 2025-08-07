@@ -57,14 +57,13 @@ namespace Sprinto.Server.Controllers
         public async Task<ApiResponse<PagedResult<UserResponse>>> GetAll(
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 10,
-            [FromQuery] string? role = "employee")
+            [FromQuery] string? role = Constants.Roles.Employee)
         {
-            var allowedRoles = new[] { "employee", "admin", "teamLead" };
             var response = new ApiResponse<PagedResult<UserResponse>>();
             try
             {
                 // Validate query value
-                if (!allowedRoles.Contains(role))
+                if (!Constants.userRoles.Contains(role))
                 {
                     throw new Exception("Invalid role specified. Allowed values are: employee, admin, teamLead.");
                 }
@@ -253,7 +252,8 @@ namespace Sprinto.Server.Controllers
         // When user wants to change password
         [Authorize]
         [HttpPost("/api/auth/change-password")]
-        public async Task<ApiResponse<string>> ChangePassword([FromBody] UserPasswordChangeRequest request)
+        public async Task<ApiResponse<string>> 
+            ChangePassword([FromBody] UserPasswordChangeRequest request)
         {
             var response = new ApiResponse<string>();
             var _result = ValidateModelState;
@@ -291,18 +291,21 @@ namespace Sprinto.Server.Controllers
         // Search users by name
         //[Authorize(Roles = "admin,teamLead")]
         [HttpGet("search")]
-        public async Task<ApiResponse<List<UserResponse>>> SearchUser([FromQuery] string? name)
+        public async Task<ApiResponse<List<UserResponse>>> 
+            SearchUser([FromQuery] string? name, [FromQuery] string? role)
         {
             var response = new ApiResponse<List<UserResponse>>();
             try
             {
                 // If no query provided, return global list
-                if (string.IsNullOrEmpty(name))
-                {
-                    name = "";
-                }
+                if (string.IsNullOrEmpty(name))  
+                    name = string.Empty;
+                
 
-                var result = await _userService.SearchAsync(name);
+                if (string.IsNullOrEmpty(role) || !Constants.userRoles.Contains(role))      
+                    role = Constants.Roles.Employee;
+
+                var result = await _userService.SearchAsync(name, role);
                 response.Message = Constants.Messages.Success;
                 response.Result = result;
             }
