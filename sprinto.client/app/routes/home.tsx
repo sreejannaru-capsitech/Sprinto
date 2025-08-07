@@ -1,9 +1,9 @@
-import { Card, Col, Flex, Row, Space, Typography } from "antd";
+import { Card, Col, Row, Space, Typography } from "antd";
 import type { ReactNode } from "react";
 import type { Route } from "./+types/home";
 
 import LoginForm from "~/components/forms/login-form";
-import { LogoIcon } from "~/lib/icons";
+import LogoComponent from "~/components/logo";
 import "~/styles/home.css";
 
 export function meta({}: Route.MetaArgs) {
@@ -33,12 +33,7 @@ const Home = (): ReactNode => {
       <Card variant="borderless" className="card">
         <Row gutter={82}>
           <Col span={12}>
-            <Flex gap={6} align="center" className="logo-container">
-              <LogoIcon size={58} />
-              <Typography.Title level={1}>
-                Sprin<span className="text-primary">t</span>o
-              </Typography.Title>
-            </Flex>
+            <LogoComponent />
             <div className="logo-description">
               <Typography.Paragraph>
                 Sprinto is your agile command center —

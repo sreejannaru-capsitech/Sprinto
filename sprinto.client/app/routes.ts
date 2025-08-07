@@ -19,6 +19,7 @@ export default [
       route("projects/:projectId/tasks", "routes/project-tasks.tsx"),
       route("projects/:projectId/tasks/:taskId", "routes/task-details.tsx"),
       route("projects/:projectId/team", "routes/project-team.tsx"),
-    ]),
+    ])
   ]),
+  route("*", "routes/not-found.tsx"),
 ] satisfies RouteConfig;
