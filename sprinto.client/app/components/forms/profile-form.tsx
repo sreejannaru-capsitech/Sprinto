@@ -47,8 +47,9 @@ const ProfileFormModal: FC<ProfileFormProps> = ({
   const { mutateAsync: updateProfile } = useProfileUpdate(_api);
 
   useEffect(() => {
+    if (!open) return;
     form.setFieldValue("name", user.name);
-  }, [user]);
+  }, [open]);
 
   const convertToBase64 = (file: FileType): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -107,10 +108,7 @@ const ProfileFormModal: FC<ProfileFormProps> = ({
       okText="Save"
       confirmLoading={loading}
       onOk={handleSubmit}
-      afterOpenChange={() => {
-        if (open) return;
-        form.resetFields();
-      }}
+      afterClose={() => form.resetFields()}
       centered
     >
       {contextHolder}

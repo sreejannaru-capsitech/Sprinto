@@ -61,7 +61,7 @@ const TaskForm: FC<TaskFormProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [assignees, setAssignees] = useState<SelectOptions[]>([]);
 
-  useEffect(() => {
+  const setExistingTask = () => {
     if (task && !isNew) {
       changeAssignees(task.projectId);
 
@@ -76,7 +76,13 @@ const TaskForm: FC<TaskFormProps> = ({
       form.setFieldValue("status", task.status.id);
       form.setFieldValue("priority", task.priority);
     }
-  }, [task, isNew]);
+  };
+
+  // Set existing task when the modal opens
+  useEffect(() => {
+    if (!open) return;
+    setExistingTask();
+  }, [open]);
 
   const { data: statuses, isPending: statusesPending } = useStatusesQuery();
   const { data: projects, isPending: projectsPending } = useProjectsQuery();
@@ -186,7 +192,6 @@ const TaskForm: FC<TaskFormProps> = ({
     try {
       if (isNew) await createTask(payload);
       else await updateTask({ id: task?.id!, task: payload });
-      form.resetFields();
       onClose();
     } catch (error) {
     } finally {
@@ -199,14 +204,12 @@ const TaskForm: FC<TaskFormProps> = ({
       title={isNew ? "CREATE NEW TASK" : "EDIT TASK"}
       okText={isNew ? "Create" : "Save"}
       centered
+      maskClosable={false}
       open={open}
       onCancel={() => {
         onClose();
       }}
-      afterOpenChange={() => {
-        if (open) return;
-        form.resetFields();
-      }}
+      afterClose={() => form.resetFields()}
       onOk={handleSubmit}
       confirmLoading={loading}
     >
