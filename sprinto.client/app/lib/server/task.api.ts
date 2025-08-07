@@ -45,3 +45,10 @@ export const deleteTask = async (taskId: string) => {
   );
   return data;
 };
+
+export const searchTasks = async (query: string) => {
+  const { data } = await axiosApi.get<ApiResponse<Task[]>>(
+    `/tasks/search?query=${query}`
+  );
+  return data;
+};

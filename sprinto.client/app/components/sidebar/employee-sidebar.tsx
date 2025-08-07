@@ -19,6 +19,7 @@ import "~/styles/sidebar.css";
 import { menuItemStyle } from ".";
 import ToolTip from "../ui/tooltip";
 import SidebarHeader from "./sidebar-header";
+import SearchForm from "../forms/search-form";
 
 /**
  * This component renders sidebar section
@@ -29,6 +30,7 @@ const EmployeeSidebar = (): ReactNode => {
 
   const [staticSelectedKey, setStaticSelectedKey] = useState<string[]>([]);
   const [dynamicSelectedKey, setDynamicSelectedKey] = useState<string[]>([]);
+  const [searchFormOpen, setSearchFormOpen] = useState<boolean>(false);
   const [openKeys, setOpenKeys] = useState<string[]>([]);
 
   useEffect(() => {
@@ -68,11 +70,12 @@ const EmployeeSidebar = (): ReactNode => {
   };
 
   const menuItems: MenuProps["items"] = [
-    // {
-    //   icon: <SearchIcon size={22} />,
-    //   label: <span style={menuItemStyle}>Search</span>,
-    //   key: "search",
-    // },
+    {
+      icon: <SearchIcon size={22} />,
+      label: <span style={menuItemStyle}>Search</span>,
+      onClick: () => setSearchFormOpen(true),
+      key: "search",
+    },
     {
       icon: <TodayIcon size={22} />,
       label: (
@@ -175,6 +178,10 @@ const EmployeeSidebar = (): ReactNode => {
   return (
     <>
       <SidebarHeader />
+      <SearchForm
+        open={searchFormOpen}
+        onClose={() => setSearchFormOpen(false)}
+      />
       <Menu
         mode="inline"
         style={{ marginTop: "80px", background: "none" }}

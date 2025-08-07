@@ -7,6 +7,7 @@ import {
   PROJECT_TASKS_KEY,
   STALE_TIME,
   TASK_ACTIVITIES_KEY,
+  TASKS_SEARCH_KEY,
   TODAY_TASKS_KEY,
   UPCOMING_TASKS_KEY,
 } from "~/lib/const";
@@ -19,6 +20,7 @@ import {
   getTaskActivities,
   getTodayTasks,
   getUpcomingTasks,
+  searchTasks,
   updateTask,
 } from "../task.api";
 
@@ -139,5 +141,12 @@ export const useTaskActivitiesQuery = (taskId: string) => {
     queryKey: [TASK_ACTIVITIES_KEY, taskId],
     queryFn: () => getTaskActivities(taskId),
     staleTime: STALE_TIME,
+  });
+};
+
+export const useTasksSearchQuery = (query: string) => {
+  return useQuery({
+    queryKey: [TASKS_SEARCH_KEY, query],
+    queryFn: () => searchTasks(query),
   });
 };

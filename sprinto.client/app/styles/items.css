@@ -27,7 +27,7 @@
   border: 1px solid var(--border-color) !important;
 }
 
-.activity-task-tag>svg {
+.activity-task-tag > svg {
   margin-bottom: -2px;
   margin-left: -2px;
   margin-right: 2px;
@@ -93,6 +93,24 @@ span.ant-popconfirm-message-icon {
   }
 }
 
+.search-container {
+  margin-top: 40px;
+  min-height: 250px;
+  max-height: 250px;
+  min-width: 550px;
+  padding: 0px 18px 18px 20px;
+  overflow-y: hidden;
+
+  &:hover {
+    overflow-y: auto;
+  }
+}
+
+.search-task {
+  max-width: 540px;
+  border: 1px solid var(--border-color) !important;
+}
+
 .project-container {
   min-width: 1420px;
   max-width: 1420px;
@@ -106,8 +124,8 @@ span.ant-popconfirm-message-icon {
 }
 
 .team-member-container {
-  min-width : 700px;
-  max-width : 700px;
+  min-width: 700px;
+  max-width: 700px;
   max-height: 600px;
   overflow-y: hidden;
   padding: 6px 10px 14px 10px;
