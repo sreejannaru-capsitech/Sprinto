@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 using Sprinto.Server.Common;
 using Sprinto.Server.DTOs;
 using Sprinto.Server.Extensions;
@@ -304,6 +305,30 @@ namespace Sprinto.Server.Controllers
                 var result = await _userService.SearchAsync(name);
                 response.Message = Constants.Messages.Success;
                 response.Result = result;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
+
+        // Get user profile picture
+        [HttpGet("{id}/picture")]
+        [Authorize]
+        public async Task<ApiResponse<string?>> GetProfilePicture(string id)
+        {
+            var response = new ApiResponse<string?>();
+            try
+            {
+                if (!ObjectId.TryParse(id, out _))
+                    throw new Exception("Please provide valid id");
+
+                var picture = await _userService.GetProfilePicture(id);
+
+                response.Message = Constants.Messages.Success;
+                response.Result = picture;
             }
             catch (Exception ex)
             {

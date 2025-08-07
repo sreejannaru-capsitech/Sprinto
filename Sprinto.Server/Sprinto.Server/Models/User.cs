@@ -25,6 +25,7 @@ namespace Sprinto.Server.Models
 
         [BsonElement("display_picture")]
         [BsonIgnoreIfNull]
+        [BsonIgnoreIfDefault]
         public string? DisplayPic { get; set; }
 
         [BsonElement("role")]

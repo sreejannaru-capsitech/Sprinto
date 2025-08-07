@@ -360,8 +360,28 @@ namespace Sprinto.Server.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to delete user session");
+                throw new Exception("Failed to delete user session");
             }
         }
 
+
+        // Get Profile Picture of an User By ID
+        public async Task<string?> GetProfilePicture(string userId)
+        {
+            try
+            {
+                var user = await GetAsync(userId) ?? throw new KeyNotFoundException(Constants.Messages.NotFound);
+                return user.DisplayPic;
+            }
+            catch (KeyNotFoundException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get user profile picture");
+                throw new Exception("Failed to get user profile picture");
+            }
+        }
     }
 }

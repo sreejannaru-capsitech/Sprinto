@@ -90,6 +90,9 @@ namespace Sprinto.Server.Controllers
             
             try
             {
+                if (!ObjectId.TryParse(id, out _))
+                    throw new Exception("Please provide valid id");
+
                 var result = await _taskService.GetTaskActivities(id);
                 res.Message = Constants.Messages.Success;
                 res.Result = result;
