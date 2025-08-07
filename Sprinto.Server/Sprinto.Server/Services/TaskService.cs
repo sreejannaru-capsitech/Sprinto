@@ -329,6 +329,57 @@ namespace Sprinto.Server.Services
             }
         }
 
+
+        // Search for Tasks based on Regex on Task title and Description
+        public async Task<List<TaskItem>> 
+            SearchUserTasksAsync(string userId, string searchTerm, bool isAdmin = false)
+        {
+            try
+            {
+                var filters = new List<FilterDefinition<TaskItem>>();
+
+                // Apply assignee filter only if not admin
+                if (!isAdmin)
+                {
+                    var assigneeFilter = Builders<TaskItem>.Filter.ElemMatch(
+                        t => t.Assignees,
+                        a => a.Id == userId
+                    );
+                    filters.Add(assigneeFilter);
+                }
+
+                // Exclude deleted tasks
+                var deleteFilter = Builders<TaskItem>.Filter.Ne(
+                    t => t.IsDeleted,
+                    true
+                );
+                filters.Add(deleteFilter);
+
+                // Apply regex search only if searchTerm is not empty
+                if (!string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    var regexFilter = Builders<TaskItem>.Filter.Or(
+                        Builders<TaskItem>.Filter.Regex(t => t.Title, new BsonRegularExpression(searchTerm, "i")),
+                        Builders<TaskItem>.Filter.Regex(t => t.Description, new BsonRegularExpression(searchTerm, "i"))
+                    );
+                    filters.Add(regexFilter);
+                }
+
+                // Combine all filters
+                var combinedFilter = filters.Count != 0
+                    ? Builders<TaskItem>.Filter.And(filters)
+                    : Builders<TaskItem>.Filter.Empty;
+
+                var tasks = await _tasks.Find(combinedFilter).Limit(10).ToListAsync();
+                return tasks;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error searching tasks for user {UserId}", userId);
+                throw new Exception("Could not search tasks");
+            }
+        }
+
         /// <summary>
         /// Updates an existing task with new values from the provided <see cref="TaskDTO"/>.
         /// Tracks changes made to task properties and records corresponding activity logs.

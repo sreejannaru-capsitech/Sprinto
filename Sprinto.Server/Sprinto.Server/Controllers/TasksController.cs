@@ -87,7 +87,7 @@ namespace Sprinto.Server.Controllers
             GetTaskActivities(string id)
         {
             var res = new ApiResponse<List<Activity>>();
-            
+
             try
             {
                 if (!ObjectId.TryParse(id, out _))
@@ -153,6 +153,39 @@ namespace Sprinto.Server.Controllers
             }
             return response;
         }
+
+        // Search for tasks
+        [HttpGet("search")]
+        public async Task<ApiResponse<List<TaskResponse>>>
+            SearchTasks([FromQuery] string query)
+        {
+            var response = new ApiResponse<List<TaskResponse>>();
+
+            try
+            {
+                if (string.IsNullOrEmpty(query))
+                {
+                    query = string.Empty;
+                }
+
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userRole = User.FindFirstValue(ClaimTypes.Role);
+
+                if (string.IsNullOrEmpty(userRole) || string.IsNullOrEmpty(userId))
+                    throw new Exception(Constants.Messages.InvalidToken);
+
+                var tasks = await _taskService.SearchUserTasksAsync(userId, query, userRole == "admin");
+                response.Message = Constants.Messages.Success;
+
+                response.Result = [.. tasks.Select(a => a.ToTaskResponse())];
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
 
         // Get all upcoming tasks
         [HttpGet("upcoming")]
