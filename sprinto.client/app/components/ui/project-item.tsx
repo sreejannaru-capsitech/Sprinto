@@ -3,13 +3,13 @@ import advancedFormat from "dayjs/plugin/advancedFormat";
 import utc from "dayjs/plugin/utc";
 import type { FC, ReactNode } from "react";
 import { ArchiveIcon } from "~/lib/icons";
-import { getInitials, truncateText } from "~/lib/utils";
-import ToolTip from "./tooltip";
+import { truncateText } from "~/lib/utils";
 
 import dayjs from "dayjs";
-import "~/styles/items.css";
-import ProjectTiming from "./project-timing";
 import { NavLink } from "react-router";
+import "~/styles/items.css";
+import AvatarPic from "./avatar-pic";
+import ProjectTiming from "./project-timing";
 
 dayjs.extend(utc);
 dayjs.extend(advancedFormat);
@@ -65,23 +65,16 @@ const ProjectItem: FC<ProjectItemProps> = ({
                 <ProjectTiming proj={project} />
               </Tag>
               <Flex align="center">
-                {project.assignees.map((assignee) => (
-                  <Avatar.Group
-                    key={assignee.id}
-                    max={{
-                      count: 2,
-                      style: { color: "black", backgroundColor: "white" },
-                    }}
-                  >
-                    <Avatar size={18}>
-                      <ToolTip title={assignee.name}>
-                        <span className="small-text">
-                          {getInitials(assignee.name)}
-                        </span>
-                      </ToolTip>
-                    </Avatar>
-                  </Avatar.Group>
-                ))}
+                <Avatar.Group
+                  size={24}
+                  max={{
+                    count: 2,
+                  }}
+                >
+                  {project.assignees.map((assignee) => (
+                    <AvatarPic key={assignee.id} user={assignee} size={24} />
+                  ))}
+                </Avatar.Group>
               </Flex>
             </Flex>
           </Col>

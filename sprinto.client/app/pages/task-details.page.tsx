@@ -13,12 +13,12 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 import { useMemo, useState, type FC, type ReactNode } from "react";
-import { Navigate, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import TaskForm from "~/components/forms/task-form";
 import TimeLineSection from "~/components/timeline-section";
+import AvatarPic from "~/components/ui/avatar-pic";
 import CommentItem from "~/components/ui/comment-item";
 import Spinner from "~/components/ui/spinner";
-import ToolTip from "~/components/ui/tooltip";
 import { useAntNotification } from "~/hooks";
 import {
   AlertIcon,
@@ -35,7 +35,6 @@ import {
   useTaskActivitiesQuery,
   useUpdateComment,
 } from "~/lib/server/services";
-import { getInitials } from "~/lib/utils";
 import { getRequiredStringRule } from "~/lib/validators";
 
 import "~/styles/project-overview.css";
@@ -195,13 +194,7 @@ const TaskDetailsPage: FC<TaskDetailsPageProps> = ({
                 }}
               >
                 {task.assignees.map((assignee) => (
-                  <Avatar key={assignee.id}>
-                    <ToolTip title={assignee.name}>
-                      <span className="small-text">
-                        {getInitials(assignee.name)}
-                      </span>
-                    </ToolTip>
-                  </Avatar>
+                  <AvatarPic user={assignee} key={assignee.id} />
                 ))}
               </Avatar.Group>
             </Flex>

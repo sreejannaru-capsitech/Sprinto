@@ -6,16 +6,15 @@ import type { BarData, PieData } from "~/components/charts";
 import BarChart from "~/components/charts/bar.chart";
 import TaskStatusChart from "~/components/charts/pie.chart";
 import TimeLineSection from "~/components/timeline-section";
+import AvatarPic from "~/components/ui/avatar-pic";
 import ProjectTiming from "~/components/ui/project-timing";
 import Spinner from "~/components/ui/spinner";
 import TaskContainer from "~/components/ui/task-container";
-import ToolTip from "~/components/ui/tooltip";
 import {
   useProjectActivitiesQuery,
   useProjectOverviewQuery,
 } from "~/lib/server/services";
 import type { RootState } from "~/lib/store/store";
-import { getInitials } from "~/lib/utils";
 
 import "~/styles/project-overview.css";
 
@@ -25,12 +24,14 @@ import "~/styles/project-overview.css";
  * @returns {ReactNode} The ProjectOverview component
  */
 const ProjectOverview = (): ReactNode => {
-  const proj = useSelector((state: RootState) => state.project.project);
+  const proj = useSelector(
+    (state: RootState) => state.project.project
+  ) as Project;
 
   const { data: activities, isPending: _actPending } =
-    useProjectActivitiesQuery(proj!.id);
+    useProjectActivitiesQuery(proj.id);
   const { data: overview, isPending: overviewPending } =
-    useProjectOverviewQuery(proj!.id);
+    useProjectOverviewQuery(proj.id);
 
   const statusData: PieData[] = useMemo(() => {
     if (!overview?.result?.statusGroups) return [];
@@ -55,13 +56,13 @@ const ProjectOverview = (): ReactNode => {
           {/* Title and Timing */}
           <Flex align="center" gap={20}>
             <Typography.Title level={2}>
-              {proj!.title}
+              {proj.title}
               <span> — </span>
-              <span className="text-primary-dark">{proj!.alias}</span>
+              <span className="text-primary-dark">{proj.alias}</span>
             </Typography.Title>
 
             <Flex gap={4} align="center" justify="center">
-              <ProjectTiming proj={proj!} />
+              <ProjectTiming proj={proj} />
             </Flex>
           </Flex>
 
@@ -74,33 +75,21 @@ const ProjectOverview = (): ReactNode => {
                   style: { color: "black", backgroundColor: "white" },
                 }}
               >
-                {proj!.assignees.map((assignee) => (
-                  <Avatar key={assignee.id}>
-                    <ToolTip title={assignee.name}>
-                      <span className="small-text">
-                        {getInitials(assignee.name)}
-                      </span>
-                    </ToolTip>
-                  </Avatar>
+                {proj.assignees.map((assignee) => (
+                  <AvatarPic user={assignee} key={assignee.id} />
                 ))}
-                <Avatar key={proj!.teamLead.id}>
-                  <ToolTip title={proj!.teamLead.name}>
-                    <span className="small-text">
-                      {getInitials(proj!.teamLead.name)}
-                    </span>
-                  </ToolTip>
-                </Avatar>
+                <AvatarPic user={proj.teamLead} />
               </Avatar.Group>
             </Flex>
             <Tag style={{ padding: "4px 8px", fontSize: 14, borderRadius: 8 }}>
-              Team Lead - {proj!.teamLead.name}
+              Team Lead - {proj.teamLead.name}
             </Tag>
           </Flex>
         </Flex>
-        
+
         <Spinner isActive={overviewPending} fullscreen>
           <div className="project-description">
-            <Typography.Paragraph>{proj!.description}</Typography.Paragraph>
+            <Typography.Paragraph>{proj.description}</Typography.Paragraph>
           </div>
 
           {/* Statistics Section */}

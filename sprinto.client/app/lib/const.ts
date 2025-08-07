@@ -19,6 +19,7 @@ export const COMMENTS_KEY = "comments" as const;
 
 export const PROJECT_ACTIVITIES_KEY = "projectActivities" as const;
 export const PROJECT_TASKS_KEY = "projectTasks" as const;
+export const PROFILE_PICTURE_KEY = "profilePicture" as const;
 
 export const STALE_TIME = 5 * 60 * 1000; // 5 minutes
 

@@ -20,17 +20,23 @@ import {
   HighIcon,
   LowIcon,
   MediumIcon,
+  TickRoundedIcon,
 } from "~/lib/icons";
-import { getInitials, truncateText } from "~/lib/utils";
+import { truncateText } from "~/lib/utils";
 
 dayjs.extend(utc);
 dayjs.extend(advancedFormat);
 
-import "~/styles/items.css";
-import ToolTip from "./tooltip";
 import { NavLink } from "react-router";
 import { useAntNotification } from "~/hooks";
-import { useDeleteTask } from "~/lib/server/services";
+import {
+  useDeleteTask,
+  useStatusesQuery,
+  useUpdateTask,
+} from "~/lib/server/services";
+import "~/styles/items.css";
+import AvatarPic from "./avatar-pic";
+import ToolTip from "./tooltip";
 
 interface TaskItemProps {
   task: Task;
@@ -46,6 +52,8 @@ const TaskItem: FC<TaskItemProps> = ({
   task,
   isToday = false,
 }: TaskItemProps): ReactNode => {
+  const { data: statuses, isPending: statusesPending } = useStatusesQuery();
+
   const dueDate = useMemo(() => {
     if (dayjs.utc(task.dueDate).isSame(dayjs.utc(), "day")) {
       return "Today";
@@ -61,43 +69,72 @@ const TaskItem: FC<TaskItemProps> = ({
 
   const { mutateAsync: deleteTask } = useDeleteTask(_api);
 
+  const { mutateAsync: updateTask } = useUpdateTask(_api);
+
+  const handleDone = async () => {
+    if (!statuses?.result) return;
+    const done = statuses?.result.find((s) => s.title === "Done");
+    if (!done) return;
+
+    await updateTask({
+      id: task.id,
+      task: { ...task, status: done },
+    });
+  };
+
   return (
     <Card hoverable size="small" className="task-item">
       {contextHolder}
       <Flex align="center" justify="space-between" className="task-item-header">
-        <Typography.Text className="text-primary font-bolder smaller-text">
-          {task.projectAlias}-{task.sequence}
-        </Typography.Text>
+        <NavLink
+          to={`/projects/${task.projectId}/tasks/${task.id}`}
+          style={{ display: "flex", alignItems: "center", flex: 1 }}
+        >
+          <Flex align="center" gap={10} flex={1}>
+            <Typography.Text className="text-primary font-bolder smaller-text">
+              {task.projectAlias}-{task.sequence}
+            </Typography.Text>
+            <Avatar.Group
+              size={21}
+              max={{
+                count: 2,
+                style: { color: "black", backgroundColor: "white" },
+              }}
+            >
+              {task.assignees.map((assignee) => (
+                <AvatarPic user={assignee} size={21} key={assignee.id} />
+              ))}
+            </Avatar.Group>
+          </Flex>
+        </NavLink>
 
-        <div>
-          <Avatar.Group
-            max={{
-              count: 2,
-              style: { color: "black", backgroundColor: "white" },
-            }}
-          >
-            {task.assignees.map((assignee) => (
-              <Avatar size={18} key={assignee.id}>
-                <ToolTip title={assignee.name}>
-                  <span className="small-text">
-                    {getInitials(assignee.name)}
-                  </span>
-                </ToolTip>
-              </Avatar>
-            ))}
-          </Avatar.Group>
+        <Flex align="center">
+          {task.status.title !== "Done" && (
+            <Popconfirm
+              title="Mark as Done ?"
+              onConfirm={handleDone}
+              icon={<AlertIcon size={18} />}
+            >
+              <Button
+                disabled={statusesPending}
+                type="text"
+                className="task-delete-btn"
+                icon={<TickRoundedIcon size={20} />}
+              />
+            </Popconfirm>
+          )}
           <Popconfirm
-            title="Delete this task?"
+            title="Delete this task ?"
             onConfirm={async () => await deleteTask(task.id)}
             icon={<AlertIcon size={18} />}
           >
             <Button
               type="text"
               className="task-delete-btn"
-              icon={<DeleteIcon size={16} />}
+              icon={<DeleteIcon size={20} />}
             />
           </Popconfirm>
-        </div>
+        </Flex>
       </Flex>
       <NavLink to={`/projects/${task.projectId}/tasks/${task.id}`}>
         <Row gutter={0}>

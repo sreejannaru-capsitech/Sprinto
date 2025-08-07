@@ -6,9 +6,7 @@
 
 .task-delete-btn {
   padding: 2px !important;
-  margin-top: -5px;
-  margin-left: 4px;
-  margin-right: -6px;
+  margin-right: -3px;
 }
 
 .activity-item {
@@ -50,7 +48,8 @@
 }
 
 .task-item-header {
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  margin-top: -4px;
 }
 
 .ant-card-body {

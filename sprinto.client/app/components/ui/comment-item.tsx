@@ -1,4 +1,4 @@
-import { Avatar, Button, Flex, Popconfirm } from "antd";
+import { Button, Flex, Popconfirm } from "antd";
 import dayjs from "dayjs";
 import type { FC, ReactNode } from "react";
 import { useSelector } from "react-redux";
@@ -6,9 +6,9 @@ import { useAntNotification } from "~/hooks";
 import { AlertIcon, DeleteIcon, PencilIcon } from "~/lib/icons";
 import { useDeleteComment } from "~/lib/server/services";
 import type { RootState } from "~/lib/store/store";
-import { getInitials } from "~/lib/utils";
 
 import "~/styles/project-overview.css";
+import AvatarPic from "./avatar-pic";
 
 interface CommentItemProps {
   item: Comment;
@@ -35,7 +35,7 @@ const CommentItem: FC<CommentItemProps> = ({
   return (
     <Flex align="flex-start" gap={8}>
       {contextHolder}
-      <Avatar size={30}>{getInitials(item.createdBy.userName)}</Avatar>
+      <AvatarPic user={item.createdBy} size={30} />
       <div className="comment-card">
         <Flex align="center" justify="space-between">
           <p className="text-primary-dark no-margin smaller-text">

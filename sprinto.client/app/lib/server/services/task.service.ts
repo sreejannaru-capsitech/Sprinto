@@ -2,6 +2,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { NotificationApi } from "~/hooks/useAntNotification";
 import {
   INBOX_TASKS_KEY,
+  PROJECT_ACTIVITIES_KEY,
+  PROJECT_OVERVIEW_KEY,
   PROJECT_TASKS_KEY,
   STALE_TIME,
   TASK_ACTIVITIES_KEY,
@@ -27,16 +29,28 @@ const invalidateKeys = [
   PROJECT_TASKS_KEY,
 ];
 
+const ivalidateProjects = [
+  PROJECT_OVERVIEW_KEY,
+  PROJECT_ACTIVITIES_KEY,
+  PROJECT_TASKS_KEY,
+];
+
 export const useCreateTask = (_api: NotificationApi) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (task: TaskItemRequest) => {
       return await createTask(task);
     },
-    onSuccess: () => {
+    onSuccess: (_res, vars) => {
       _api({ message: "Task created successfully", type: "success" });
       invalidateKeys.forEach((key) => {
-        queryClient.invalidateQueries({ queryKey: [key]});
+        queryClient.invalidateQueries({ queryKey: [key] });
+      });
+      ivalidateProjects.forEach((key) => {
+        queryClient.invalidateQueries({
+          queryKey: [key, vars.projectId],
+          exact: true,
+        });
       });
     },
     onError: (error) => {
@@ -56,10 +70,16 @@ export const useUpdateTask = (_api: NotificationApi) => {
     mutationFn: async ({ id, task }) => {
       return await updateTask(id, task);
     },
-    onSuccess: () => {
+    onSuccess: (_res, vars) => {
       _api({ message: "Task updated successfully", type: "success" });
       invalidateKeys.forEach((key) => {
         queryClient.invalidateQueries({ queryKey: [key] });
+      });
+      ivalidateProjects.forEach((key) => {
+        queryClient.invalidateQueries({
+          queryKey: [key, vars.task.projectId],
+          exact: true,
+        });
       });
     },
     onError: (error) => {
@@ -75,9 +95,12 @@ export const useDeleteTask = (_api: NotificationApi) => {
     mutationFn: async (taskId) => {
       return await deleteTask(taskId);
     },
-    onSuccess: () => {
+    onSuccess: (_res, vars) => {
       _api({ message: "Task deleted successfully", type: "success" });
       invalidateKeys.forEach((key) => {
+        queryClient.invalidateQueries({ queryKey: [key] });
+      });
+      ivalidateProjects.forEach((key) => {
         queryClient.invalidateQueries({ queryKey: [key] });
       });
     },

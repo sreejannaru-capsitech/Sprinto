@@ -1,9 +1,9 @@
-import { Avatar, Card, Flex, Tag } from "antd";
+import { Card, Flex, Tag } from "antd";
 import dayjs from "dayjs";
 import type { CSSProperties, FC, ReactNode } from "react";
-import { getInitials } from "~/lib/utils";
 
 import "~/styles/items.css";
+import AvatarPic from "./avatar-pic";
 
 interface TeamMemberProps {
   member: User;
@@ -26,7 +26,7 @@ const TeamMember: FC<TeamMemberProps> = ({
     <Card size="small" hoverable className="member-item">
       <Flex align="center" justify="space-between">
         <Flex align="center" gap={10}>
-          <Avatar src={member.displayPic} size={36}>{getInitials(member.name)}</Avatar>
+          <AvatarPic user={member} size={36} />
           <div>
             <p style={p_style}>{member.name}</p>
             <p style={p_style} className="text-primary-dark smaller-text">

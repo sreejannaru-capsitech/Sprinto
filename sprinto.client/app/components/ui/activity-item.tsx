@@ -1,13 +1,14 @@
-import { Avatar, Card, Col, Flex, Row, Tag, Typography } from "antd";
+import { Card, Col, Flex, Row, Tag, Typography } from "antd";
 import dayjs from "dayjs";
-import type { FC, JSX, ReactNode } from "react";
-import { NavLink } from "react-router";
-import { getInitials, truncateText } from "~/lib/utils";
 import advancedFormat from "dayjs/plugin/advancedFormat";
 import utc from "dayjs/plugin/utc";
+import type { FC, JSX, ReactNode } from "react";
+import { NavLink } from "react-router";
+import { truncateText } from "~/lib/utils";
 
-import "~/styles/items.css";
 import { DeleteIcon } from "~/lib/icons";
+import "~/styles/items.css";
+import AvatarPic from "./avatar-pic";
 
 dayjs.extend(utc);
 dayjs.extend(advancedFormat);
@@ -172,7 +173,7 @@ const ActivityItem: FC<ActivityItemProps> = ({
     <Card size="small" className="activity-item" hoverable>
       <Row gutter={4} justify={"space-between"}>
         <Col span={2}>
-          <Avatar>{getInitials(item.activity.createdBy.userName)}</Avatar>
+          <AvatarPic user={item.activity.createdBy} />
         </Col>
         <Col span={21}>
           <Flex align="center" justify="space-between">

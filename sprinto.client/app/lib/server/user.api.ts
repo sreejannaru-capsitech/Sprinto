@@ -33,3 +33,10 @@ export const searchUsers = async (query: string) => {
   );
   return data;
 };
+
+export const getUserProfilePic = async (userId: string) => {
+  const { data } = await axiosApi.get<ApiResponse<string | null>>(
+    `/users/${userId}/picture`
+  );
+  return data;
+};

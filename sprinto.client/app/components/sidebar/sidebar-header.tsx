@@ -1,4 +1,4 @@
-import { Avatar, Dropdown, Flex, Modal, Space, type MenuProps } from "antd";
+import { Dropdown, Flex, Modal, Space, type MenuProps } from "antd";
 import { isAxiosError } from "axios";
 import { useState, type ReactNode } from "react";
 import { useSelector } from "react-redux";
@@ -6,10 +6,10 @@ import { useAntNotification } from "~/hooks";
 import { DownArrow } from "~/lib/icons";
 import { logOut } from "~/lib/server/auth.api";
 import type { RootState } from "~/lib/store/store";
-import { getInitials } from "~/lib/utils";
 import CreateTask from "../create-task";
 import PasswordForm from "../forms/password-form";
 import ProfileFormModal from "../forms/profile-form";
+import AvatarPic from "../ui/avatar-pic";
 
 /**
  * This component renders sidebar-header section
@@ -71,12 +71,7 @@ const SidebarHeader = (): ReactNode => {
     <Flex align="center" justify="space-between">
       {contextHolder}
       <Space>
-        <Avatar
-          src={user.displayPic}
-          style={{ backgroundColor: "var(--primary-color)" }}
-        >
-          {getInitials(user.name ?? "")}
-        </Avatar>
+        <AvatarPic user={user} />
         <Dropdown trigger={["click"]} menu={{ items }} placement="bottomRight">
           <Flex align="center" style={{ cursor: "pointer" }}>
             <span>{user.name}</span>
