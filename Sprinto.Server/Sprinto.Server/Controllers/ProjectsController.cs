@@ -17,6 +17,28 @@ namespace Sprinto.Server.Controllers
     {
         private readonly ProjectService _projectService = projectService;
 
+
+        // Check if alias exists
+        [HttpGet("alias")]
+        [Authorize(Roles = "admin")]
+        public async Task<ApiResponse<bool>>
+            CheckAlias([FromQuery] string? key)
+        {
+            var response = new ApiResponse<bool>();
+
+            try
+            {
+                var res = await _projectService.CheckAliasAsync(key);
+                response.Result = res;
+                response.Message = Constants.Messages.Success;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
         // Create / Register new project ( Admin Only )
         [HttpPost]
         [Authorize(Roles = "admin")]

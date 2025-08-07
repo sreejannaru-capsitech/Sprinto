@@ -5,6 +5,7 @@ using Sprinto.Server.Common;
 using Sprinto.Server.DTOs;
 using Sprinto.Server.Extensions;
 using Sprinto.Server.Models;
+using System.Data;
 
 namespace Sprinto.Server.Services
 {
@@ -28,6 +29,48 @@ namespace Sprinto.Server.Services
         }
 
         /// <summary>
+        /// Checks whether a given 3-letter alias is available (i.e., not already used by an existing project).
+        /// </summary>
+        /// <param name="alias">The alias string to validate and check for uniqueness.</param>
+        /// <returns>
+        /// A <see cref="Task{Boolean}"/> representing the asynchronous operation.
+        /// Returns <c>true</c> if the alias is valid and not already in use; otherwise, <c>false</c>.
+        /// </returns>
+        /// <exception cref="InvalidDataException">
+        /// Thrown when the alias is null, empty, or not exactly 3 characters long.
+        /// </exception>
+        /// <exception cref="Exception">
+        /// Thrown when an unexpected error occurs during the alias check.
+        /// </exception>
+        public async Task<bool> CheckAliasAsync(string? alias)
+        {
+            try
+            {
+                var trimmed = alias?.Trim() ?? throw new InvalidDataException("Invalid Alias");
+
+                if (trimmed.Length != 3)
+                    throw new InvalidDataException("Invalid Alias");
+
+                var existing = await _projects.Find(p => p.Alias == trimmed).FirstOrDefaultAsync();
+
+                if (existing != null)
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (InvalidDataException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to check alias existance");
+                throw new Exception("Failed to check for alias");
+            }
+        }
+
+        /// <summary>
         /// Asynchronously creates a new project using the provided data transfer object (DTO),
         /// along with the creator's user ID and username.
         /// </summary>
@@ -42,10 +85,29 @@ namespace Sprinto.Server.Services
         {
             try
             {
+                // Check for alias existance
+                var aliasxists = await CheckAliasAsync(dto.Alias);
+                if (aliasxists)
+                {
+                    throw new DuplicateNameException("Duplicate project alias already exists");
+                }
+
+                // Check for title existance
+                var existing = await _projects.Find(p => p.Title == dto.Title).FirstOrDefaultAsync();
+
+                if (existing != null)
+                {
+                    throw new DuplicateNameException("Duplicate project title already exists");
+                }
+
                 var user = new Project(dto, userId, userName);
                 await _projects.InsertOneAsync(user);
 
                 return user;
+            }
+            catch (DuplicateNameException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
