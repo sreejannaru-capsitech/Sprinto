@@ -1,13 +1,11 @@
 import { Flex, Typography } from "antd";
 import dayjs from "dayjs";
 import { useMemo, type ReactNode } from "react";
-import { useSelector } from "react-redux";
 import type { MetaArgs } from "react-router";
 import ProjectItem from "~/components/ui/project-item";
 import ProjectsContainer from "~/components/ui/projects-container";
-import TaskContainer from "~/components/ui/task-container";
+import TaskItem from "~/components/ui/task-item";
 import { useProjectsQuery, useTopDueTasksQuery } from "~/lib/server/services";
-import type { RootState } from "~/lib/store";
 
 import "~/styles/items.css";
 
@@ -23,8 +21,6 @@ export function meta({}: MetaArgs) {
  * @returns {ReactNode} The Deadlines component
  */
 const Deadlines = (): ReactNode => {
-  const user = useSelector((state: RootState) => state.user.user) as User;
-
   const { data: projects } = useProjectsQuery();
   const { data: topDueTasks } = useTopDueTasksQuery();
 
@@ -42,7 +38,7 @@ const Deadlines = (): ReactNode => {
   }, [projects]);
 
   return (
-    <Flex gap={40}>
+    <Flex gap={80}>
       <div>
         <Typography.Title level={4} className="font-bold container-header">
           Deadline Projects
@@ -60,7 +56,12 @@ const Deadlines = (): ReactNode => {
           Due Soon Tasks
         </Typography.Title>
 
-        <TaskContainer text="" tasks={topDueTasks?.result ?? []} />
+        {/* <TaskContainer text="" tasks={topDueTasks?.result ?? []} /> */}
+        <Flex align="flex-start" gap={20} wrap className="due-tasks-container">
+          {topDueTasks?.result?.map((task) => (
+            <TaskItem key={task.id} task={task} />
+          ))}
+        </Flex>
       </div>
     </Flex>
   );

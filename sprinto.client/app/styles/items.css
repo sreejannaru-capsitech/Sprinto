@@ -93,6 +93,18 @@ span.ant-popconfirm-message-icon {
   }
 }
 
+.due-tasks-container {
+  min-width: 760px;
+  max-width: 760px;
+  max-height: 680px;
+  overflow-y: hidden;
+  padding: 6px 10px 14px 10px;
+
+  &:hover {
+    overflow-y: auto;
+  }
+}
+
 .search-container {
   margin-top: 40px;
   min-height: 250px;
