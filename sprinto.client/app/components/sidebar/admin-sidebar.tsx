@@ -19,6 +19,7 @@ import "~/styles/sidebar.css";
 import { isCurrentPath, menuItemStyle } from ".";
 import ProjectForm from "../forms/project-form";
 import UserForm from "../forms/user-form";
+import SearchForm from "../forms/search-form";
 
 /**
  * This component renders admin-sidebar section
@@ -29,6 +30,7 @@ const AdminSidebar = (): ReactNode => {
     {
       icon: <SearchIcon size={22} />,
       label: <span style={menuItemStyle}>Search</span>,
+      onClick: () => setSearchFormOpen(true),
       key: "0",
     },
     {
@@ -118,10 +120,15 @@ const AdminSidebar = (): ReactNode => {
 
   const [userOpen, setUserOpen] = useState<boolean>(false);
   const [projectOpen, setProjectOpen] = useState<boolean>(false);
+  const [searchFormOpen, setSearchFormOpen] = useState<boolean>(false);
 
   return (
     <>
       <SidebarHeader />
+      <SearchForm
+        open={searchFormOpen}
+        onClose={() => setSearchFormOpen(false)}
+      />
       <Menu
         mode="vertical"
         style={{ marginTop: "80px", background: "none" }}

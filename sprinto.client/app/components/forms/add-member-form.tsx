@@ -1,13 +1,8 @@
 import { Form, Modal, Select } from "antd";
 import { useState, type FC, type ReactNode } from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router";
 import { useAntNotification } from "~/hooks";
-import {
-  useAddMembers,
-  useProjectTeamQuery,
-  useUserSearchQuery,
-} from "~/lib/server/services";
+import { useAddMembers, useUserSearchQuery } from "~/lib/server/services";
 import type { RootState } from "~/lib/store/store";
 import { getOptionsFromUsers } from "~/lib/utils";
 import { getRequiredSelectRule } from "~/lib/validators";
@@ -98,6 +93,7 @@ const AddMemberForm: FC<AddMemberFormProps> = ({
             ])}
             onSearch={onSearch}
             optionFilterProp="label"
+            maxTagCount="responsive"
             mode="multiple"
             placeholder="Select members"
           />
