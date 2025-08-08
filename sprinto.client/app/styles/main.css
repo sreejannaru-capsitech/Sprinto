@@ -108,6 +108,12 @@ h1.ant-typography {
   border-color: var(--primary-color) !important;
 }
 
+button.ant-btn span.ant-btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Dropdown | Select */
 
 .ant-select-dropdown

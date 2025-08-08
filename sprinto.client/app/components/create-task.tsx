@@ -5,6 +5,7 @@ import { PencilIcon, PlusIcon } from "~/lib/icons";
 
 interface CreateTaskProps {
   block?: boolean;
+  plusIcon?: boolean;
 }
 
 /**
@@ -13,6 +14,7 @@ interface CreateTaskProps {
  */
 const CreateTask: FC<CreateTaskProps> = ({
   block = false,
+  plusIcon = false,
 }: CreateTaskProps): ReactNode => {
   const [taskModalOpen, setTaskModalOpen] = useState<boolean>(false);
 
@@ -34,8 +36,8 @@ const CreateTask: FC<CreateTaskProps> = ({
         <Button
           className="header-button"
           onClick={() => setTaskModalOpen(true)}
-          type="text"
-          icon={<PencilIcon />}
+          type={plusIcon ? "dashed" : "text"}
+          icon={plusIcon ? <PlusIcon size={20} /> : <PencilIcon size={20} />}
         />
       )}
     </>
