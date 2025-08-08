@@ -61,8 +61,12 @@ const TaskItem: FC<TaskItemProps> = ({
     return dayjs.utc(task.dueDate).format("Do MMMM");
   }, [task.dueDate]);
 
+  // Check if task is overdue and not done
   const isOverdue = useMemo(() => {
-    return dayjs.utc(task.dueDate).isBefore(dayjs.utc(), "day");
+    return (
+      dayjs.utc(task.dueDate).isBefore(dayjs.utc(), "day") &&
+      task.status.title !== "Done"
+    );
   }, [task.dueDate]);
 
   const { _api, contextHolder } = useAntNotification();
@@ -171,7 +175,15 @@ const TaskItem: FC<TaskItemProps> = ({
               )}
             </Typography.Paragraph>
             <Flex align="center" gap={4}>
-              <Tag>{task.status.title}</Tag>
+              <Tag>
+                <span
+                  style={{
+                    color: task.status.title === "Done" ? "green" : "",
+                  }}
+                >
+                  {task.status.title}
+                </span>
+              </Tag>
 
               {!isToday && (
                 <Tag
@@ -183,12 +195,10 @@ const TaskItem: FC<TaskItemProps> = ({
                   }}
                 >
                   <CalenderIcon
-                    // fill={isOverdue ? "#e05151" : "#141B34"}
+                    fill={isOverdue ? "var(--color-red)" : "#141B34"}
                     size={16}
                   />
-                  <span
-                  // style={{ color: isOverdue ? "#e05151" : "" }}
-                  >
+                  <span style={{ color: isOverdue ? "var(--color-red)" : "" }}>
                     {dueDate}
                   </span>
                 </Tag>

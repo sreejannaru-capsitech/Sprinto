@@ -6,6 +6,7 @@
   --primary-light-color: rgba(20, 27, 52, 0.03);
   --border-color: rgba(5, 5, 5, 0.06);
   --color-black: rgba(0, 0, 0, 0.88);
+  --color-red: #e05151;
 }
 
 body {

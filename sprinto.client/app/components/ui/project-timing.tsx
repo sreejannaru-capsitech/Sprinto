@@ -19,17 +19,25 @@ const ProjectTiming: FC<ProjectTimingProps> = ({
       <CalenderIcon size={15} />
       {proj.startDate || proj.deadline ? (
         <>
-          <span>
-            {proj.startDate
-              ? dayjs.utc(proj.startDate).format("Do MMM YYYY")
-              : "Not Started"}
-          </span>
+          {proj.startDate ? (
+            <span>{dayjs.utc(proj.startDate).format("Do MMM YYYY")}</span>
+          ) : (
+            "Not Started"
+          )}
           <span style={{ margin: "0 4px" }}>—</span>
-          <span>
-            {proj.deadline
-              ? dayjs.utc(proj.deadline).format("Do MMM YYYY")
-              : "Not Decided"}
-          </span>
+          {proj.deadline ? (
+            <span
+              style={{
+                color: dayjs.utc(proj.deadline).isBefore(dayjs.utc(), "day")
+                  ? "var(--color-red)"
+                  : "",
+              }}
+            >
+              {dayjs.utc(proj.deadline).format("Do MMM YYYY")}
+            </span>
+          ) : (
+            "Not Decided"
+          )}
         </>
       ) : (
         <span>Not Started Yet</span>

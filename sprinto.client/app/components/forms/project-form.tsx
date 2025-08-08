@@ -224,14 +224,17 @@ const ProjectForm: FC<ProjectFormProps> = ({
             <Form.Item<ProjectFormType> label="Start Date" name="startDate">
               <DatePicker
                 style={{ width: "100%" }}
-                minDate={dayjs().subtract(6, "weeks")}
+                minDate={isNew ? dayjs().subtract(6, "weeks") : undefined}
               />
             </Form.Item>
           </Col>
 
           <Col span={12}>
             <Form.Item<ProjectFormType> label="Deadline" name="deadline">
-              <DatePicker style={{ width: "100%" }} minDate={dayjs()} />
+              <DatePicker
+                style={{ width: "100%" }}
+                minDate={isNew ? dayjs() : undefined}
+              />
             </Form.Item>
           </Col>
         </Row>
