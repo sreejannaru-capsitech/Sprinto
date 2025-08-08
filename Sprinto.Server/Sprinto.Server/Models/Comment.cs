@@ -31,11 +31,7 @@ namespace Sprinto.Server.Models
             Id = ObjectId.GenerateNewId().ToString();
             Content = dto.Content;
             IsEdited = dto.IsEdited;
-            CreatedBy = new Creation
-            {
-                UserId = id,
-                UserName = name
-            };
+            CreatedBy = new Creation(id, name);
         }
 
         public Comment() { }

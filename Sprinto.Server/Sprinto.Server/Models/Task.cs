@@ -77,11 +77,7 @@ namespace Sprinto.Server.Models
             Priority = task.Priority;
             Comments = [];
             Activities = [];
-            CreatedBy = new Creation
-            {
-                UserId = id,
-                UserName = name
-            };
+            CreatedBy = new Creation(id, name);
         }
 
         public TaskItem() { }

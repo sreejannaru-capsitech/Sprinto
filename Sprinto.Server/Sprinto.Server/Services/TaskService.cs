@@ -5,6 +5,7 @@ using Sprinto.Server.Common;
 using Sprinto.Server.DTOs;
 using Sprinto.Server.Extensions;
 using Sprinto.Server.Models;
+using System.Xml.Linq;
 
 
 namespace Sprinto.Server.Services
@@ -64,11 +65,7 @@ namespace Sprinto.Server.Services
                 var creation = new Activity
                 {
                     Action = ActivityAction.TaskCreated,
-                    CreatedBy = new Creation
-                    {
-                        UserId = userId,
-                        UserName = userName
-                    }
+                    CreatedBy = new Creation(userId, userName)
                 };
 
                 task.Activities.Add(creation);
@@ -402,7 +399,7 @@ namespace Sprinto.Server.Services
 
                 var activities = new List<Activity>();
 
-                var creator = new Creation { UserId = userId, UserName = userName };
+                var creator = new Creation(userId, userName);
 
                 // Check Description
                 if (existingTask.Description != dto.Description)
@@ -583,11 +580,7 @@ namespace Sprinto.Server.Services
                 var deletion = new Activity
                 {
                     Action = ActivityAction.TaskDeleted,
-                    CreatedBy = new Creation
-                    {
-                        UserId = userId,
-                        UserName = userName
-                    }
+                    CreatedBy = new Creation(userId, userName)
                 };
 
                 var update = Builders<TaskItem>.Update.Combine(

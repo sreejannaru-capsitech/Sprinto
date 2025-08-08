@@ -22,11 +22,7 @@ namespace Sprinto.Server.Models
         public Status(StatusDTO dto, string id, string name)
         {
             Title = dto.Title;
-            CreatedBy = new Creation
-            {
-                UserId = id,
-                UserName = name
-            };
+            CreatedBy = new Creation(id, name);
         }
 
         public Status() { }

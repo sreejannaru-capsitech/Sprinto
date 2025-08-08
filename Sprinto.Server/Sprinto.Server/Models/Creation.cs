@@ -16,5 +16,13 @@ namespace Sprinto.Server.Models
 
         [BsonElement("time")]
         public DateTime Time { get; set; } = DateTime.UtcNow;
+
+        public Creation(string userId, string userName)
+        {
+            UserId = userId;
+            UserName = userName;
+        }
+
+        public Creation() { }
     }
 }

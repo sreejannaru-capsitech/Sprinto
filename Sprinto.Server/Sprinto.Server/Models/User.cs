@@ -44,11 +44,7 @@ namespace Sprinto.Server.Models
             // Auto set default password for new users as "welcome"
             Password = BCrypt.Net.BCrypt.EnhancedHashPassword("welcome", workFactor: 15);
             Role = dto.Role;
-            CreatedBy = new Creation
-            {
-                UserId = id,
-                UserName = name
-            };
+            CreatedBy = new Creation(id, name);
         }
 
         public User() { }
