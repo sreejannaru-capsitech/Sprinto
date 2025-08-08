@@ -126,12 +126,23 @@ namespace Sprinto.Server.Services
         /// </summary>
         /// <returns> A list of <see cref="Project"/> documents.</returns>
         /// <exception cref="Exception">Thrown when an error occurs during the retrieval of projects.</exception>
-        public async Task<List<Project>> GetAsync()
+        public async Task<AllProjects> GetAsync()
         {
             try
             {
                 var projects = await _projects.Find(_ => true).ToListAsync();
-                return projects;
+
+                long totalCount = projects.Count;
+                long activeCount = projects.Where(a => a.IsCompleted != true).Count();
+                long inActiveCount = totalCount - activeCount;
+
+                return new AllProjects
+                {
+                    Active = activeCount,
+                    InActive = inActiveCount,
+                    Projects = projects,
+                    Total = totalCount,
+                };
             }
             catch (Exception ex)
             {
@@ -181,7 +192,7 @@ namespace Sprinto.Server.Services
                     maintainerFilter
                 );
 
-                var projects  = await _projects.Find(accessFilter).ToListAsync();
+                var projects = await _projects.Find(accessFilter).ToListAsync();
 
                 var notCompleted = projects.Where(a => a.IsCompleted == false).ToList();
 
@@ -279,7 +290,7 @@ namespace Sprinto.Server.Services
         // Get project overview stats
         public async Task<ProjectOverview> GetProjectOverviewAsync(string id)
         {
-            var project = await GetAsync(id) 
+            var project = await GetAsync(id)
                 ?? throw new KeyNotFoundException(Constants.Messages.NotFound);
 
             var res = new ProjectOverview();
@@ -585,6 +596,63 @@ namespace Sprinto.Server.Services
             {
                 _logger.LogError(ex, "Error deleting project with ID {Id}", id);
                 throw new Exception("Could not delete project");
+            }
+        }
+
+
+        // Get Top Active Projects
+        public async Task<List<TopActiveProject>> GetTopActiveProjectsAsync()
+        {
+            try
+            {
+                var pipeline = new List<BsonDocument>
+                {
+                    new("$unwind", "$activities"),
+                    new("$group",
+                        new BsonDocument
+                        {
+                            { "_id", "$project_id" },
+                            { "activityCount",
+                                new BsonDocument("$sum", 1)
+                            }
+                        }
+                    ),
+                    new("$sort",
+                    new BsonDocument("activityCount", -1)),
+                    new ("$limit", 10),
+                    new ("$lookup",
+                        new BsonDocument
+                        {
+                            { "from", "projects" },
+                            { "localField", "_id" },
+                            { "foreignField", "_id" },
+                            { "as", "project" }
+                        }
+                    ),
+                    new ("$unwind", "$project"),
+                    new ("$match",
+                    new BsonDocument("project.is_completed",
+                    new BsonDocument("$ne", true))),
+                    new ("$project",
+                    new BsonDocument
+                    {
+                        { "Title", "$project.title" },
+                        { "Alias", "$project.alias" },
+                        { "ActivityCount", 1 },
+                        { "Maintainer", "$project.maintainer._id" },
+                        { "StartDate", "$project.start_date" },
+                        { "Deadline", "$project.deadline" },
+                        { "_id", 0 }
+                    })
+                };
+
+                var result = await _tasks.Aggregate<TopActiveProject>(pipeline).ToListAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get top active projects");
+                throw new Exception("Failed to get top active projects");
             }
         }
     }

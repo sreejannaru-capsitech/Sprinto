@@ -71,6 +71,30 @@ namespace Sprinto.Server.Controllers
             return response;
         }
 
+
+        // Get all projects and status count ( admin only )
+        [HttpGet("all")]
+        [Authorize(Roles = "admin")]
+        public async Task<ApiResponse<AllProjects>>
+            GetAllProjects()
+        {
+            var response = new ApiResponse<AllProjects>();
+
+            try
+            {
+                var res = await _projectService.GetAsync();
+                response.Message = Constants.Messages.Success;
+                response.Result = res;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+
+            return response;
+        }
+
+
         // Get projects based on user role
         // Admins get all project list
         // Other users get list of assigned projects
@@ -91,7 +115,7 @@ namespace Sprinto.Server.Controllers
                 if (userRole == "admin")
                 {
                     var projects = await _projectService.GetAsync();
-                    response.Result = projects;
+                    response.Result = projects.Projects;
                 }
                 else
                 {
@@ -287,7 +311,7 @@ namespace Sprinto.Server.Controllers
 
         // Deletes the project with the specified ID. (Admin Only)
         [HttpPost("{id}/delete")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = Constants.Roles.Admin)]
         public async Task<ApiResponse<Project>> DeleteAsync(string id)
         {
             var response = new ApiResponse<Project>();
@@ -307,6 +331,27 @@ namespace Sprinto.Server.Controllers
             return response;
         }
 
+
+        // Get Top 10 Active Project List
+        [HttpGet("top")]
+        [Authorize(Roles = Constants.Roles.Admin)]
+        public async Task<ApiResponse<List<TopActiveProject>>>
+            GetTopActiveProjects()
+        {
+            var response = new ApiResponse<List<TopActiveProject>>();
+
+            try
+            {
+                var result = await _projectService.GetTopActiveProjectsAsync();
+                response.Message = Constants.Messages.Success;
+                response.Result = result;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
 
         private object? ValidateModelState
         {

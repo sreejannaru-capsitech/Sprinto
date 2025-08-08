@@ -43,6 +43,26 @@ namespace Sprinto.Server.Models
         public List<TaskResponse> Overdue { get; set; } = [];
     }
 
+    public class AllProjects
+    {
+        public long Total { get; set; }
+        public long Active { get; set; }
+        public long InActive { get; set; }
+        public List<Project> Projects { get; set; } = [];
+    }
+
+    public class TopActiveProject
+    {
+        public string Title { get; set; } = null!;
+        public string Alias { get; set; } = null!;
+        public long ActivityCount { get; set; }
+
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Maintainer { get; set; } = null!;
+        public DateTime StartDate { get; set; }
+        public DateTime Deadline { get; set; }
+    }
+
     public class ProjectTaskGroup
     {
         [BsonRepresentation(BsonType.ObjectId)]
