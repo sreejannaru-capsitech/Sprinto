@@ -2,7 +2,8 @@ import { Breadcrumb, Flex, Layout, Space, Tag } from "antd";
 import { useMemo, type ReactNode } from "react";
 import { useSelector } from "react-redux";
 import { NavLink } from "react-router";
-import type { RootState } from "~/lib/store/store";
+import { USER_TEAM_LEAD } from "~/lib/const";
+import type { RootState } from "~/lib/store";
 import { capitalizeFirst } from "~/lib/utils";
 
 interface Crumb {
@@ -91,7 +92,7 @@ const Header = (): ReactNode => {
             borderRadius: 8,
           }}
         >
-          {user.role === "teamLead" ? "Team Lead" : user.role}
+          {user.role === USER_TEAM_LEAD ? "Team Lead" : user.role}
         </Tag>
       </Space>
     </Layout.Header>

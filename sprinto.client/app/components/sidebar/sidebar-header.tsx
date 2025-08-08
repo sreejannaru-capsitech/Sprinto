@@ -3,9 +3,10 @@ import { isAxiosError } from "axios";
 import { useState, type ReactNode } from "react";
 import { useSelector } from "react-redux";
 import { useAntNotification } from "~/hooks";
+import { USER_ADMIN } from "~/lib/const";
 import { DownArrow } from "~/lib/icons";
 import { logOut } from "~/lib/server/auth.api";
-import type { RootState } from "~/lib/store/store";
+import type { RootState } from "~/lib/store";
 import CreateTask from "../create-task";
 import PasswordForm from "../forms/password-form";
 import ProfileFormModal from "../forms/profile-form";
@@ -99,7 +100,7 @@ const SidebarHeader = (): ReactNode => {
         />
       </Space>
       {/* Do not show create task button for admins */}
-      {user.role !== "admin" && <CreateTask />}
+      {user.role !== USER_ADMIN && <CreateTask />}
     </Flex>
   );
 };

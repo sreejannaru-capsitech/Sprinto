@@ -12,7 +12,7 @@ import { useSelector } from "react-redux";
 import { useAntNotification } from "~/hooks";
 import { UploadIcon } from "~/lib/icons";
 import { useProfileUpdate } from "~/lib/server/services";
-import type { RootState } from "~/lib/store/store";
+import type { RootState } from "~/lib/store";
 import {
   getNonWhitespaceValidator,
   getRequiredStringRule,

@@ -5,7 +5,7 @@ import NoData from "~/components/ui/no-data";
 import Spinner from "~/components/ui/spinner";
 import TaskContainer from "~/components/ui/task-container";
 import { useProjectTasksQuery } from "~/lib/server/services";
-import type { RootState } from "~/lib/store/store";
+import type { RootState } from "~/lib/store";
 
 interface TaskStatusGroup {
   status: string;

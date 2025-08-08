@@ -7,8 +7,9 @@ import ProjectItem from "~/components/ui/project-item";
 import ProjectsContainer from "~/components/ui/projects-container";
 import Spinner from "~/components/ui/spinner";
 import TaskContainer from "~/components/ui/task-container";
+import { USER_EMPLOYEE } from "~/lib/const";
 import { useProjectsQuery, useUpcomingTasksQuery } from "~/lib/server/services";
-import type { RootState } from "~/lib/store/store";
+import type { RootState } from "~/lib/store";
 
 /**
  * This component renders inbox.page section
@@ -35,7 +36,7 @@ const UpcomingPageComponent = (): ReactNode => {
 
   return (
     <Spinner isActive={isPending}>
-      {user?.role !== "employee" ? (
+      {user?.role !== USER_EMPLOYEE ? (
         <Row style={{ marginTop: "1rem" }}>
           {upcomingProjects.length ? (
             <ProjectsContainer text="Upcoming Project Deadlines" horizontal>
@@ -51,12 +52,12 @@ const UpcomingPageComponent = (): ReactNode => {
           <NoData text="You don't have any upcoming task" />
         ) : (
           <Flex
-            style={{ marginTop: `${user?.role !== "employee" ? 1 : 2}rem` }}
+            style={{ marginTop: `${user?.role !== USER_EMPLOYEE ? 1 : 2}rem` }}
             gap={30}
           >
             {data.result.map((group) => (
               <TaskContainer
-                height={user?.role !== "employee" ? 410 : undefined}
+                height={user?.role !== USER_EMPLOYEE ? 410 : undefined}
                 text={group.projectTitle}
                 tasks={group.tasks}
                 key={group.projectId}

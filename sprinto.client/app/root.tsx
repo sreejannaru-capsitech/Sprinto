@@ -14,7 +14,7 @@ import "~/styles/main.css";
 import type { Route } from "./+types/root";
 import { queryClient } from "./lib/server";
 import { Provider } from "react-redux";
-import { store } from "./lib/store/store";
+import { store } from "./lib/store";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },

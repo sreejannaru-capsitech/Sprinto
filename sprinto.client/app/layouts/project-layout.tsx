@@ -4,8 +4,7 @@ import { useDispatch } from "react-redux";
 import { NavLink, Outlet, useParams } from "react-router";
 import { AlertIcon } from "~/lib/icons";
 import { useProjectsQuery } from "~/lib/server/services";
-import { setProject } from "~/lib/store/projectSlice";
-import type { AppDispatch } from "~/lib/store/store";
+import { setProject, type AppDispatch } from "~/lib/store";
 import { isValidMongoId } from "~/lib/utils";
 import CenteredLayout from "./centered-layout";
 

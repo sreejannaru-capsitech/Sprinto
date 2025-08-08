@@ -4,6 +4,7 @@ import type { CSSProperties, FC, ReactNode } from "react";
 
 import "~/styles/items.css";
 import AvatarPic from "./avatar-pic";
+import { USER_TEAM_LEAD } from "~/lib/const";
 
 interface TeamMemberProps {
   member: User;
@@ -36,7 +37,7 @@ const TeamMember: FC<TeamMemberProps> = ({
         </Flex>
 
         <Tag className="capitalize">
-          {member.role === "teamLead" ? "Team Lead" : member.role}
+          {member.role === USER_TEAM_LEAD ? "Team Lead" : member.role}
         </Tag>
 
         <p style={p_style} className="smaller-text">

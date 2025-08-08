@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Navigate, Outlet } from "react-router";
 import Spinner from "~/components/ui/spinner";
+import { USER_ADMIN } from "~/lib/const";
 import { useProfileQuery } from "~/lib/server/services";
 
 /**
@@ -21,7 +22,7 @@ const RootLayout = (): ReactNode => {
   }
 
   // Else redirect to the appropriate route based on the user's role
-  if (data?.result?.user.role === "admin") {
+  if (data?.result?.user.role === USER_ADMIN) {
     return <Navigate to="/projects" />;
   } else {
     return <Navigate to="/today" />;

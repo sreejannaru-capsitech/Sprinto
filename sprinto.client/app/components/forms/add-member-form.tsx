@@ -3,7 +3,7 @@ import { useState, type FC, type ReactNode } from "react";
 import { useSelector } from "react-redux";
 import { useAntNotification } from "~/hooks";
 import { useAddMembers, useUserSearchQuery } from "~/lib/server/services";
-import type { RootState } from "~/lib/store/store";
+import type { RootState } from "~/lib/store";
 import { getOptionsFromUsers } from "~/lib/utils";
 import { getRequiredSelectRule } from "~/lib/validators";
 

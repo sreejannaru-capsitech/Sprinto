@@ -6,9 +6,9 @@ import Header from "~/components/header";
 import AdminSidebar from "~/components/sidebar/admin-sidebar";
 import EmployeeSidebar from "~/components/sidebar/employee-sidebar";
 import Spinner from "~/components/ui/spinner";
+import { USER_ADMIN } from "~/lib/const";
 import { useProfileQuery, useProjectsQuery } from "~/lib/server/services";
-import type { AppDispatch } from "~/lib/store/store";
-import { setToken, setUser } from "~/lib/store/userSlice";
+import { setToken, setUser, type AppDispatch } from "~/lib/store";
 import NoProject from "~/pages/no-project";
 
 const { Content, Sider } = Layout;
@@ -54,7 +54,7 @@ const MainLayout = (): ReactNode => {
                 padding: "20px 15px",
               }}
             >
-              {role === "admin" ? <AdminSidebar /> : <EmployeeSidebar />}
+              {role === USER_ADMIN ? <AdminSidebar /> : <EmployeeSidebar />}
             </Sider>
             <Layout>
               <Header />
@@ -78,7 +78,7 @@ const ProjectsChecker: FC<ProjectCheckerProps> = ({ children, role }) => {
 
   return (
     <Spinner isActive={isPending} fullscreen>
-      {role !== "admin" && data?.result?.length === 0 ? (
+      {role !== USER_ADMIN && data?.result?.length === 0 ? (
         <Layout style={{ height: "100vh" }}>
           <NoProject />
         </Layout>

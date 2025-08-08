@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { useAntNotification } from "~/hooks";
 import { AlertIcon, DeleteIcon, PencilIcon } from "~/lib/icons";
 import { useDeleteComment } from "~/lib/server/services";
-import type { RootState } from "~/lib/store/store";
+import type { RootState } from "~/lib/store";
 
 import "~/styles/project-overview.css";
 import AvatarPic from "./avatar-pic";

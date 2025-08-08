@@ -14,7 +14,7 @@ import {
   useProjectActivitiesQuery,
   useProjectOverviewQuery,
 } from "~/lib/server/services";
-import type { RootState } from "~/lib/store/store";
+import type { RootState } from "~/lib/store";
 
 import "~/styles/project-overview.css";
 

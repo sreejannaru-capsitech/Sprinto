@@ -4,9 +4,10 @@ import { useSelector } from "react-redux";
 import Spinner from "~/components/ui/spinner";
 import TeamMember from "~/components/ui/team-member";
 import { useAntNotification } from "~/hooks";
+import { USER_EMPLOYEE } from "~/lib/const";
 import { AlertIcon, UserRemoveIcon } from "~/lib/icons";
 import { useProjectTeamQuery, useRemoveMember } from "~/lib/server/services";
-import type { RootState } from "~/lib/store/store";
+import type { RootState } from "~/lib/store";
 
 /**
  * This component renders project-team.page section
@@ -45,7 +46,7 @@ const ProjectTeamPage = (): ReactNode => {
               <Flex key={member.id} align="center" gap={10}>
                 <TeamMember member={member} />
                 {/* Only show the button if the user is not an employee */}
-                {user?.role !== "employee" ? (
+                {user?.role !== USER_EMPLOYEE ? (
                   <Popconfirm
                     title="Are you sure you want to remove this member?"
                     icon={<AlertIcon size={18} />}

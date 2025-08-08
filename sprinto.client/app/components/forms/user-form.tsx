@@ -1,7 +1,9 @@
 import { Col, Form, Input, Modal, Row, Select } from "antd";
 import { useState, type FC, type ReactNode } from "react";
 import { useAntNotification } from "~/hooks";
+import { USER_ADMIN, USER_EMPLOYEE, USER_TEAM_LEAD } from "~/lib/const";
 import { createUser } from "~/lib/server";
+import { capitalizeFirst } from "~/lib/utils";
 import {
   getNonWhitespaceValidator,
   getRequiredEmailRule,
@@ -16,16 +18,16 @@ interface UserFormProps {
 
 const roleOptions = [
   {
-    label: "Admin",
-    value: "admin",
+    label: capitalizeFirst(USER_ADMIN),
+    value: USER_ADMIN,
   },
   {
-    label: "Employee",
-    value: "employee",
+    label: capitalizeFirst(USER_EMPLOYEE),
+    value: USER_EMPLOYEE,
   },
   {
     label: "Team Lead",
-    value: "teamLead",
+    value: USER_TEAM_LEAD,
   },
 ];
 

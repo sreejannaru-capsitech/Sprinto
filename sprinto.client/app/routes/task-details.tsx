@@ -6,8 +6,7 @@ import Spinner from "~/components/ui/spinner";
 import CenteredLayout from "~/layouts/centered-layout";
 import { AlertIcon } from "~/lib/icons";
 import { useProjectTasksQuery } from "~/lib/server/services";
-import type { AppDispatch, RootState } from "~/lib/store/store";
-import { setTask } from "~/lib/store/taskSlice";
+import { setTask, type AppDispatch, type RootState } from "~/lib/store";
 import { isValidMongoId } from "~/lib/utils";
 import TaskDetailsPage from "~/pages/task-details.page";
 

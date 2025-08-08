@@ -220,7 +220,7 @@ const ProjectForm: FC<ProjectFormProps> = ({
             {/* Team Lead */}
             <Form.Item<ProjectFormType>
               label="Team Lead"
-              name="teamLead"
+              name={USER_TEAM_LEAD}
               rules={[getRequiredSelectRule("TL")]}
             >
               <Select

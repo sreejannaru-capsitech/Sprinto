@@ -1,5 +1,6 @@
 import { Button, Flex } from "antd";
 import { useState, type ReactNode } from "react";
+import { USER_EMPLOYEE } from "~/lib/const";
 import { PlusIcon } from "~/lib/icons";
 import { useProfileQuery } from "~/lib/server/services";
 import AddMemberForm from "../forms/add-member-form";
@@ -14,7 +15,7 @@ const AddAssignee = (): ReactNode => {
   return (
     <>
       {/* Only show the button if the user is not an employee */}
-      {data?.result?.user.role === "employee" ? null : (
+      {data?.result?.user.role === USER_EMPLOYEE ? null : (
         <Button type="default" onClick={() => setOpen(true)}>
           <Flex align="center" gap={5}>
             <PlusIcon size={20} />
