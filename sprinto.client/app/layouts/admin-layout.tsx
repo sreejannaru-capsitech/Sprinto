@@ -5,6 +5,8 @@ import { USER_ADMIN } from "~/lib/const";
 import { useProfileQuery } from "~/lib/server/services";
 import NotFoundPage from "~/routes/not-found";
 import MainLayout from "./main-layout";
+import { setToken, setUser, type AppDispatch } from "~/lib/store";
+import { useDispatch } from "react-redux";
 
 /**
  * This component renders admin-layout section
@@ -14,12 +16,16 @@ const AdminLayout = (): ReactNode => {
   // Fetch the profile and access token from the server
   const { data, isPending } = useProfileQuery();
 
+  const dispatch: AppDispatch = useDispatch();
+
+  // Set the user and token in the store
   useEffect(() => {
     if (isPending || !data?.result) {
       return;
     }
 
-    console.log(data.result.user);
+    dispatch(setUser(data?.result?.user));
+    dispatch(setToken(data?.result?.accessToken));
   }, [data?.result, isPending]);
 
   return (
