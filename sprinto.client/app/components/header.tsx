@@ -1,10 +1,13 @@
-import { Breadcrumb, Flex, Layout, Space, Tag } from "antd";
+import { Breadcrumb, Button, Flex, Layout, Space, Tag } from "antd";
 import { useMemo, type ReactNode } from "react";
 import { useSelector } from "react-redux";
 import { NavLink } from "react-router";
 import { USER_TEAM_LEAD } from "~/lib/const";
+import LeftArrow from "~/lib/icons/left-arrow.icon";
 import type { RootState } from "~/lib/store";
 import { capitalizeFirst } from "~/lib/utils";
+
+import "~/styles/sidebar.css";
 
 interface Crumb {
   Title: string;
@@ -70,6 +73,10 @@ const Header = (): ReactNode => {
     return crumbs;
   }, [window.location.pathname, proj, task]);
 
+  const goBack = () => {
+    window.history.back();
+  };
+
   return (
     <Layout.Header>
       <Space
@@ -78,6 +85,12 @@ const Header = (): ReactNode => {
         size={24}
       >
         <Flex align="center" gap={18}>
+          <Button
+            onClick={goBack}
+            type="text"
+            className="header-button"
+            icon={<LeftArrow />}
+          />
           <Breadcrumb
             items={crumbs.map((crumb) => ({
               title: <NavLink to={crumb.Path}>{crumb.Title}</NavLink>,
