@@ -4,6 +4,7 @@ import { useMemo, type ReactNode } from "react";
 import type { MetaArgs } from "react-router";
 import ProjectItem from "~/components/ui/project-item";
 import ProjectsContainer from "~/components/ui/projects-container";
+import Spinner from "~/components/ui/spinner";
 import TaskItem from "~/components/ui/task-item";
 import { useProjectsQuery, useTopDueTasksQuery } from "~/lib/server/services";
 
@@ -21,8 +22,8 @@ export function meta({}: MetaArgs) {
  * @returns {ReactNode} The Deadlines component
  */
 const Deadlines = (): ReactNode => {
-  const { data: projects } = useProjectsQuery();
-  const { data: topDueTasks } = useTopDueTasksQuery();
+  const { data: projects, isPending: projPending } = useProjectsQuery();
+  const { data: topDueTasks, isPending: taskPending } = useTopDueTasksQuery();
 
   const dueProjects = useMemo(() => {
     if (!projects?.result?.length) {
@@ -44,11 +45,13 @@ const Deadlines = (): ReactNode => {
           Deadline Projects
         </Typography.Title>
 
-        <ProjectsContainer text="">
-          {dueProjects.map((project) => (
-            <ProjectItem key={project.id} project={project} />
-          ))}
-        </ProjectsContainer>
+        <Spinner isActive={projPending}>
+          <ProjectsContainer text="">
+            {dueProjects.map((project) => (
+              <ProjectItem key={project.id} project={project} />
+            ))}
+          </ProjectsContainer>
+        </Spinner>
       </div>
 
       <div>
@@ -57,11 +60,18 @@ const Deadlines = (): ReactNode => {
         </Typography.Title>
 
         {/* <TaskContainer text="" tasks={topDueTasks?.result ?? []} /> */}
-        <Flex align="flex-start" gap={20} wrap className="due-tasks-container">
-          {topDueTasks?.result?.map((task) => (
-            <TaskItem key={task.id} task={task} />
-          ))}
-        </Flex>
+        <Spinner isActive={taskPending}>
+          <Flex
+            align="flex-start"
+            gap={20}
+            wrap
+            className="due-tasks-container"
+          >
+            {topDueTasks?.result?.map((task) => (
+              <TaskItem key={task.id} task={task} />
+            ))}
+          </Flex>
+        </Spinner>
       </div>
     </Flex>
   );
