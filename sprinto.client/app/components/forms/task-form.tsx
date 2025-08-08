@@ -3,8 +3,8 @@ import dayjs from "dayjs";
 import { useEffect, useMemo, useState, type FC, type ReactNode } from "react";
 import { useAntNotification } from "~/hooks";
 import {
-  useProjectsQuery,
   useCreateTask,
+  useProjectsQuery,
   useStatusesQuery,
   useUpdateTask,
 } from "~/lib/server/services";
@@ -75,6 +75,11 @@ const TaskForm: FC<TaskFormProps> = ({
       form.setFieldValue("dueDate", dayjs(task.dueDate));
       form.setFieldValue("status", task.status.id);
       form.setFieldValue("priority", task.priority);
+    } else {
+      const paths = window.location.pathname.split("/");
+      if (paths.length >= 3) {
+        form.setFieldValue("projectId", paths[2]);
+      }
     }
   };
 
