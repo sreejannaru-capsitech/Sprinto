@@ -119,7 +119,7 @@ namespace Sprinto.Server.Services
         }
 
 
-        // Update an user
+        // Update an user's name and profile picture
         public async Task UpdateUserAsync(string id, UserUpdateReq req)
         {
             try
@@ -386,6 +386,31 @@ namespace Sprinto.Server.Services
             {
                 _logger.LogError(ex, "Failed to get user profile picture");
                 throw new Exception("Failed to get user profile picture");
+            }
+        }
+
+        /// <summary>
+        /// Returns list of user objects for the provided user id list
+        /// </summary>
+        /// <param name="userIds"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        internal async Task<List<User>> GetUserByIds(string[] userIds)
+        {
+            try
+            {
+                if (userIds == null || userIds.Length == 0)
+                    return [];
+
+                var filter = Builders<User>.Filter.In(u => u.Id, userIds);
+                var users = await _users.Find(filter).ToListAsync();
+
+                return users;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get users by their ids");
+                throw new Exception("Failed to get users by their ids");
             }
         }
     }
