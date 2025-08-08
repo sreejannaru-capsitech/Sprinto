@@ -79,6 +79,7 @@ const TaskForm: FC<TaskFormProps> = ({
       const paths = window.location.pathname.split("/");
       if (paths.length >= 3) {
         form.setFieldValue("projectId", paths[2]);
+        changeAssignees(paths[2]);
       }
     }
   };
@@ -247,6 +248,8 @@ const TaskForm: FC<TaskFormProps> = ({
             >
               <Select
                 loading={projectsPending}
+                showSearch
+                optionFilterProp="label"
                 options={projectOptions}
                 placeholder="Select a project"
                 disabled={!isNew}
@@ -292,6 +295,9 @@ const TaskForm: FC<TaskFormProps> = ({
           <Select
             mode="multiple"
             loading={projectsPending}
+            showSearch
+            optionFilterProp="label"
+            allowClear
             maxTagCount="responsive"
             placeholder="Select assignees"
             options={assignees}

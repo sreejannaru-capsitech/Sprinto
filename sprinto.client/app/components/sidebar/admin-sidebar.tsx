@@ -20,6 +20,7 @@ import { isCurrentPath, menuItemStyle } from ".";
 import ProjectForm from "../forms/project-form";
 import UserForm from "../forms/user-form";
 import SearchForm from "../forms/search-form";
+import TaskForm from "../forms/task-form";
 
 /**
  * This component renders admin-sidebar section
@@ -59,6 +60,12 @@ const AdminSidebar = (): ReactNode => {
           label: <span style={menuItemStyle}>Project</span>,
           onClick: () => setProjectOpen(true),
           key: "1.2",
+        },
+        {
+          icon: <TaskIcon size={22} />,
+          label: <span style={menuItemStyle}>Task</span>,
+          onClick: () => setTaskformOpen(true),
+          key: "1.3",
         },
       ],
       key: "2",
@@ -121,6 +128,7 @@ const AdminSidebar = (): ReactNode => {
   const [userOpen, setUserOpen] = useState<boolean>(false);
   const [projectOpen, setProjectOpen] = useState<boolean>(false);
   const [searchFormOpen, setSearchFormOpen] = useState<boolean>(false);
+  const [taskformOpen, setTaskformOpen] = useState<boolean>(false);
 
   return (
     <>
@@ -141,6 +149,12 @@ const AdminSidebar = (): ReactNode => {
         isNew
       />
       <UserForm open={userOpen} onClose={() => setUserOpen(false)} />
+
+      <TaskForm
+        open={taskformOpen}
+        onClose={() => setTaskformOpen(false)}
+        isNew
+      />
 
       <Menu
         mode="inline"
