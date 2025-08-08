@@ -27,14 +27,14 @@ namespace Sprinto.Server.Services
         }
 
         // Retrives the next available task sequence.
-        public async Task<long> GetNextSequenceAsync()
+        public async Task<long> GetNextSequenceAsync(string projectId)
         {
             try
             {
                 var sort = Builders<TaskItem>.Sort.Descending(t => t.Sequence);
 
                 var highestTask = await _tasks
-                    .Find(FilterDefinition<TaskItem>.Empty)
+                    .Find( t => t.ProjectId == projectId)
                     .Sort(sort)
                     .Limit(1)
                     .FirstOrDefaultAsync();
@@ -57,7 +57,7 @@ namespace Sprinto.Server.Services
                     ?? throw new KeyNotFoundException("Invalid Project Id");
 
 
-                long seq = await GetNextSequenceAsync();
+                long seq = await GetNextSequenceAsync(dto.ProjectId);
                 var task = new TaskItem(dto, userId, userName, seq, project.Alias);
 
                 // Log the creation activity
