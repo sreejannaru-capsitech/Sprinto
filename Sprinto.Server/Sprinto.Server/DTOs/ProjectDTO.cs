@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using Sprinto.Server.Models;
+using Sprinto.Server.Validation;
 using System.ComponentModel.DataAnnotations;
 
 namespace Sprinto.Server.DTOs
@@ -50,9 +50,11 @@ namespace Sprinto.Server.DTOs
 
         [Required(ErrorMessage = "Please provide project maintainer details")]
         [BsonElement("maintainer")]
-        public Assignee TeamLead { get; set; } = null!;
+        [ValidObjectId(ErrorMessage = "Provide valid Team Lead User Id")]
+        public string TeamLead { get; set; } = null!;
 
         [BsonElement("assignees")]
-        public List<Assignee> Assignees { get; set; } = [];
+        [ValidObjectIdList(ErrorMessage = "Provide valid list of assignee Ids")]
+        public string[] Assignees { get; set; } = [];
     }
 }

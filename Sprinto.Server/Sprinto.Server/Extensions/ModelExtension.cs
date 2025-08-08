@@ -35,5 +35,14 @@ namespace Sprinto.Server.Extensions
                 Comments = task.Comments,
             };
         }
+
+        public static Assignee ToAssignee(this User user)
+        {
+            return new Assignee
+            {
+                Id = user.Id,
+                Name = user.Name,
+            };
+        }
     }
 }

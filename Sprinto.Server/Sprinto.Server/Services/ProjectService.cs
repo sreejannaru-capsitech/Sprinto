@@ -13,18 +13,19 @@ namespace Sprinto.Server.Services
     {
         private readonly IMongoCollection<Project> _projects;
         private readonly IMongoCollection<TaskItem> _tasks;
-        private readonly IMongoCollection<User> _users;
+        private readonly UserService _userSerice;
         private readonly ILogger<ProjectService> _logger;
 
         public ProjectService(IMongoClient mongoCLient,
             IOptions<DatabaseSettings> dbsettings,
+            UserService userService,
             ILogger<ProjectService> logger)
         {
             var mongoDB = mongoCLient.GetDatabase(dbsettings.Value.DatabaseName);
 
             _projects = mongoDB.GetCollection<Project>(dbsettings.Value.ProjectsCollection);
             _tasks = mongoDB.GetCollection<TaskItem>(dbsettings.Value.TasksCollection);
-            _users = mongoDB.GetCollection<User>(dbsettings.Value.UsersCollection);
+            _userSerice = userService;
             _logger = logger;
         }
 
@@ -86,8 +87,8 @@ namespace Sprinto.Server.Services
             try
             {
                 // Check for alias existance
-                var aliasxists = await CheckAliasAsync(dto.Alias);
-                if (aliasxists)
+                var aliasAvailable = await CheckAliasAsync(dto.Alias);
+                if (!aliasAvailable)
                 {
                     throw new DuplicateNameException("Duplicate project alias already exists");
                 }
@@ -100,10 +101,14 @@ namespace Sprinto.Server.Services
                     throw new DuplicateNameException("Duplicate project title already exists");
                 }
 
-                var user = new Project(dto, userId, userName);
-                await _projects.InsertOneAsync(user);
+                var creator = new Creation(userId, userName);
+                var tl = await _userSerice.GetAsync(dto.TeamLead);
+                var emps = await _userSerice.GetUserByIds(dto.Assignees);
 
-                return user;
+                var project = new Project(dto, creator, tl.ToAssignee(), [.. emps.Select(a => a.ToAssignee())]);
+                await _projects.InsertOneAsync(project);
+
+                return project;
             }
             catch (DuplicateNameException)
             {
@@ -200,13 +205,17 @@ namespace Sprinto.Server.Services
         {
             try
             {
+                var tl = await _userSerice.GetAsync(dto.TeamLead);
+                var emps = await _userSerice.GetUserByIds(dto.Assignees);
+                var assignees = emps.Select(a => a.ToAssignee()).ToList();
+
                 var update = Builders<Project>.Update
                     .Set(p => p.Title, dto.Title)
                     .Set(p => p.Description, dto.Description)
                     .Set(p => p.IsCompleted, dto.IsCompleted ?? false)
                     .Set(p => p.Deadline, dto.Deadline)
-                    .Set(p => p.TeamLead, dto.TeamLead)
-                    .Set(p => p.Assignees, dto.Assignees);
+                    .Set(p => p.TeamLead, tl.ToAssignee())
+                    .Set(p => p.Assignees, assignees);
 
                 var options = new FindOneAndUpdateOptions<Project>
                 {
@@ -425,9 +434,8 @@ namespace Sprinto.Server.Services
 
                 var assigneeIds = project.Assignees.Select(a => a.Id).ToList();
 
-                var filter = Builders<User>.Filter.In(u => u.Id, assigneeIds);
-                var users = await _users.Find(filter).ToListAsync();
-                var tl = await _users.Find(a => a.Id == project.TeamLead.Id).FirstOrDefaultAsync();
+                var users = await _userSerice.GetUserByIds(assigneeIds.ToArray());
+                var tl = await _userSerice.GetAsync(project.TeamLead.Id);
 
                 res.TeamLead = tl.ToUserResponse();
                 res.Employees = [.. users.Select(u => u.ToUserResponse())];
@@ -454,8 +462,7 @@ namespace Sprinto.Server.Services
                     ?? throw new KeyNotFoundException(Constants.Messages.NotFound);
 
                 // Fetch user details from _users collection
-                var userFilter = Builders<User>.Filter.In(u => u.Id, UserIds);
-                var users = await _users.Find(userFilter).ToListAsync();
+                var users = await _userSerice.GetUserByIds([.. UserIds]);
 
                 if (users.Count == 0)
                 {

@@ -45,7 +45,8 @@ namespace Sprinto.Server.Models
         [BsonElement("created_by")]
         public Creation CreatedBy { get; set; } = null!;
 
-        public Project(ProjectDTO dto, string id, string name)
+        public Project
+            (ProjectDTO dto, Creation creator, Assignee tl, List<Assignee> emps)
         {
             Title = dto.Title;
             Alias = dto.Alias;
@@ -53,13 +54,9 @@ namespace Sprinto.Server.Models
             IsCompleted = dto.IsCompleted ?? false;
             StartDate = dto.StartDate;
             Deadline = dto.Deadline;
-            TeamLead = dto.TeamLead;
-            Assignees = dto.Assignees;
-            CreatedBy = new Creation
-            {
-                UserId = id,
-                UserName = name
-            };
+            TeamLead = tl;
+            Assignees = emps;
+            CreatedBy = creator;
         }
 
         public Project() { }
