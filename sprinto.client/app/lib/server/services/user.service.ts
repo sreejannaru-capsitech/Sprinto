@@ -62,10 +62,10 @@ export const useTeamLeadsQuery = () => {
   });
 };
 
-export const useUserSearchQuery = (query: string) => {
+export const useUserSearchQuery = (query: string, role?: UserRole) => {
   return useQuery({
-    queryKey: [USERS_SEARCH_KEY, query],
-    queryFn: () => searchUsers(query),
+    queryKey: [USERS_SEARCH_KEY, query, role],
+    queryFn: () => searchUsers(query, role),
   });
 };
 

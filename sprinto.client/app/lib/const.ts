@@ -46,8 +46,12 @@ export const ADMIN_ROUTES = [
   "Admins",
 ] as const;
 
+export const USER_EMPLOYEE = "employee" as const;
+export const USER_ADMIN = "admin" as const;
+export const USER_TEAM_LEAD = "teamLead" as const;
+
 export const USER_ROLES: UserRole[] = [
-  "admin",
-  "teamLead",
-  "employee",
+  USER_EMPLOYEE,
+  USER_ADMIN,
+  USER_TEAM_LEAD,
 ] as const;

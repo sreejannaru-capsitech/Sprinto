@@ -51,3 +51,6 @@ export default axiosApi;
 export { queryClient } from "./queryClient";
 export * from "./auth.api";
 export * from "./user.api";
+export * from "./project.api";
+export * from "./task.api";
+export * from "./comment.api";

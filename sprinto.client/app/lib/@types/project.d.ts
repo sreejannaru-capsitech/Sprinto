@@ -18,8 +18,8 @@ interface ProjectRequest {
   isCompleted: boolean;
   startDate?: string;
   deadline?: string;
-  teamLead: Assignee;
-  assignees: Assignee[];
+  teamLead: string;
+  assignees: string[];
 }
 
 interface ProjectTaskGroup {

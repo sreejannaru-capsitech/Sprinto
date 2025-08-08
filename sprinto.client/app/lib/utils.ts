@@ -18,34 +18,31 @@ export const getInitials = (fullName: string): string => {
 };
 
 /**
- * Extracts 3-letter initials from a name string.
+ * Generates a random 3-letter alias from a name string.
  *
- * @param name - Full name string to extract initials from.
- * @returns A string of 3 uppercase letters based on name structure.
+ * @param name - Full name string to extract alias from.
+ * @returns A string of 3 uppercase letters randomly selected from the name.
  *
  * @example
- * getInitialsFromName("ecommerce") → "ECE"
- * getInitialsFromName("play ball") → "PYL"
- * getInitialsFromName("rice bubble gum") → "RBM"
+ * getAliasFromTitle("ecommerce") → "EMC"
+ * getAliasFromTitle("play ball") → "LPB"
+ * getAliasFromTitle("rice bubble gum") → "GRB"
  */
 export const getAliasFromTitle = (name: string): string => {
-  if (!name.trim()) return "";
+  const cleaned = name.replace(/\s+/g, "").toUpperCase();
 
-  const words = name.trim().split(/\s+/);
+  if (!cleaned) return "";
 
-  if (words.length === 1) {
-    const word = words[0];
-    return word.length >= 3
-      ? (word[0] + word[1] + word[word.length - 1]).toUpperCase()
-      : word.toUpperCase();
-  } else if (words.length === 2) {
-    const [first, second] = words;
-    return (first[0] + second[0] + second[second.length - 1]).toUpperCase();
-  } else {
-    const [first, second] = words;
-    const last = words[words.length - 1];
-    return (first[0] + second[0] + last[last.length - 1]).toUpperCase();
+  const chars = cleaned.split("");
+
+  const alias = new Set<string>();
+  while (alias.size < 3 && chars.length > 0) {
+    const index = Math.floor(Math.random() * chars.length);
+    alias.add(chars[index]);
+    chars.splice(index, 1); // remove to avoid duplicates
   }
+
+  return [...alias].join("");
 };
 
 /**

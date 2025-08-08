@@ -13,6 +13,11 @@ export const getProjects = async () => {
   return data;
 };
 
+export const checkAlias = async (alias: string) => {
+  const { data } = await axiosApi.get<ApiResponse<boolean>>(`/projects/alias?key=${alias}`);
+  return data;
+};
+
 export const getProjectActivities = async (projectId: string) => {
   const { data } = await axiosApi.get<ApiResponse<TaskActivity[]>>(
     `/projects/${projectId}/activities`

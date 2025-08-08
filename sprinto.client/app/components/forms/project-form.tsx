@@ -12,13 +12,15 @@ import {
 } from "antd";
 import { AxiosError } from "axios";
 import dayjs from "dayjs";
-import { useMemo, useState, type FC, type ReactNode } from "react";
+import { useState, type FC, type ReactNode } from "react";
 import { useAntNotification } from "~/hooks";
-import { createProject } from "~/lib/server/project.api";
-import { useEmployeesQuery, useTeamLeadsQuery } from "~/lib/server/services";
-import { getAliasFromTitle } from "~/lib/utils";
+import { USER_EMPLOYEE, USER_TEAM_LEAD } from "~/lib/const";
+import { checkAlias, createProject } from "~/lib/server";
+import { useUserSearchQuery } from "~/lib/server/services";
+import { getAliasFromTitle, getOptionsFromTeam } from "~/lib/utils";
 import {
   getNonWhitespaceValidator,
+  getRequiredSelectRule,
   getRequiredStringRule,
 } from "~/lib/validators";
 
@@ -51,28 +53,43 @@ const ProjectForm: FC<ProjectFormProps> = ({
   const [form] = Form.useForm<ProjectFormType>();
   const [loading, setLoading] = useState<boolean>(false);
   const [alias, setAlias] = useState<string>("");
+  const [empQuery, setEmpQuery] = useState<string>("");
+  const [tlQuery, setTlQuery] = useState<string>("");
 
-  const { data: employees, isPending: employeesPending } = useEmployeesQuery();
+  const { data: employees, isPending: employeesPending } = useUserSearchQuery(
+    empQuery,
+    USER_EMPLOYEE
+  );
 
-  const { data: teamLeads, isPending: teamLeadsPending } = useTeamLeadsQuery();
+  const { data: teamLeads, isPending: teamLeadsPending } = useUserSearchQuery(
+    tlQuery,
+    USER_TEAM_LEAD
+  );
 
-  const assigneeOptions = useMemo(() => {
-    return (
-      employees?.result?.items?.map((employee) => ({
-        label: employee.name,
-        value: employee.id,
-      })) ?? []
-    );
-  }, [employees]);
-
-  const teamLeadOptions = useMemo(() => {
-    return (
-      teamLeads?.result?.items?.map((teamLead) => ({
-        label: teamLead.name,
-        value: teamLead.id,
-      })) ?? []
-    );
-  }, [teamLeads]);
+  /**
+   * Checks if the project alias is available.
+   * If it is, displays a success message.
+   * If it is not, displays an error message.
+   *
+   * @returns {Promise<boolean>} A promise that resolves to a boolean indicating the availability of the alias.
+   */
+  const isAvailableAlias = async (): Promise<boolean> => {
+    if (!alias || alias.length < 3) return false;
+    try {
+      const data = await checkAlias(alias);
+      if (!data.result) {
+        _api({ message: "Alias already exists", type: "error" });
+      }
+      return data.result ?? false;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        _api({ message: error.message, type: "error" });
+      } else {
+        _api({ message: "Could not check alias", type: "error" });
+      }
+      return false;
+    }
+  };
 
   const { _api, contextHolder } = useAntNotification();
 
@@ -83,6 +100,15 @@ const ProjectForm: FC<ProjectFormProps> = ({
     } catch (error) {
       return error;
     }
+
+    if (alias.length < 3) {
+      _api({ message: "Alias must be at least 3 characters", type: "error" });
+      return;
+    }
+
+    // Check if alias already exists
+    const check = await isAvailableAlias();
+    if (!check) return;
 
     // Inject assignee names with their ids
     const payload: ProjectRequest = {
@@ -96,16 +122,8 @@ const ProjectForm: FC<ProjectFormProps> = ({
       startDate: values.startDate
         ? dayjs(values.startDate).format("YYYY-MM-DD")
         : undefined,
-      teamLead: teamLeads?.result?.items.find(
-        (e) => e.id === values.teamLead
-      ) ?? {
-        id: values.teamLead,
-        name: values.teamLead,
-      },
-      assignees:
-        employees?.result?.items
-          ?.filter((employee) => values.assignees?.includes(employee.id))
-          .map((employee) => ({ id: employee.id, name: employee.name })) ?? [],
+      teamLead: values.teamLead,
+      assignees: values.assignees,
     };
 
     setLoading(true);
@@ -160,6 +178,7 @@ const ProjectForm: FC<ProjectFormProps> = ({
               <Input
                 placeholder="Project Title"
                 onChange={(e) => setAlias(getAliasFromTitle(e.target.value))}
+                onBlur={isAvailableAlias}
               />
             </Form.Item>
           </Col>
@@ -202,17 +221,17 @@ const ProjectForm: FC<ProjectFormProps> = ({
             <Form.Item<ProjectFormType>
               label="Team Lead"
               name="teamLead"
-              rules={[
-                {
-                  type: "string",
-                  required: true,
-                  message: "Please select TL",
-                },
-              ]}
+              rules={[getRequiredSelectRule("TL")]}
             >
               <Select
+                showSearch
+                onSearch={(value) => {
+                  if (value) setTlQuery(value);
+                  else setTlQuery("");
+                }}
+                optionFilterProp="label"
                 loading={teamLeadsPending}
-                options={teamLeadOptions}
+                options={getOptionsFromTeam(teamLeads?.result ?? [])}
                 placeholder="Select TL"
               />
             </Form.Item>
@@ -222,10 +241,17 @@ const ProjectForm: FC<ProjectFormProps> = ({
             {/* Assignees */}
             <Form.Item<ProjectFormType> label="Assignees" name="assignees">
               <Select
+                showSearch
+                onSearch={(value) => {
+                  if (value) setEmpQuery(value);
+                  else setEmpQuery("");
+                }}
+                optionFilterProp="label"
                 mode="multiple"
+                maxTagCount="responsive"
                 loading={employeesPending}
                 placeholder="Select assignees"
-                options={assigneeOptions}
+                options={getOptionsFromTeam(employees?.result ?? [])}
               />
             </Form.Item>
           </Col>
