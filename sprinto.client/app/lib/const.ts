@@ -17,6 +17,7 @@ export const TODAY_TASKS_KEY = "todayTasks" as const;
 export const INBOX_TASKS_KEY = "inboxTasks" as const;
 export const TASKS_SEARCH_KEY = "tasksSearch" as const;
 export const UPCOMING_TASKS_KEY = "upcomingTasks" as const;
+export const TOP_DUE_TASKS_KEY = "topDueTasks" as const;
 export const COMMENTS_KEY = "comments" as const;
 
 // Projects

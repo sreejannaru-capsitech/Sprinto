@@ -52,3 +52,8 @@ export const searchTasks = async (query: string) => {
   );
   return data;
 };
+
+export const getTopDueTasks = async () => {
+  const { data } = await axiosApi.get<ApiResponse<Task[]>>(`/tasks/topdue`);
+  return data;
+};

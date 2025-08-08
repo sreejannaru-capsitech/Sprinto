@@ -9,6 +9,7 @@ import {
   TASK_ACTIVITIES_KEY,
   TASKS_SEARCH_KEY,
   TODAY_TASKS_KEY,
+  TOP_DUE_TASKS_KEY,
   UPCOMING_TASKS_KEY,
 } from "~/lib/const";
 // import { queryClient } from "../queryClient";
@@ -19,6 +20,7 @@ import {
   getInboxTasks,
   getTaskActivities,
   getTodayTasks,
+  getTopDueTasks,
   getUpcomingTasks,
   searchTasks,
   updateTask,
@@ -148,5 +150,13 @@ export const useTasksSearchQuery = (query: string) => {
   return useQuery({
     queryKey: [TASKS_SEARCH_KEY, query],
     queryFn: () => searchTasks(query),
+  });
+};
+
+export const useTopDueTasksQuery = () => {
+  return useQuery({
+    queryKey: [TOP_DUE_TASKS_KEY],
+    queryFn: getTopDueTasks,
+    staleTime: STALE_TIME,
   });
 };

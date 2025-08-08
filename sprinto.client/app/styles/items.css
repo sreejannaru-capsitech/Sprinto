@@ -112,8 +112,8 @@ span.ant-popconfirm-message-icon {
 }
 
 .project-container {
-  min-width: 1420px;
-  max-width: 1420px;
+  min-width: 430px;
+  max-width: 430px;
   max-height: 680px;
   overflow-y: hidden;
   padding: 6px 10px 14px 10px;
@@ -121,6 +121,11 @@ span.ant-popconfirm-message-icon {
   &:hover {
     overflow-y: auto;
   }
+}
+
+.container-header {
+  margin-left: 10px !important;
+  margin-bottom: 40px !important;
 }
 
 .team-member-container {

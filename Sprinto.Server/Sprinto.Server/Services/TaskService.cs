@@ -5,7 +5,6 @@ using Sprinto.Server.Common;
 using Sprinto.Server.DTOs;
 using Sprinto.Server.Extensions;
 using Sprinto.Server.Models;
-using System.Xml.Linq;
 
 
 namespace Sprinto.Server.Services
@@ -150,6 +149,45 @@ namespace Sprinto.Server.Services
             {
                 _logger.LogError(ex, "Error retrieving tasks for user {UserId}", userId);
                 throw new Exception("Could not retrieve tasks of today");
+            }
+        }
+
+
+        // Get Top 20 Incomplete Due soon tasks
+        public async Task<List<TaskItem>> GetTopDueTasksAsync()
+        {
+            try
+            {
+                // Exclude deleted tasks
+                var deleteFilter = Builders<TaskItem>.Filter.Ne(
+                    t => t.IsDeleted,
+                    true
+                );
+
+                // Incomplete filter
+                var notDone = Builders<TaskItem>.Filter.Ne(
+                    t => t.Status.Title,
+                    "Done"
+                );
+
+                // Combine filters
+                var combinedFilter = Builders<TaskItem>.Filter.And(
+                    deleteFilter,
+                    notDone
+                );
+
+                var tasks = await _tasks
+                    .Find(combinedFilter)
+                    .SortBy(t => t.DueDate)
+                    .Limit(20)
+                    .ToListAsync();
+
+                return tasks;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get top due tasks");
+                throw new Exception("Failed to get top due tasks");
             }
         }
 

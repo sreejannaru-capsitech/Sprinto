@@ -10,11 +10,12 @@ import {
 import { QueryClientProvider } from "@tanstack/react-query";
 
 import { ConfigProvider } from "antd";
-import "~/styles/main.css";
+import { Provider } from "react-redux";
 import type { Route } from "./+types/root";
 import { queryClient } from "./lib/server";
-import { Provider } from "react-redux";
 import { store } from "./lib/store";
+
+import "~/styles/main.css";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },

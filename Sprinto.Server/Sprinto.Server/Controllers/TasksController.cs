@@ -129,6 +129,28 @@ namespace Sprinto.Server.Controllers
             return response;
         }
 
+
+        // Get top due tasks
+        [HttpGet("topdue")]
+        [Authorize(Roles = Constants.Roles.Admin)]
+        public async Task<ApiResponse<List<TaskResponse>>> GetTopDueTasks()
+        {
+            var res = new ApiResponse<List<TaskResponse>>();
+            try
+            {
+                var tasks = await _taskService.GetTopDueTasksAsync();
+                res.Message = Constants.Messages.Success;
+                res.Result = [..tasks.Select(t => t.ToTaskResponse())];
+            }
+            catch (Exception ex)
+            {
+                res.HandleException(ex);
+            }
+
+            return res;
+        }
+
+
         // Get all assigned tasks
         [HttpGet("inbox")]
         public async Task<ApiResponse<InboxTaskGroup>>
