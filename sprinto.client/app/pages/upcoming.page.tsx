@@ -47,10 +47,10 @@ const UpcomingPageComponent = (): ReactNode => {
           ) : null}
         </Row>
       ) : null}
-      <Row>
-        {!data?.result?.length ? (
-          <NoData text="You don't have any upcoming task" />
-        ) : (
+      {!data?.result?.length ? (
+        <NoData text="You don't have any upcoming task" />
+      ) : (
+        <Row>
           <Flex
             style={{ marginTop: `${user?.role !== USER_EMPLOYEE ? 1 : 2}rem` }}
             gap={30}
@@ -64,8 +64,8 @@ const UpcomingPageComponent = (): ReactNode => {
               />
             ))}
           </Flex>
-        )}
-      </Row>
+        </Row>
+      )}
     </Spinner>
   );
 };
