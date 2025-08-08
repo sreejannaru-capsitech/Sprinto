@@ -11,12 +11,14 @@ import {
 import { handleApiError } from "~/lib/utils";
 import {
   addMembers,
+  createProject,
   getProjectActivities,
   getProjectOverview,
   getProjects,
   getProjectTasks,
   getProjectTeam,
   removeMember,
+  updateProject,
 } from "../project.api";
 
 export const useProjectsQuery = () => {
@@ -24,6 +26,22 @@ export const useProjectsQuery = () => {
     queryKey: [PROJECTS_KEY],
     queryFn: getProjects,
     staleTime: STALE_TIME,
+  });
+};
+
+export const useCreateProject = (_api: NotificationApi) => {
+  const query = useQueryClient();
+  return useMutation({
+    mutationFn: async (project: ProjectRequest) => {
+      return await createProject(project);
+    },
+    onSuccess: (_res, vars) => {
+      _api({ message: "New project was created", type: "success" });
+      query.invalidateQueries({ queryKey: [PROJECTS_KEY] });
+    },
+    onError: (error) => {
+      handleApiError(error, _api, "Could not create project");
+    },
   });
 };
 
@@ -57,6 +75,27 @@ export const useProjectTeamQuery = (projectId: string) => {
     queryKey: [PROJECT_TEAM_KEY, projectId],
     queryFn: () => getProjectTeam(projectId),
     staleTime: STALE_TIME,
+  });
+};
+
+type UpdateProjectPayload = {
+  projectId: string;
+  project: ProjectRequest;
+};
+
+export const useUpdateProject = (_api: NotificationApi) => {
+  const query = useQueryClient();
+  return useMutation<ApiResponse<Project>, Error, UpdateProjectPayload>({
+    mutationFn: async ({ projectId, project }) => {
+      return await updateProject(project, projectId);
+    },
+    onSuccess: (_res, vars) => {
+      _api({ message: "Project was updated", type: "success" });
+      query.invalidateQueries({ queryKey: [PROJECTS_KEY] });
+    },
+    onError: (error) => {
+      handleApiError(error, _api, "Could not update project");
+    },
   });
 };
 

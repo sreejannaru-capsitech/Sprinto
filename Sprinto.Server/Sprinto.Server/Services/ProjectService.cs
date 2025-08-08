@@ -213,6 +213,7 @@ namespace Sprinto.Server.Services
                     .Set(p => p.Title, dto.Title)
                     .Set(p => p.Description, dto.Description)
                     .Set(p => p.IsCompleted, dto.IsCompleted ?? false)
+                    .Set(p => p.StartDate, dto.StartDate)
                     .Set(p => p.Deadline, dto.Deadline)
                     .Set(p => p.TeamLead, tl.ToAssignee())
                     .Set(p => p.Assignees, assignees);

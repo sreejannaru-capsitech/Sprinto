@@ -12,11 +12,15 @@ import {
 } from "antd";
 import { AxiosError } from "axios";
 import dayjs from "dayjs";
-import { useState, type FC, type ReactNode } from "react";
+import { useEffect, useState, type FC, type ReactNode } from "react";
 import { useAntNotification } from "~/hooks";
 import { USER_EMPLOYEE, USER_TEAM_LEAD } from "~/lib/const";
-import { checkAlias, createProject } from "~/lib/server";
-import { useUserSearchQuery } from "~/lib/server/services";
+import { checkAlias } from "~/lib/server";
+import {
+  useCreateProject,
+  useUpdateProject,
+  useUserSearchQuery,
+} from "~/lib/server/services";
 import { getAliasFromTitle, getOptionsFromTeam } from "~/lib/utils";
 import {
   getNonWhitespaceValidator,
@@ -26,6 +30,7 @@ import {
 
 interface ProjectFormProps {
   isNew?: boolean;
+  project?: Project;
   open: boolean;
   onClose: () => void;
 }
@@ -47,6 +52,7 @@ interface ProjectFormType {
  */
 const ProjectForm: FC<ProjectFormProps> = ({
   isNew = false,
+  project,
   open,
   onClose,
 }: ProjectFormProps): ReactNode => {
@@ -66,6 +72,33 @@ const ProjectForm: FC<ProjectFormProps> = ({
     USER_TEAM_LEAD
   );
 
+  const { _api, contextHolder } = useAntNotification();
+
+  const { mutateAsync: createProject } = useCreateProject(_api);
+  const { mutateAsync: updateProject } = useUpdateProject(_api);
+
+  useEffect(() => {
+    if (!isNew && project) {
+      form.setFieldsValue({
+        title: project.title,
+        alias: project.alias,
+        description: project.description,
+        isCompleted: project.isCompleted,
+        teamLead: project.teamLead.id,
+        assignees: project.assignees.map((a) => a.id),
+      });
+      setAlias(project.alias);
+      form.setFieldValue(
+        "deadline",
+        project.deadline ? dayjs(project.deadline) : undefined
+      );
+      form.setFieldValue(
+        "startDate",
+        project.startDate ? dayjs(project.startDate) : undefined
+      );
+    }
+  }, [project, open]);
+
   /**
    * Checks if the project alias is available.
    * If it is, displays a success message.
@@ -74,6 +107,10 @@ const ProjectForm: FC<ProjectFormProps> = ({
    * @returns {Promise<boolean>} A promise that resolves to a boolean indicating the availability of the alias.
    */
   const isAvailableAlias = async (): Promise<boolean> => {
+    // Check if Editing
+    if (!isNew) return true;
+
+    // Check if valid alias
     if (!alias || alias.length < 3) return false;
     try {
       const data = await checkAlias(alias);
@@ -90,8 +127,6 @@ const ProjectForm: FC<ProjectFormProps> = ({
       return false;
     }
   };
-
-  const { _api, contextHolder } = useAntNotification();
 
   const handleSubmit = async () => {
     let values;
@@ -128,19 +163,10 @@ const ProjectForm: FC<ProjectFormProps> = ({
 
     setLoading(true);
     try {
-      await createProject(payload);
-      _api({
-        message: "Project created successfully",
-        type: "success",
-      });
-      form.resetFields();
+      if (isNew) await createProject(payload);
+      else await updateProject({ projectId: project?.id!, project: payload });
       onClose();
     } catch (error) {
-      if (error instanceof AxiosError) {
-        _api({ message: error.message, type: "error" });
-      } else {
-        _api({ message: "Could not create project", type: "error" });
-      }
     } finally {
       setLoading(false);
     }
@@ -148,17 +174,12 @@ const ProjectForm: FC<ProjectFormProps> = ({
 
   return (
     <Modal
-      title="CREATE NEW PROJECT"
-      okText="Create"
+      title={isNew ? "CREATE NEW PROJECT" : "EDIT PROJECT"}
+      okText={isNew ? "Create" : "Save"}
       centered
       open={open}
-      onCancel={() => {
-        onClose();
-      }}
-      afterOpenChange={() => {
-        if (open) return;
-        form.resetFields();
-      }}
+      onCancel={onClose}
+      afterClose={() => form.resetFields()}
       onOk={handleSubmit}
       confirmLoading={loading}
     >

@@ -1,15 +1,28 @@
-import { Avatar, Col, Flex, Row, Statistic, Tag, Typography } from "antd";
+import {
+  Avatar,
+  Button,
+  Col,
+  Flex,
+  Row,
+  Statistic,
+  Tag,
+  Typography,
+} from "antd";
 import dayjs from "dayjs";
-import { useMemo, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { useSelector } from "react-redux";
+import { NavLink } from "react-router";
 import type { BarData, PieData } from "~/components/charts";
 import BarChart from "~/components/charts/bar.chart";
 import TaskStatusChart from "~/components/charts/pie.chart";
+import ProjectForm from "~/components/forms/project-form";
 import TimeLineSection from "~/components/timeline-section";
 import AvatarPic from "~/components/ui/avatar-pic";
 import ProjectTiming from "~/components/ui/project-timing";
 import Spinner from "~/components/ui/spinner";
 import TaskContainer from "~/components/ui/task-container";
+import { USER_ADMIN } from "~/lib/const";
+import { PencilIcon, TaskIcon } from "~/lib/icons";
 import {
   useProjectActivitiesQuery,
   useProjectOverviewQuery,
@@ -27,6 +40,8 @@ const ProjectOverview = (): ReactNode => {
   const proj = useSelector(
     (state: RootState) => state.project.project
   ) as Project;
+  const user = useSelector((state: RootState) => state.user.user) as User;
+  const [isEdit, setIsEdit] = useState<boolean>(false);
 
   const { data: activities, isPending: _actPending } =
     useProjectActivitiesQuery(proj.id);
@@ -51,6 +66,11 @@ const ProjectOverview = (): ReactNode => {
 
   return (
     <Row gutter={50} wrap={false}>
+      <ProjectForm
+        project={proj}
+        open={isEdit}
+        onClose={() => setIsEdit(false)}
+      />
       <Col flex={"auto"}>
         <Flex align="center" justify="space-between">
           {/* Title and Timing */}
@@ -61,8 +81,22 @@ const ProjectOverview = (): ReactNode => {
               <span className="text-primary-dark">{proj.alias}</span>
             </Typography.Title>
 
-            <Flex gap={4} align="center" justify="center">
-              <ProjectTiming proj={proj} />
+            <Flex align="center" gap={20}>
+              <Flex gap={4} align="center" justify="center">
+                <ProjectTiming proj={proj} />
+              </Flex>
+              <NavLink to={`/projects/${proj.id}/tasks`}>
+                <Button icon={<TaskIcon size={20} />}>Tasks</Button>
+              </NavLink>
+              {/* Only show edit button for admins */}
+              {user.role === USER_ADMIN && (
+                <Button
+                  icon={<PencilIcon size={20} />}
+                  onClick={() => setIsEdit(true)}
+                >
+                  Edit
+                </Button>
+              )}
             </Flex>
           </Flex>
 

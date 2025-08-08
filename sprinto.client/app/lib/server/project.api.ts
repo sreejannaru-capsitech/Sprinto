@@ -8,13 +8,26 @@ export const createProject = async (project: ProjectRequest) => {
   return data;
 };
 
+export const updateProject = async (
+  project: ProjectRequest,
+  projectId: string
+) => {
+  const { data } = await axiosApi.post<ApiResponse<Project>>(
+    `/projects/${projectId}`,
+    project
+  );
+  return data;
+};
+
 export const getProjects = async () => {
   const { data } = await axiosApi.get<ApiResponse<Project[]>>("/projects");
   return data;
 };
 
 export const checkAlias = async (alias: string) => {
-  const { data } = await axiosApi.get<ApiResponse<boolean>>(`/projects/alias?key=${alias}`);
+  const { data } = await axiosApi.get<ApiResponse<boolean>>(
+    `/projects/alias?key=${alias}`
+  );
   return data;
 };
 
