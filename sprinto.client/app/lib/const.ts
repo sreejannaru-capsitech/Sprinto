@@ -22,10 +22,13 @@ export const COMMENTS_KEY = "comments" as const;
 
 // Projects
 export const PROJECTS_KEY = "projects" as const;
+export const ALL_PROJECTS_KEY = "allProjects" as const;
 export const PROJECT_TEAM_KEY = "projectTeam" as const;
 export const PROJECT_OVERVIEW_KEY = "projectOverview" as const;
 export const PROJECT_ACTIVITIES_KEY = "projectActivities" as const;
 export const PROJECT_TASKS_KEY = "projectTasks" as const;
+export const TOP_PROJECTS_KEY = "topProjects" as const;
+export const LEAST_PROJECTS_KEY = "leastProjects" as const;
 
 // Configuration
 export const STATUSES_KEY = "statuses" as const;

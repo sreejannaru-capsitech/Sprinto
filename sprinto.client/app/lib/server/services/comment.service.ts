@@ -33,7 +33,7 @@ export const useCreateComment = (_api: NotificationApi) => {
       return await createComment(comment, taskId);
     },
     onSuccess: (_res, variables) => {
-      _api({ message: "Comment created successfully", type: "success" });
+      _api({ message: "Your comment was added", type: "success" });
       query.invalidateQueries({ queryKey: [COMMENTS_KEY, variables.taskId] });
     },
     onError: (error) => {
@@ -58,7 +58,7 @@ export const useUpdateComment = (_api: NotificationApi) => {
       return await updateComment(comment, taskId, commentId);
     },
     onSuccess: (_res, variables) => {
-      _api({ message: "Comment updated successfully", type: "success" });
+      _api({ message: "Comment was updated", type: "success" });
       query.invalidateQueries({ queryKey: [COMMENTS_KEY, variables.taskId] });
     },
     onError: (error) => {
@@ -75,7 +75,7 @@ export const useDeleteComment = (_api: NotificationApi) => {
       return await deleteComment(taskId, commentId);
     },
     onSuccess: (_res, variables) => {
-      _api({ message: "Comment deleted successfully", type: "success" });
+      _api({ message: "Your comment was deleted", type: "success" });
       query.invalidateQueries({ queryKey: [COMMENTS_KEY, variables.taskId] });
     },
     onError: (error) => {

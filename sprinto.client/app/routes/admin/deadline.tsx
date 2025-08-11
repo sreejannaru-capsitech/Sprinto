@@ -29,7 +29,9 @@ const Deadlines = (): ReactNode => {
     if (!projects?.result?.length) {
       return [];
     }
-    const due = projects.result.filter((project) => project.deadline);
+    const due = projects.result.filter(
+      (project) => project.deadline && project.isCompleted === false
+    );
 
     return due.sort((a, b) => {
       const aTime = dayjs(a.deadline).valueOf();

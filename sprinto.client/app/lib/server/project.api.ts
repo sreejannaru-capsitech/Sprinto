@@ -24,6 +24,27 @@ export const getProjects = async () => {
   return data;
 };
 
+export const getAllProjects = async () => {
+  const { data } = await axiosApi.get<ApiResponse<AllProjects>>(
+    "/projects/all"
+  );
+  return data;
+};
+
+export const deleteProject = async (projectId: string) => {
+  const { data } = await axiosApi.post<ApiResponse<null>>(
+    `/projects/${projectId}/delete`
+  );
+  return data;
+};
+
+export const markProjectCompleted = async (projectId: string) => {
+  const { data } = await axiosApi.post<ApiResponse<null>>(
+    `/projects/${projectId}/complete`
+  );
+  return data;
+};
+
 export const checkAlias = async (alias: string) => {
   const { data } = await axiosApi.get<ApiResponse<boolean>>(
     `/projects/alias?key=${alias}`
@@ -73,6 +94,20 @@ export const addMembers = async (projectId: string, memberIds: string[]) => {
     `/projects/${projectId}/team`,
     memberIds,
     { headers: { "Content-Type": "application/json" } }
+  );
+  return data;
+};
+
+export const getTopActiveProjects = async () => {
+  const { data } = await axiosApi.get<ApiResponse<TopActiveProjects[]>>(
+    "/projects/top"
+  );
+  return data;
+};
+
+export const getLeastActiveProjects = async () => {
+  const { data } = await axiosApi.get<ApiResponse<LeastActiveProjects[]>>(
+    "/projects/least"
   );
   return data;
 };

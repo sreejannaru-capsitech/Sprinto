@@ -1,30 +1,53 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { NotificationApi } from "~/hooks/useAntNotification";
 import {
+  ALL_PROJECTS_KEY,
+  LEAST_PROJECTS_KEY,
   PROJECT_ACTIVITIES_KEY,
   PROJECT_OVERVIEW_KEY,
   PROJECT_TASKS_KEY,
   PROJECT_TEAM_KEY,
   PROJECTS_KEY,
   STALE_TIME,
+  TOP_PROJECTS_KEY,
 } from "~/lib/const";
 import { handleApiError } from "~/lib/utils";
 import {
   addMembers,
   createProject,
+  deleteProject,
+  getAllProjects,
+  getLeastActiveProjects,
   getProjectActivities,
   getProjectOverview,
   getProjects,
   getProjectTasks,
   getProjectTeam,
+  getTopActiveProjects,
+  markProjectCompleted,
   removeMember,
   updateProject,
 } from "../project.api";
+
+const invalidateKeys = [
+  PROJECTS_KEY,
+  ALL_PROJECTS_KEY,
+  TOP_PROJECTS_KEY,
+  LEAST_PROJECTS_KEY,
+];
 
 export const useProjectsQuery = () => {
   return useQuery({
     queryKey: [PROJECTS_KEY],
     queryFn: getProjects,
+    staleTime: STALE_TIME,
+  });
+};
+
+export const useAllProjectsQuery = () => {
+  return useQuery({
+    queryKey: [ALL_PROJECTS_KEY],
+    queryFn: getAllProjects,
     staleTime: STALE_TIME,
   });
 };
@@ -37,10 +60,48 @@ export const useCreateProject = (_api: NotificationApi) => {
     },
     onSuccess: (_res, vars) => {
       _api({ message: "New project was created", type: "success" });
-      query.invalidateQueries({ queryKey: [PROJECTS_KEY] });
+      invalidateKeys.forEach((key) => {
+        query.invalidateQueries({ queryKey: [key] });
+      });
     },
     onError: (error) => {
       handleApiError(error, _api, "Could not create project");
+    },
+  });
+};
+
+export const useDeleteProject = (_api: NotificationApi) => {
+  const query = useQueryClient();
+  return useMutation({
+    mutationFn: async (projectId: string) => {
+      return await deleteProject(projectId);
+    },
+    onSuccess: (_res, vars) => {
+      _api({ message: "Project was deleted", type: "success" });
+      invalidateKeys.forEach((key) => {
+        query.invalidateQueries({ queryKey: [key] });
+      });
+    },
+    onError: (error) => {
+      handleApiError(error, _api, "Could not delete project");
+    },
+  });
+};
+
+export const useMarkProjectCompleted = (_api: NotificationApi) => {
+  const query = useQueryClient();
+  return useMutation({
+    mutationFn: async (projectId: string) => {
+      return await markProjectCompleted(projectId);
+    },
+    onSuccess: (_res, vars) => {
+      _api({ message: "Project marked as completed", type: "success" });
+      invalidateKeys.forEach((key) => {
+        query.invalidateQueries({ queryKey: [key] });
+      });
+    },
+    onError: (error) => {
+      handleApiError(error, _api, "Could not mark project as completed");
     },
   });
 };
@@ -140,5 +201,21 @@ export const useAddMembers = (_api: NotificationApi) => {
     onError: (error) => {
       handleApiError(error, _api, "Could not add members");
     },
+  });
+};
+
+export const useGetTopActiveProjects = () => {
+  return useQuery({
+    queryKey: [TOP_PROJECTS_KEY],
+    queryFn: getTopActiveProjects,
+    staleTime: STALE_TIME,
+  });
+};
+
+export const useGetLeastActiveProjects = () => {
+  return useQuery({
+    queryKey: [LEAST_PROJECTS_KEY],
+    queryFn: getLeastActiveProjects,
+    staleTime: STALE_TIME,
   });
 };

@@ -45,3 +45,28 @@ interface ProjectTeam {
   teamLead: User;
   employees: User[];
 }
+
+interface AllProjects {
+  total: number;
+  active: number;
+  inActive: number;
+  projects: Project[];
+}
+
+interface TopActiveProjects {
+  title: string;
+  alias: string;
+  activityCount: number;
+  maintainer: string;
+  startDate?: string;
+  deadline?: string;
+}
+
+interface LeastActiveProjects {
+  title: string;
+  alias: string;
+  activityCount: number;
+  maintainer: Assignee;
+  startDate?: string;
+  deadline?: string;
+}

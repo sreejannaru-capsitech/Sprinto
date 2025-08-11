@@ -3,6 +3,8 @@ import {
   Button,
   Col,
   Flex,
+  Modal,
+  Popconfirm,
   Row,
   Statistic,
   Tag,
@@ -11,7 +13,7 @@ import {
 import dayjs from "dayjs";
 import { useMemo, useState, type ReactNode } from "react";
 import { useSelector } from "react-redux";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import type { BarData, PieData } from "~/components/charts";
 import BarChart from "~/components/charts/bar.chart";
 import TaskStatusChart from "~/components/charts/pie.chart";
@@ -21,9 +23,18 @@ import AvatarPic from "~/components/ui/avatar-pic";
 import ProjectTiming from "~/components/ui/project-timing";
 import Spinner from "~/components/ui/spinner";
 import TaskContainer from "~/components/ui/task-container";
+import { useAntNotification } from "~/hooks";
 import { USER_ADMIN } from "~/lib/const";
-import { PencilIcon, TaskIcon } from "~/lib/icons";
 import {
+  AlertIcon,
+  DeleteIcon,
+  PencilIcon,
+  TaskIcon,
+  TickRoundedIcon,
+} from "~/lib/icons";
+import {
+  useDeleteProject,
+  useMarkProjectCompleted,
   useProjectActivitiesQuery,
   useProjectOverviewQuery,
 } from "~/lib/server/services";
@@ -42,11 +53,17 @@ const ProjectOverview = (): ReactNode => {
   ) as Project;
   const user = useSelector((state: RootState) => state.user.user) as User;
   const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const navigate = useNavigate();
+
+  const { _api, contextHolder } = useAntNotification();
 
   const { data: activities, isPending: _actPending } =
     useProjectActivitiesQuery(proj.id);
   const { data: overview, isPending: overviewPending } =
     useProjectOverviewQuery(proj.id);
+  const { mutateAsync: deleteProject } = useDeleteProject(_api);
+  const { mutateAsync: markProjectCompleted } = useMarkProjectCompleted(_api);
 
   const statusData: PieData[] = useMemo(() => {
     if (!overview?.result?.statusGroups) return [];
@@ -71,32 +88,67 @@ const ProjectOverview = (): ReactNode => {
         open={isEdit}
         onClose={() => setIsEdit(false)}
       />
+      {contextHolder}
       <Col flex={"auto"}>
         <Flex align="center" justify="space-between">
           {/* Title and Timing */}
-          <Flex align="center" gap={20}>
+          <Flex align="center" gap={12}>
             <Typography.Title level={2}>
               {proj.title}
               <span> — </span>
               <span className="text-primary-dark">{proj.alias}</span>
             </Typography.Title>
 
+            <Modal
+              open={modalOpen}
+              onCancel={() => setModalOpen(false)}
+              title="PERMENANTLY DELETE PROJECT ?"
+              okText="Delete"
+              centered
+              onOk={async () => {
+                await deleteProject(proj.id);
+                setModalOpen(false);
+                navigate("/projects", { replace: true });
+              }}
+            >
+              <div>
+                The employees amd team leader will no longer be able to access
+                this project. Are you sure, you want to delete this project?
+              </div>
+            </Modal>
+
             <Flex align="center" gap={20}>
               <Flex gap={4} align="center" justify="center">
+                {/* Show edit & delete buttons only for admins */}
+                {user.role === USER_ADMIN && (
+                  <>
+                    <Button
+                      type="text"
+                      icon={<PencilIcon size={20} />}
+                      onClick={() => setIsEdit(true)}
+                    />
+                    <Button
+                      style={{ marginRight: 6 }}
+                      type="text"
+                      onClick={() => setModalOpen(true)}
+                      icon={<DeleteIcon size={20} />}
+                    />
+                  </>
+                )}
                 <ProjectTiming proj={proj} />
               </Flex>
+              {user.role === USER_ADMIN && proj.isCompleted === false && (
+                <Popconfirm
+                  icon={<AlertIcon size={20} />}
+                  title="Mark as Completed ?"
+                  onConfirm={async () => await markProjectCompleted(proj.id)}
+                >
+                  <Button type="text" icon={<TickRoundedIcon />} />
+                </Popconfirm>
+              )}
               <NavLink to={`/projects/${proj.id}/tasks`}>
                 <Button icon={<TaskIcon size={20} />}>Tasks</Button>
               </NavLink>
-              {/* Only show edit button for admins */}
-              {user.role === USER_ADMIN && (
-                <Button
-                  icon={<PencilIcon size={20} />}
-                  onClick={() => setIsEdit(true)}
-                >
-                  Edit
-                </Button>
-              )}
             </Flex>
           </Flex>
 
@@ -120,12 +172,11 @@ const ProjectOverview = (): ReactNode => {
             </Tag>
           </Flex>
         </Flex>
+        <div className="project-description">
+          <Typography.Paragraph>{proj.description}</Typography.Paragraph>
+        </div>
 
         <Spinner isActive={overviewPending} fullscreen>
-          <div className="project-description">
-            <Typography.Paragraph>{proj.description}</Typography.Paragraph>
-          </div>
-
           {/* Statistics Section */}
           <div style={{ padding: "40px 10px" }}>
             <Flex align="center" gap={200} justify="space-around">
