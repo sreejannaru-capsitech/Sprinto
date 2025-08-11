@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from "react";
-import EChart from "./echart";
+import ReactEcharts from "echarts-for-react";
 import type { PieData, ReactEChartsProps } from ".";
 
 interface PieChartProps {
@@ -54,7 +54,13 @@ const PieChart: FC<PieChartProps> = ({ data }: PieChartProps): ReactNode => {
       },
     ],
   };
-  return <EChart option={option} style={{ width: "250px", height: "350px" }} />;
+  return (
+    <ReactEcharts
+      style={{ width: "100%", height: 350, overflow: "auto" }}
+      opts={{ renderer: "svg" }}
+      option={option}
+    />
+  );
 };
 
 export default PieChart;

@@ -1,6 +1,6 @@
+import ReactEcharts from "echarts-for-react";
 import type { FC, ReactNode } from "react";
 import type { BarData, ReactEChartsProps } from ".";
-import EChart from "./echart";
 
 interface BarChartProps {
   data: BarData;
@@ -25,12 +25,18 @@ const BarChart: FC<BarChartProps> = ({ data }: BarChartProps): ReactNode => {
         data: data.value,
         type: "bar",
         itemStyle: {
-          color: "rgba(161, 164, 174, 1)"
+          color: "rgba(161, 164, 174, 1)",
         },
       },
     ],
   };
-  return <EChart option={option} style={{ width: "350px", height: "350px" }} />;
+  return (
+    <ReactEcharts
+      style={{ width: "100%", height: 350, overflow: "auto" }}
+      opts={{ renderer: "svg" }}
+      option={option}
+    />
+  );
 };
 
 export default BarChart;
