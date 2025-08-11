@@ -395,11 +395,11 @@ namespace Sprinto.Server.Services
         /// <param name="userIds"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        internal async Task<List<User>> GetUserByIds(string[] userIds)
+        internal async Task<List<User>> GetUserByIds(List<string> userIds)
         {
             try
             {
-                if (userIds == null || userIds.Length == 0)
+                if (userIds == null || userIds.Count == 0)
                     return [];
 
                 var filter = Builders<User>.Filter.In(u => u.Id, userIds);

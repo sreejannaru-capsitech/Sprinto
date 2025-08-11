@@ -51,26 +51,16 @@ namespace Sprinto.Server.Models
         public List<Project> Projects { get; set; } = [];
     }
 
-    public class TopActiveProject
+    public class TopProject
     {
-        public string Title { get; set; } = null!;
-        public string Alias { get; set; } = null!;
-        public long ActivityCount { get; set; }
-
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Maintainer { get; set; } = null!;
-        public DateTime StartDate { get; set; }
-        public DateTime Deadline { get; set; }
-    }
-
-    public class LeastActiveProjects
-    {
+        public string Id { get; set; } = null!;
         public string Title { get; set; } = null!;
         public string Alias { get; set; } = null!;
         [BsonIgnoreIfNull]
-        public DateTime StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
         [BsonIgnoreIfNull]
-        public DateTime Deadline { get; set; }
+        public DateTime? Deadline { get; set; }
         public long ActivityCount { get; set; }
         public Assignee Maintainer { get; set; } = null!;
     }

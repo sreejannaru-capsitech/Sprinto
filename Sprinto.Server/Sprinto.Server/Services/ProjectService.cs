@@ -103,7 +103,7 @@ namespace Sprinto.Server.Services
 
                 var creator = new Creation(userId, userName);
                 var tl = await _userSerice.GetAsync(dto.TeamLead);
-                var emps = await _userSerice.GetUserByIds(dto.Assignees);
+                var emps = await _userSerice.GetUserByIds([.. dto.Assignees]);
 
                 var project = new Project(dto, creator, tl.ToAssignee(), [.. emps.Select(a => a.ToAssignee())]);
                 await _projects.InsertOneAsync(project);
@@ -217,7 +217,7 @@ namespace Sprinto.Server.Services
             try
             {
                 var tl = await _userSerice.GetAsync(dto.TeamLead);
-                var emps = await _userSerice.GetUserByIds(dto.Assignees);
+                var emps = await _userSerice.GetUserByIds([.. dto.Assignees]);
                 var assignees = emps.Select(a => a.ToAssignee()).ToList();
 
                 var update = Builders<Project>.Update
@@ -446,7 +446,7 @@ namespace Sprinto.Server.Services
 
                 var assigneeIds = project.Assignees.Select(a => a.Id).ToList();
 
-                var users = await _userSerice.GetUserByIds(assigneeIds.ToArray());
+                var users = await _userSerice.GetUserByIds(assigneeIds);
                 var tl = await _userSerice.GetAsync(project.TeamLead.Id);
 
                 res.TeamLead = tl.ToUserResponse();
@@ -632,10 +632,11 @@ namespace Sprinto.Server.Services
         }
 
         // Get Top most Active Projects
-        public async Task<List<TopActiveProject>> GetTopActiveProjectsAsync()
+        public async Task<List<TopProject>> GetTopActiveProjectsAsync()
         {
             try
             {
+
                 var pipeline = new List<BsonDocument>
                 {
                     new("$unwind", "$activities"),
@@ -667,17 +668,17 @@ namespace Sprinto.Server.Services
                     new ("$project",
                     new BsonDocument
                     {
+                        //{ "Id", "$project._id" },
                         { "Title", "$project.title" },
                         { "Alias", "$project.alias" },
-                        { "ActivityCount", 1 },
-                        { "Maintainer", "$project.maintainer._id" },
+                        { "ActivityCount", "$activityCount" },
+                        { "Maintainer", "$project.maintainer" },
                         { "StartDate", "$project.start_date" },
-                        { "Deadline", "$project.deadline" },
-                        { "_id", 0 }
+                        { "Deadline", "$project.deadline" }
                     })
                 };
 
-                var result = await _tasks.Aggregate<TopActiveProject>(pipeline).ToListAsync();
+                var result = await _tasks.Aggregate<TopProject>(pipeline).ToListAsync();
                 return result;
             }
             catch (Exception ex)
@@ -689,7 +690,7 @@ namespace Sprinto.Server.Services
 
 
         // Get least active projcts
-        public async Task<List<LeastActiveProjects>> GetLeastActiveProjectsAsync()
+        public async Task<List<TopProject>> GetLeastActiveProjectsAsync()
         {
             try
             {
@@ -743,7 +744,7 @@ namespace Sprinto.Server.Services
                     new("$project",
                     new BsonDocument
                     {
-                        { "_id", 0 },
+                        //{ "Id", "$_id" },
                         { "Title", "$title" },
                         { "Alias", "$alias" },
                         { "StartDate", "$start_date" },
@@ -753,7 +754,7 @@ namespace Sprinto.Server.Services
                     })
                 };
 
-                var result = await _projects.Aggregate<LeastActiveProjects>(pipeline).ToListAsync();
+                var result = await _projects.Aggregate<TopProject>(pipeline).ToListAsync();
                 return result;
             }
             catch (Exception ex)
@@ -762,8 +763,6 @@ namespace Sprinto.Server.Services
                 throw new Exception("Failed to get least active projects");
             }
         }
-
-
 
     }
 }

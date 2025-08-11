@@ -18,7 +18,7 @@ namespace Sprinto.Server.Controllers
 
         // Create new status ( admin only )
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = Constants.Roles.Admin)]
         public async Task<ApiResponse<Status>>
             Post([FromBody] StatusDTO newStatus)
         {
@@ -71,7 +71,7 @@ namespace Sprinto.Server.Controllers
 
         // Update status ( admin only )
         [HttpPost("{id}")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = Constants.Roles.Admin)]
         public async Task<ApiResponse<Status>> Put(string id, [FromBody] StatusDTO updateStatus)
         {
             var response = new ApiResponse<Status>();
@@ -98,7 +98,7 @@ namespace Sprinto.Server.Controllers
 
         // Delete status ( admin only )
         [HttpPost("{id}/delete")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = Constants.Roles.Admin)]
         public async Task<ApiResponse<Status>> Delete(string id)
         {
             var response = new ApiResponse<Status>();

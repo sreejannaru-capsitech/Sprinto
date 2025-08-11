@@ -357,10 +357,10 @@ namespace Sprinto.Server.Controllers
         // Get Top 10 Active Project List
         [HttpGet("top")]
         [Authorize(Roles = Constants.Roles.Admin)]
-        public async Task<ApiResponse<List<TopActiveProject>>>
+        public async Task<ApiResponse<List<TopProject>>>
             GetTopActiveProjects()
         {
-            var response = new ApiResponse<List<TopActiveProject>>();
+            var response = new ApiResponse<List<TopProject>>();
 
             try
             {
@@ -378,10 +378,10 @@ namespace Sprinto.Server.Controllers
         // Get least Active Project List
         [HttpGet("least")]
         [Authorize(Roles = Constants.Roles.Admin)]
-        public async Task<ApiResponse<List<LeastActiveProjects>>>
+        public async Task<ApiResponse<List<TopProject>>>
             GetLeastActiveProjects()
         {
-            var response = new ApiResponse<List<LeastActiveProjects>>();
+            var response = new ApiResponse<List<TopProject>>();
 
             try
             {

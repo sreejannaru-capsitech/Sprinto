@@ -21,7 +21,7 @@ namespace Sprinto.Server.Controllers
 
         // Create / Register new users ( Admin Only )
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = Constants.Roles.Admin)]
         public async Task<ApiResponse<UserResponse>>
             Post([FromBody] UserDTO newUser)
         {
