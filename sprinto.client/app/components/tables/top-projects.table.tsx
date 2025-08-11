@@ -72,6 +72,7 @@ const TopProjectTable: FC<TopProjectTableProps> = ({
       data={projects}
       loading={pending}
       urlString="/projects/"
+      pageSize={4}
     />
   );
 };

@@ -135,9 +135,9 @@ const ProjectOverview = (): ReactNode => {
                     />
                   </>
                 )}
-                <ProjectTiming proj={proj} />
+                {/* <ProjectTiming proj={proj} /> */}
               </Flex>
-              {user.role === USER_ADMIN && proj.isCompleted === false && (
+              {/* {user.role === USER_ADMIN && proj.isCompleted === false && (
                 <Popconfirm
                   icon={<AlertIcon size={20} />}
                   title="Mark as Completed ?"
@@ -148,7 +148,7 @@ const ProjectOverview = (): ReactNode => {
               )}
               <NavLink to={`/projects/${proj.id}/tasks`}>
                 <Button icon={<TaskIcon size={20} />}>Tasks</Button>
-              </NavLink>
+              </NavLink> */}
             </Flex>
           </Flex>
 
@@ -172,13 +172,31 @@ const ProjectOverview = (): ReactNode => {
             </Tag>
           </Flex>
         </Flex>
+
+        <Flex align="center" gap={20} style={{ margin: "20px 0"}}>
+          <Flex align="center" gap={4}>
+            <ProjectTiming proj={proj} />
+          </Flex>
+          {user.role === USER_ADMIN && proj.isCompleted === false && (
+            <Popconfirm
+              icon={<AlertIcon size={20} />}
+              title="Mark as Completed ?"
+              onConfirm={async () => await markProjectCompleted(proj.id)}
+            >
+              <Button type="text" icon={<TickRoundedIcon />} />
+            </Popconfirm>
+          )}
+          <NavLink to={`/projects/${proj.id}/tasks`}>
+            <Button icon={<TaskIcon size={20} />}>Tasks</Button>
+          </NavLink>
+        </Flex>
         <div className="project-description">
           <Typography.Paragraph>{proj.description}</Typography.Paragraph>
         </div>
 
         <Spinner isActive={overviewPending} fullscreen>
           {/* Statistics Section */}
-          <div style={{ padding: "40px 10px" }}>
+          <div style={{ padding: "30px 10px 10px 0" }}>
             <Flex align="center" gap={200} justify="space-around">
               <Statistic
                 title="Total Tasks"
@@ -226,7 +244,7 @@ const ProjectOverview = (): ReactNode => {
                   height={320}
                 />
               ) : (
-                <div style={{ width: "380px" }}>
+                <div style={{ minWidth: "380px" }}>
                   <Typography.Title level={4} className="font-bold">
                     Last Completed Tasks
                   </Typography.Title>
