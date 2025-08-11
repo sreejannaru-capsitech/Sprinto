@@ -20,7 +20,7 @@ namespace Sprinto.Server.Controllers
 
         // Check if alias exists
         [HttpGet("alias")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = Constants.Roles.Admin)]
         public async Task<ApiResponse<bool>>
             CheckAlias([FromQuery] string? key)
         {
@@ -41,7 +41,7 @@ namespace Sprinto.Server.Controllers
 
         // Create / Register new project ( Admin Only )
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = Constants.Roles.Admin)]
         public async Task<ApiResponse<Project>>
             Post([FromBody] ProjectDTO newProject)
         {
@@ -74,7 +74,7 @@ namespace Sprinto.Server.Controllers
 
         // Get all projects and status count ( admin only )
         [HttpGet("all")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = Constants.Roles.Admin)]
         public async Task<ApiResponse<AllProjects>>
             GetAllProjects()
         {
@@ -138,7 +138,7 @@ namespace Sprinto.Server.Controllers
 
         // Update an existing project ( Admin Only )
         [HttpPost("{id}")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = Constants.Roles.Admin)]
         public async Task<ApiResponse<Project>>
             Put(string id, [FromBody] ProjectDTO newProject)
         {
@@ -332,6 +332,28 @@ namespace Sprinto.Server.Controllers
         }
 
 
+        // Mark a project as completed
+        [HttpPost("{id}/complete")]
+        [Authorize(Roles = Constants.Roles.Admin)]
+        public async Task<ApiResponse<Project>> CompleteAsync(string id)
+        {
+            var response = new ApiResponse<Project>();
+            try
+            {
+                if (!ObjectId.TryParse(id, out _))
+                    throw new Exception("Please provide valid id");
+
+                var project = await _projectService.MarkCompletedAsync(id);
+                response.Message = Constants.Messages.Deleted;
+                response.Result = project;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
         // Get Top 10 Active Project List
         [HttpGet("top")]
         [Authorize(Roles = Constants.Roles.Admin)]
@@ -343,6 +365,27 @@ namespace Sprinto.Server.Controllers
             try
             {
                 var result = await _projectService.GetTopActiveProjectsAsync();
+                response.Message = Constants.Messages.Success;
+                response.Result = result;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
+        // Get least Active Project List
+        [HttpGet("least")]
+        [Authorize(Roles = Constants.Roles.Admin)]
+        public async Task<ApiResponse<List<LeastActiveProjects>>>
+            GetLeastActiveProjects()
+        {
+            var response = new ApiResponse<List<LeastActiveProjects>>();
+
+            try
+            {
+                var result = await _projectService.GetLeastActiveProjectsAsync();
                 response.Message = Constants.Messages.Success;
                 response.Result = result;
             }

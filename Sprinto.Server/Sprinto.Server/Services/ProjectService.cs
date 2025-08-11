@@ -600,7 +600,38 @@ namespace Sprinto.Server.Services
         }
 
 
-        // Get Top Active Projects
+        // Mark Project as completed
+        public async Task<Project> MarkCompletedAsync(string id)
+        {
+            try
+            {
+                var options = new FindOneAndUpdateOptions<Project>
+                {
+                    ReturnDocument = ReturnDocument.After
+                };
+
+                var updatedProject = await _projects.FindOneAndUpdateAsync(
+                    x => x.Id == id,
+                     Builders<Project>.Update
+                    .Set(p => p.IsCompleted, true),
+                    options
+                );
+
+                return updatedProject 
+                    ?? throw new InvalidOperationException(Constants.Messages.NotFound);
+            }
+            catch (InvalidOperationException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error marking project with ID {Id}", id);
+                throw new Exception("Could not mark project as completed");
+            }
+        }
+
+        // Get Top most Active Projects
         public async Task<List<TopActiveProject>> GetTopActiveProjectsAsync()
         {
             try
@@ -655,5 +686,84 @@ namespace Sprinto.Server.Services
                 throw new Exception("Failed to get top active projects");
             }
         }
+
+
+        // Get least active projcts
+        public async Task<List<LeastActiveProjects>> GetLeastActiveProjectsAsync()
+        {
+            try
+            {
+                var pipeline = new List<BsonDocument>
+                {
+                    new("$match",
+                    new BsonDocument("is_completed",
+                    new BsonDocument("$ne", true))),
+                    new("$lookup",
+                    new BsonDocument
+                    {
+                        { "from", "tasks" },
+                        { "localField", "_id" },
+                        { "foreignField", "project_id" },
+                        { "as", "projectTasks" }
+                    }),
+                    new("$addFields",
+                        new BsonDocument("recentActivity",
+                            new BsonDocument("$filter",
+                            new BsonDocument{{ "input",
+                            new BsonDocument("$reduce",
+                            new BsonDocument  {
+                            { "input", "$projectTasks.activities" },
+                            { "initialValue",
+                        new BsonArray() }, { "in",
+                        new BsonDocument("$concatArrays",
+                        new BsonArray{ "$$value", "$$this" }) } }) },
+                            { "as", "activity" },
+                            { "cond",
+                        new BsonDocument("$gte",
+                        new BsonArray
+                        {
+                            "$$activity.created_by.time",
+                            new BsonDocument("$dateSubtract",
+                            new BsonDocument  { { "startDate",
+                            new BsonDocument("$dateTrunc",
+                            new BsonDocument {
+                                            { "date", "$$NOW" },
+                                            { "unit", "day" },
+                                            { "timezone", "Asia/Kolkata" }
+                                        }) },
+                                    { "unit", "day" },
+                                    { "amount", 15 } })
+                            }) }
+                        }))),
+                    new("$addFields",
+                    new BsonDocument("activity_count",
+                    new BsonDocument("$size", "$recentActivity"))),
+                    new("$sort", value: new BsonDocument("activity_count", 1)),
+                    new("$limit", 10),
+                    new("$project",
+                    new BsonDocument
+                    {
+                        { "_id", 0 },
+                        { "Title", "$title" },
+                        { "Alias", "$alias" },
+                        { "StartDate", "$start_date" },
+                        { "Maintainer", "$maintainer" },
+                        { "Deadline", "$deadline" },
+                        { "ActivityCount", "$activity_count" }
+                    })
+                };
+
+                var result = await _projects.Aggregate<LeastActiveProjects>(pipeline).ToListAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get least active projects");
+                throw new Exception("Failed to get least active projects");
+            }
+        }
+
+
+
     }
 }

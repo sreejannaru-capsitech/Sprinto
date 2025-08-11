@@ -63,6 +63,18 @@ namespace Sprinto.Server.Models
         public DateTime Deadline { get; set; }
     }
 
+    public class LeastActiveProjects
+    {
+        public string Title { get; set; } = null!;
+        public string Alias { get; set; } = null!;
+        [BsonIgnoreIfNull]
+        public DateTime StartDate { get; set; }
+        [BsonIgnoreIfNull]
+        public DateTime Deadline { get; set; }
+        public long ActivityCount { get; set; }
+        public Assignee Maintainer { get; set; } = null!;
+    }
+
     public class ProjectTaskGroup
     {
         [BsonRepresentation(BsonType.ObjectId)]
