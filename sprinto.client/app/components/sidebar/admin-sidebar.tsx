@@ -1,5 +1,5 @@
 import { Menu, type MenuProps } from "antd";
-import { useState, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { NavLink } from "react-router";
 import { ADMIN_ROUTES } from "~/lib/const";
 import {
@@ -21,12 +21,21 @@ import ProjectForm from "../forms/project-form";
 import UserForm from "../forms/user-form";
 import SearchForm from "../forms/search-form";
 import TaskForm from "../forms/task-form";
+import { useSelector } from "react-redux";
+import type { RootState } from "~/lib/store";
 
 /**
  * This component renders admin-sidebar section
  * @returns {ReactNode} The AdminSidebar component
  */
 const AdminSidebar = (): ReactNode => {
+  const proj = useSelector((state: RootState) => state.project.project);
+
+  const isInsideProject = useMemo(() => {
+    const path = window.location.pathname.split("/");
+    return path.length >= 3 && path[1] === "projects";
+  }, [window.location.pathname]);
+
   const upperMenuItems: MenuProps["items"] = [
     {
       icon: <SearchIcon size={22} />,
@@ -77,7 +86,9 @@ const AdminSidebar = (): ReactNode => {
       icon: <ProjectIcon size={22} />,
       label: (
         <NavLink to={"/" + ADMIN_ROUTES[1].toLowerCase()} style={menuItemStyle}>
-          {ADMIN_ROUTES[1]}
+          {isInsideProject
+            ? ADMIN_ROUTES[1] + " | " + proj?.alias
+            : ADMIN_ROUTES[1]}
         </NavLink>
       ),
       className: isCurrentPath(ADMIN_ROUTES[1].toLowerCase()),
