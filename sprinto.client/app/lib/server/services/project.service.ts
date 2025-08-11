@@ -204,7 +204,7 @@ export const useAddMembers = (_api: NotificationApi) => {
   });
 };
 
-export const useGetTopActiveProjects = () => {
+export const useTopActiveProjectsQuery = () => {
   return useQuery({
     queryKey: [TOP_PROJECTS_KEY],
     queryFn: getTopActiveProjects,
@@ -212,7 +212,7 @@ export const useGetTopActiveProjects = () => {
   });
 };
 
-export const useGetLeastActiveProjects = () => {
+export const useLeastActiveProjectsQuery = () => {
   return useQuery({
     queryKey: [LEAST_PROJECTS_KEY],
     queryFn: getLeastActiveProjects,

@@ -99,14 +99,14 @@ export const addMembers = async (projectId: string, memberIds: string[]) => {
 };
 
 export const getTopActiveProjects = async () => {
-  const { data } = await axiosApi.get<ApiResponse<TopActiveProjects[]>>(
+  const { data } = await axiosApi.get<ApiResponse<TopProjects[]>>(
     "/projects/top"
   );
   return data;
 };
 
 export const getLeastActiveProjects = async () => {
-  const { data } = await axiosApi.get<ApiResponse<LeastActiveProjects[]>>(
+  const { data } = await axiosApi.get<ApiResponse<TopProjects[]>>(
     "/projects/least"
   );
   return data;

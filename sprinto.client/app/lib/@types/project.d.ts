@@ -53,16 +53,8 @@ interface AllProjects {
   projects: Project[];
 }
 
-interface TopActiveProjects {
-  title: string;
-  alias: string;
-  activityCount: number;
-  maintainer: string;
-  startDate?: string;
-  deadline?: string;
-}
-
-interface LeastActiveProjects {
+interface TopProjects {
+  id: string;
   title: string;
   alias: string;
   activityCount: number;
