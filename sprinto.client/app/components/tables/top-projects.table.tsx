@@ -39,6 +39,11 @@ const TopProjectTable: FC<TopProjectTableProps> = ({
       title: "Activities",
       dataIndex: "activityCount",
       width: 90,
+      render: (count: number) => (
+        <span style={{ color: count <= 10 ? "var(--color-red)" : "" }}>
+          {count}
+        </span>
+      ),
     },
     {
       title: "Maintainer",

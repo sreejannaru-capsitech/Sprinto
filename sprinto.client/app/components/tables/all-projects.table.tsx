@@ -21,6 +21,7 @@ const AllProjectsTable = (): ReactNode => {
       dataIndex: "title",
       width: 250,
       ellipsis: true,
+      sorter: (a, b) => a.title.localeCompare(b.title),
       render: (title: string) => (
         <CustomTooltip title={title}>
           <span>{truncateText(title, 25)}</span>
@@ -42,23 +43,35 @@ const AllProjectsTable = (): ReactNode => {
       title: "Alias",
       dataIndex: "alias",
       width: 90,
+      sorter: (a, b) => a.alias.localeCompare(b.alias),
       render: (alias: string) => <Tag>{alias}</Tag>,
     },
     {
       title: "Maintainer",
       dataIndex: "teamLead",
       render: (user: Assignee) => user.name,
+      sorter: (a, b) => a.teamLead.name.localeCompare(b.teamLead.name),
     },
     {
       title: "Status",
       dataIndex: "isCompleted",
       width: 100,
+      filters: [
+        { text: "Active", value: false },
+        { text: "Complete", value: true },
+      ],
+      onFilter: (value, record) => record.isCompleted === value,
       render: (isCompleted: boolean) => (isCompleted ? "Complete" : "Active"),
     },
     {
       title: "Start Date",
       dataIndex: "startDate",
       width: 150,
+      sorter: (a, b) => {
+        const aDate = a.startDate ? dayjs(a.startDate).valueOf() : Infinity;
+        const bDate = b.startDate ? dayjs(b.startDate).valueOf() : Infinity;
+        return aDate - bDate;
+      },
       render: (date: string) =>
         date ? (
           <CustomTooltip title={dayjs(date).format("Do MMMM YYYY")}>
@@ -72,6 +85,11 @@ const AllProjectsTable = (): ReactNode => {
       title: "Deadline",
       dataIndex: "deadline",
       width: 150,
+      sorter: (a, b) => {
+        const aDate = a.deadline ? dayjs(a.deadline).valueOf() : Infinity;
+        const bDate = b.deadline ? dayjs(b.deadline).valueOf() : Infinity;
+        return aDate - bDate;
+      },
       render: (date?: string) =>
         date ? (
           <CustomTooltip title={dayjs(date).format("Do MMMM YYYY")}>
@@ -85,16 +103,23 @@ const AllProjectsTable = (): ReactNode => {
       title: "Created By",
       dataIndex: "createdBy",
       width: 120,
-      render: (user: Creation) => (
-        <CustomTooltip title={dayjs(user.time).format("Do MMMM YYYY")}>
-          <span>{dayjs(user.time).format("Do MMM YY")}</span>
-        </CustomTooltip>
-      ),
+      sorter: (a, b) =>
+        a.createdBy.userName.localeCompare(b.createdBy.userName),
+      render: (user: Creation) => user.userName,
     },
     {
       title: "Created On",
       dataIndex: "createdBy",
       width: 120,
+      sorter: (a, b) => {
+        const aDate = a.createdBy.time
+          ? dayjs(a.createdBy.time).valueOf()
+          : Infinity;
+        const bDate = b.createdBy.time
+          ? dayjs(b.createdBy.time).valueOf()
+          : Infinity;
+        return aDate - bDate;
+      },
       render: (user: Creation) => (
         <CustomTooltip title={dayjs(user.time).format("Do MMMM YYYY")}>
           <span>{dayjs(user.time).format("Do MMM YY")}</span>
