@@ -2,7 +2,7 @@ import { Avatar } from "antd";
 import type { FC, ReactNode } from "react";
 import { usePictureQuery } from "~/lib/server/services";
 import { getInitials } from "~/lib/utils";
-import ToolTip from "./tooltip";
+import CustomTooltip from "./tooltip";
 
 interface AvatarPicProps {
   user: User | Assignee | Creation;
@@ -32,9 +32,9 @@ const AvatarPic: FC<AvatarPicProps> = ({
         <AssigneeAvatar size={size} assignee={user} />
       ) : (
         <Avatar size={size} src={user.displayPic}>
-          <ToolTip title={user.name}>
+          <CustomTooltip title={user.name}>
             <span>{getInitials(user.name)}</span>
-          </ToolTip>
+          </CustomTooltip>
         </Avatar>
       )}
     </>
@@ -57,9 +57,9 @@ const AssigneeAvatar: FC<AssigneeAvatarProps> = ({
   const { data } = usePictureQuery(id);
   return (
     <Avatar size={size} src={data}>
-      <ToolTip title={name}>
+      <CustomTooltip title={name}>
         <span>{getInitials(name)}</span>
-      </ToolTip>
+      </CustomTooltip>
     </Avatar>
   );
 };

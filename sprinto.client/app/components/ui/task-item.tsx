@@ -36,7 +36,7 @@ import {
 } from "~/lib/server/services";
 import "~/styles/items.css";
 import AvatarPic from "./avatar-pic";
-import ToolTip from "./tooltip";
+import CustomTooltip from "./tooltip";
 
 interface TaskItemProps {
   task: Task;
@@ -143,7 +143,7 @@ const TaskItem: FC<TaskItemProps> = ({
       <NavLink to={`/projects/${task.projectId}/tasks/${task.id}`}>
         <Row gutter={0}>
           <Col span={2}>
-            <ToolTip
+            <CustomTooltip
               title={
                 task.priority.charAt(0).toUpperCase() +
                 task.priority.slice(1) +
@@ -159,7 +159,7 @@ const TaskItem: FC<TaskItemProps> = ({
                   <HighIcon size={22} />
                 )}
               </span>
-            </ToolTip>
+            </CustomTooltip>
           </Col>
           <Col span={21}>
             <Typography.Text className="font-bold">
@@ -167,9 +167,9 @@ const TaskItem: FC<TaskItemProps> = ({
             </Typography.Text>
             <Typography.Paragraph className="text-primary">
               {task.description ? (
-                <ToolTip title={task.description}>
+                <CustomTooltip title={task.description}>
                   <span>{truncateText(task.description, 35)}</span>
-                </ToolTip>
+                </CustomTooltip>
               ) : (
                 ""
               )}

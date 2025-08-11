@@ -9,9 +9,9 @@ interface ToolTipProps {
 /**
  * This component renders tooltip section
  * @param {ToolTipProps} props
- * @returns {ReactNode} The ToolTip component
+ * @returns {ReactNode} The CustomTooltip component
  */
-const ToolTip: FC<ToolTipProps> = ({
+const CustomTooltip: FC<ToolTipProps> = ({
   children,
   title,
 }: ToolTipProps): ReactNode => {
@@ -27,4 +27,4 @@ const ToolTip: FC<ToolTipProps> = ({
   );
 };
 
-export default ToolTip;
+export default CustomTooltip;

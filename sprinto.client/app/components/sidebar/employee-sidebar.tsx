@@ -17,7 +17,7 @@ import {
 import { useProjectsQuery } from "~/lib/server/services";
 import "~/styles/sidebar.css";
 import { menuItemStyle } from ".";
-import ToolTip from "../ui/tooltip";
+import CustomTooltip from "../ui/tooltip";
 import SidebarHeader from "./sidebar-header";
 import SearchForm from "../forms/search-form";
 
@@ -133,9 +133,9 @@ const EmployeeSidebar = (): ReactNode => {
       key: project.id,
       icon: <ArchiveIcon size={22} />,
       label: (
-        <ToolTip title={project.title}>
+        <CustomTooltip title={project.title}>
           <span style={menuItemStyle}>{project.alias}</span>
-        </ToolTip>
+        </CustomTooltip>
       ),
       children: [
         {
