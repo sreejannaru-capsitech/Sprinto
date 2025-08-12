@@ -1,6 +1,6 @@
 import { Col, Tag, type TableProps } from "antd";
 import dayjs from "dayjs";
-import { type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { useAllProjectsQuery } from "~/lib/server/services";
 import { truncateText } from "~/lib/utils";
 import CustomTooltip from "../ui/tooltip";
@@ -12,6 +12,11 @@ import SprintoTable from "./table";
  * @returns {ReactNode} The AllProjectsTable component
  */
 const AllProjectsTable = (): ReactNode => {
+  const [page, setPage] = useState<Page>({
+    pageSize: 6,
+    pageIndex: 1,
+  });
+  
   const { data: allProjects, isPending: allProjPending } =
     useAllProjectsQuery();
 
@@ -134,7 +139,11 @@ const AllProjectsTable = (): ReactNode => {
         columns={columns}
         data={allProjects?.result?.projects ?? []}
         loading={allProjPending}
-        urlString="/projects/"
+        urlString="project"
+        pageIndex={page.pageIndex}
+        pageSize={page.pageSize}
+        totalCount={allProjects?.result?.total ?? 0}
+        setPage={setPage}
       />
     </Col>
   );

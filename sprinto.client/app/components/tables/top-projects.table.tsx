@@ -1,6 +1,6 @@
 import { Tag, type TableProps } from "antd";
 import dayjs from "dayjs";
-import { type FC, type ReactNode } from "react";
+import { useState, type FC, type ReactNode } from "react";
 import CustomTooltip from "~/components/ui/tooltip";
 import { truncateText } from "~/lib/utils";
 import SprintoTable from "./table";
@@ -19,6 +19,11 @@ const TopProjectTable: FC<TopProjectTableProps> = ({
   projects,
   pending = false,
 }: TopProjectTableProps): ReactNode => {
+  const [page, setPage] = useState<Page>({
+    pageSize: 5,
+    pageIndex: 1,
+  });
+
   const columns: TableProps<TopProjects>["columns"] = [
     {
       title: "Title",
@@ -71,8 +76,11 @@ const TopProjectTable: FC<TopProjectTableProps> = ({
       columns={columns}
       data={projects}
       loading={pending}
-      urlString="/projects/"
-      pageSize={4}
+      urlString="project"
+      pageSize={page.pageSize}
+      pageIndex={page.pageIndex}
+      totalCount={projects.length}
+      setPage={setPage}
     />
   );
 };
