@@ -12,7 +12,6 @@ namespace Sprinto.Server.Controllers
 {
     [Route("api/tasks")]
     [Authorize]
-    //[ApiController]
     public class TasksController(TaskService taskService) : ControllerBase
     {
         private readonly TaskService _taskService = taskService;
@@ -40,6 +39,31 @@ namespace Sprinto.Server.Controllers
 
                 response.Message = Constants.Messages.Created;
                 response.Result = createdTask.ToTaskResponse();
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
+
+        [HttpGet]
+        [Authorize(Roles = Constants.Roles.Admin)]
+        public async Task<ApiResponse<PagedResult<TaskResponse>>>
+            GetPagedTasks([FromQuery] int pageSize,
+            [FromQuery] int pageNumber,
+            [FromQuery] string priority,
+            [FromQuery] string status)
+        {
+            var response = new ApiResponse<PagedResult<TaskResponse>>();
+
+            try
+            {
+                var tasks = await _taskService.
+                    GetTasksAsync(pageSize, pageNumber, priority, status);
+                response.Result = tasks;
+                response.Message = Constants.Messages.Success;
             }
             catch (Exception ex)
             {
@@ -140,7 +164,7 @@ namespace Sprinto.Server.Controllers
             {
                 var tasks = await _taskService.GetTopDueTasksAsync();
                 res.Message = Constants.Messages.Success;
-                res.Result = [..tasks.Select(t => t.ToTaskResponse())];
+                res.Result = [.. tasks.Select(t => t.ToTaskResponse())];
             }
             catch (Exception ex)
             {
@@ -263,6 +287,27 @@ namespace Sprinto.Server.Controllers
             }
             return response;
         }
+
+
+        [HttpGet("stats")]
+        [Authorize(Roles = Constants.Roles.Admin)]
+        public async Task<ApiResponse<DashboardInsights>> GetTaskInsights()
+        {
+            var response = new ApiResponse<DashboardInsights>();
+
+            try
+            {
+                var res = await _taskService.GetSystemTaskStatsAsync();
+                response.Result = res;
+                response.Message = Constants.Messages.Success;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
 
         private object? ValidateModelState
         {

@@ -80,7 +80,7 @@ namespace Sprinto.Server.Models
         public List<TaskResponse> High { get; set; } = [];
     }
 
-    public class TaskActivity 
+    public class TaskActivity
     {
         public long Sequence { get; set; }
         public string ProjectAlias { get; set; } = null!;
@@ -96,7 +96,7 @@ namespace Sprinto.Server.Models
     public class TaskGroup
     {
         public string Group { get; set; } = null!;
-        public long Count {  get; set; }
+        public long Count { get; set; }
     }
 
 
@@ -121,5 +121,34 @@ namespace Sprinto.Server.Models
     {
         public UserResponse TeamLead { get; set; } = null!;
         public List<UserResponse> Employees { get; set; } = [];
+    }
+
+    // Task Statistics Response Models
+
+    public class DashboardInsights
+    {
+        public int TotalTasks { get; set; }
+        public List<StatusGroup> StatusBreakdown { get; set; } = [];
+        public List<ProjectGroup> ProjectInsight { get; set; } = [];
+        public List<UserGroup> TopContributors { get; set; } = [];
+    }
+
+    public class StatusGroup
+    {
+        public string Name { get; set; } = null!;
+        public int Value { get; set; }
+    }
+
+    public class ProjectGroup
+    {
+        public string Name { get; set; } = null!;
+        public string ProjectId { get; set; } = null!;
+        public int Value { get; set; }
+    }
+
+    public class UserGroup
+    {
+        public string Name { get; set; } = null!;
+        public int Count { get; set; }
     }
 }

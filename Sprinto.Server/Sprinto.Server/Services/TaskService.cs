@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using Sprinto.Server.Common;
 using Sprinto.Server.DTOs;
@@ -12,18 +13,86 @@ namespace Sprinto.Server.Services
     public class TaskService
     {
         private readonly IMongoCollection<TaskItem> _tasks;
+        private readonly StatusService _statusService;
         private readonly IMongoCollection<Project> _projects;
         private readonly ILogger<TaskService> _logger;
 
+
         public TaskService(IMongoClient mongoCLient,
             IOptions<DatabaseSettings> dbsettings,
+            StatusService statusService,
             ILogger<TaskService> logger)
         {
             var mongoDB = mongoCLient.GetDatabase(dbsettings.Value.DatabaseName);
 
             _tasks = mongoDB.GetCollection<TaskItem>(dbsettings.Value.TasksCollection);
+            _statusService = statusService;
             _projects = mongoDB.GetCollection<Project>(dbsettings.Value.ProjectsCollection);
             _logger = logger;
+        }
+
+        // Get paged response of tasks
+        public async Task<PagedResult<TaskResponse>> 
+            GetTasksAsync(int pageSize, int pageNumber, string? priority, string? status)
+        {
+            try
+            {
+                // Normalize paging
+                pageSize = pageSize <= 0 ? 10 : pageSize;
+                pageNumber = pageNumber <= 0 ? 1 : pageNumber;
+
+                var fb = Builders<TaskItem>.Filter;
+
+                // Base: exclude deleted
+                var filter = fb.Ne(t => t.IsDeleted, true);
+
+                // Optional: priority filter (case-insensitive enum parse)
+                if (!string.IsNullOrWhiteSpace(priority) &&
+                    Enum.TryParse<TaskPriority>(priority, ignoreCase: true, out var parsedPriority))
+                {
+                    filter = fb.And(filter, fb.Eq(t => t.Priority, parsedPriority));
+                }
+
+                // Optional: status title filter (case-insensitive)
+                if (!string.IsNullOrWhiteSpace(status))
+                {
+                    // Ensure that 
+                    var isFound = await _statusService.FindByTitleAsync(status);
+                    if (isFound != null)
+                    {
+                        //var regex = new BsonRegularExpression("^" + System.Text.RegularExpressions.Regex.Escape(status) + "$", "i");
+                        filter = fb.And(filter, fb.Regex(t => t.Status.Title, status));
+                    }
+                }
+
+                // Total count
+                var totalCount = (int)await _tasks.CountDocumentsAsync(filter);
+
+                // Page query: sort by due date, then sequence
+                var items = await _tasks.Find(filter)
+                    .Sort(Builders<TaskItem>.Sort.Ascending(t => t.DueDate).Ascending(t => t.Sequence))
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Limit(pageSize)
+                    .ToListAsync();
+
+                // Map to response DTOs
+                var results = items.Select(t => t.ToTaskResponse()).ToList();
+
+                // Compute total pages
+                var totalPages = totalCount == 0 ? 0 : (int)Math.Ceiling(totalCount / (double)pageSize);
+
+                return new PagedResult<TaskResponse>
+                {
+                    Items = results,
+                    TotalCount = totalCount,
+                    TotalPages = totalPages
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get tasks list");
+                throw new Exception("Could not retrieve tasks from system");
+            }
         }
 
         // Retrives the next available task sequence.
@@ -34,7 +103,7 @@ namespace Sprinto.Server.Services
                 var sort = Builders<TaskItem>.Sort.Descending(t => t.Sequence);
 
                 var highestTask = await _tasks
-                    .Find( t => t.ProjectId == projectId)
+                    .Find(t => t.ProjectId == projectId)
                     .Sort(sort)
                     .Limit(1)
                     .FirstOrDefaultAsync();
@@ -312,8 +381,8 @@ namespace Sprinto.Server.Services
                     {
                         { "assignees", new BsonDocument("$elemMatch", new BsonDocument("_id", new ObjectId(userId))) },
                         { "status.title", new BsonDocument("$ne", "Done") },
-                        { "is_deleted", new BsonDocument("$ne", true) }, 
-                        { "due_date", new BsonDocument("$gt",  DateTime.Today) } // FIXME: Fix the date check
+                        { "is_deleted", new BsonDocument("$ne", true) },
+                        { "due_date", new BsonDocument("$gt",  EndOfDay(DateTime.Today)) } // FIXME: Fix the date check
                     }),
                     new("$lookup", new BsonDocument
                     {
@@ -366,7 +435,7 @@ namespace Sprinto.Server.Services
 
 
         // Search for Tasks based on Regex on Task title and Description
-        public async Task<List<TaskItem>> 
+        public async Task<List<TaskItem>>
             SearchUserTasksAsync(string userId, string searchTerm, bool isAdmin = false)
         {
             try
@@ -647,5 +716,147 @@ namespace Sprinto.Server.Services
                 }
             }
         }
+
+
+        // Get System task Statistics
+        public async Task<DashboardInsights> GetSystemTaskStatsAsync()
+        {
+            try
+            {
+                var pipeline = new List<BsonDocument> {
+                    new("$match", new BsonDocument("is_deleted", new BsonDocument("$ne", true))),
+                    new("$facet", new BsonDocument {
+                      {
+                        "TotalTasks",
+                        new BsonArray {
+                          new BsonDocument("$count", "Count")
+                        }
+                      }, {
+                        "StatusBreakdown",
+                        new BsonArray {
+                          new BsonDocument("$group", new BsonDocument {
+                              {
+                                "_id",  "$status.title"
+                              }, {
+                                "Value",  new BsonDocument("$sum", 1)
+                              }
+                            }),
+                            new BsonDocument("$project", new BsonDocument {
+                              {
+                                "_id", 0
+                              }, {
+                                "Name", "$_id"
+                              }, {
+                                "Value", 1
+                              }
+                            })
+                        }
+                      }, {
+                        "ProjectInsight",
+                        new BsonArray {
+                          new BsonDocument("$group", new BsonDocument {
+                              {
+                                "_id", "$project_id"
+                              }, {
+                                "Value",
+                                new BsonDocument("$sum", 1)
+                              }
+                            }),
+                            new BsonDocument("$sort", new BsonDocument("Value", -1)),
+                            new BsonDocument("$limit", 5),
+                            new BsonDocument("$lookup", new BsonDocument
+                            {
+                                { "from", "projects" },
+                                { "localField", "_id" },
+                                { "foreignField", "_id" },
+                                { "as", "project" }
+                            }),
+                            new BsonDocument("$unwind", new BsonDocument
+                            {
+                                { "path", "$project" },
+                                { "preserveNullAndEmptyArrays", true } // optional based on your data quality
+                            }),
+                            new BsonDocument("$project", new BsonDocument {
+                               { "_id",  0 }, 
+                               { "ProjectId",  new BsonDocument("$toString", "$_id") }, 
+                               { "Value",  1 },
+                               { "Name", "$project.title" },
+                            })
+                        }
+                      }, {
+                        "TopContributors",
+                        new BsonArray {
+                          new BsonDocument("$match", new BsonDocument("status.title", "Done")),
+                            new BsonDocument("$unwind", "$assignees"),
+                            new BsonDocument("$group", new BsonDocument {
+                              {
+                                "_id", "$assignees.name"
+                              }, {
+                                "Count", new BsonDocument("$sum", 1)
+                              }
+                            }),
+                            new BsonDocument("$sort", new BsonDocument("Count", 1)),
+                            new BsonDocument("$limit", 5),
+                            new BsonDocument("$project", new BsonDocument {
+                              {
+                                "_id", 0
+                              }, {
+                                "Name",  "$_id"
+                              }, {
+                                "Count",  1
+                              }
+                            })
+                        }
+                      }
+                    })
+                };
+
+                var cursor = await _tasks.AggregateAsync<BsonDocument>(pipeline);
+                var doc = await cursor.FirstOrDefaultAsync();
+
+                // If there are no tasks, synthesize an empty result
+                if (doc == null)
+                {
+                    return new DashboardInsights
+                    {
+                        TotalTasks = 0,
+                        StatusBreakdown = [],
+                        ProjectInsight = [],
+                        TopContributors = []
+                    };
+                }
+
+                // TotalTasks facet returns [{ Count: <n> }]; flatten to an integer
+                // Option A: do it in code then patch into the doc before deserialization
+                var total = doc.GetValue("TotalTasks", new BsonArray())
+                               .AsBsonArray.FirstOrDefault()?.AsBsonDocument
+                               ?.GetValue("Count", 0).ToInt32() ?? 0;
+
+                // Replace array with a scalar for clean deserialization
+                doc["TotalTasks"] = total;
+
+                return BsonSerializer.Deserialize<DashboardInsights>(doc);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get task statistics");
+                throw new Exception("Failed to get task statistics");
+            }
+        }
+
+
+
+        public DateTime EndOfDay(DateTime date)
+        {
+            return new DateTime(date.Year, date.Month, date.Day, 23, 59, 59, 999);
+        }
+
+        //
+        // Summary:
+        //     Returns the Start of the given day (the first millisecond of the given System.DateTime).
+        //public static DateTime BeginningOfDay(this DateTime date)
+        //{
+        //    return new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, 0);
+        //}
     }
 }

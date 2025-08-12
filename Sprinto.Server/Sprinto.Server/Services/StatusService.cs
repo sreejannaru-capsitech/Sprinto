@@ -49,6 +49,19 @@ namespace Sprinto.Server.Services
             }
         }
 
+        public async Task<Status?> FindByTitleAsync(string title)
+        {
+            try
+            {
+                var status = await _statuses.Find(a => a.Title == title).FirstOrDefaultAsync();
+                return status;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error Finding status by title");
+                throw new Exception("Could not find status");
+            }
+        }
 
         // Get all statuses from database
         public async Task<List<Status>> GetAsync()
