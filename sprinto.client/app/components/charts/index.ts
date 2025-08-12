@@ -8,13 +8,3 @@ export interface ReactEChartsProps {
   loading?: boolean;
   theme?: "light" | "dark";
 }
-
-export interface PieData {
-  value: number;
-  name: string;
-}
-
-export interface BarData {
-  value: number[];
-  name: string[];
-}

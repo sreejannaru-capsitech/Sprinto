@@ -14,9 +14,8 @@ import dayjs from "dayjs";
 import { useMemo, useState, type ReactNode } from "react";
 import { useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router";
-import type { BarData, PieData } from "~/components/charts";
 import BarChart from "~/components/charts/bar.chart";
-import TaskStatusChart from "~/components/charts/pie.chart";
+import PieChart from "~/components/charts/pie.chart";
 import ProjectForm from "~/components/forms/project-form";
 import TimeLineSection from "~/components/timeline-section";
 import AvatarPic from "~/components/ui/avatar-pic";
@@ -235,7 +234,7 @@ const ProjectOverview = (): ReactNode => {
               />
             </Flex>
             <Flex gap={20} justify="space-around" style={{ marginTop: 30 }}>
-              <TaskStatusChart data={statusData} />
+              <PieChart data={statusData} />
               <BarChart data={assigneeData} />
               {overview?.result?.lastCompleted.length ? (
                 <TaskContainer

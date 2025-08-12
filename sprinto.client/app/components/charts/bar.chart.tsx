@@ -1,6 +1,6 @@
 import ReactEcharts from "echarts-for-react";
 import type { FC, ReactNode } from "react";
-import type { BarData, ReactEChartsProps } from ".";
+import type { ReactEChartsProps } from ".";
 
 interface BarChartProps {
   data: BarData;

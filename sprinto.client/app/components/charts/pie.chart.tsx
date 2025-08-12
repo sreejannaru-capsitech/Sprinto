@@ -1,6 +1,6 @@
 import type { FC, ReactNode } from "react";
 import ReactEcharts from "echarts-for-react";
-import type { PieData, ReactEChartsProps } from ".";
+import type { ReactEChartsProps } from ".";
 
 interface PieChartProps {
   data: PieData[];

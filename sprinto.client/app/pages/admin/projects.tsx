@@ -23,9 +23,8 @@ const AdminProjectsPage = (): ReactNode => {
     useLeastActiveProjectsQuery();
 
   return (
-    <div>
+    <div style={{ marginTop: "2rem" }}>
       <Row
-        style={{ marginTop: 40 }}
         justify="space-between"
       >
         <Col flex="130px">
@@ -67,7 +66,7 @@ const AdminProjectsPage = (): ReactNode => {
           />
         </Col>
       </Row>
-      <Row style={{ marginTop: 45 }}>
+      <Row style={{ marginTop: "2.5rem" }}>
         <AllProjectsTable />
       </Row>
     </div>
