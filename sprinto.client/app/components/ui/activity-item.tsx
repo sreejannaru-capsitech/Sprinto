@@ -170,46 +170,48 @@ const ActivityItem: FC<ActivityItemProps> = ({
   };
 
   return (
-    <Card size="small" className="activity-item" hoverable>
-      <Row gutter={4} justify={"space-between"}>
-        <Col span={2}>
-          <AvatarPic user={item.activity.createdBy} />
-        </Col>
-        <Col span={21}>
-          <Flex align="center" justify="space-between">
-            <p style={{ marginBlock: 0 }}>{item.activity.createdBy.userName}</p>
-            <NavLink
-              to={
-                item.activity.action === "TaskDeleted"
-                  ? "#"
-                  : `/projects/${item.projectId}/tasks/${item.taskId}`
-              }
-            >
+    <NavLink
+      to={
+        item.activity.action === "TaskDeleted"
+          ? "#"
+          : `/projects/${item.projectId}/tasks/${item.taskId}`
+      }
+    >
+      <Card size="small" className="activity-item" hoverable>
+        <Row gutter={4} justify={"space-between"}>
+          <Col span={2}>
+            <AvatarPic user={item.activity.createdBy} />
+          </Col>
+          <Col span={21}>
+            <Flex align="center" justify="space-between">
+              <p style={{ marginBlock: 0 }}>
+                {item.activity.createdBy.userName}
+              </p>
               <Tag className="activity-task-tag">
                 {item.activity.action === "TaskDeleted" && (
                   <DeleteIcon size={14} />
                 )}
                 {`${item.projectAlias}-${item.sequence}`}
               </Tag>
-            </NavLink>
-          </Flex>
-          <Typography.Paragraph
-            style={{ marginTop: 4, paddingRight: 2 }}
-            className="text-primary smaller-text"
-          >
-            {getActivityText(item.activity, item.activity.createdBy.userName)}
-            {renderActivityValue(item.activity)}
-          </Typography.Paragraph>
-          <div style={{ textAlign: "right" }}>
-            <span className="smaller-text text-primary-dark">
-              {dayjs(item.activity.createdBy.time).format(
-                "hh:mm A - Do MMM YYYY"
-              )}
-            </span>
-          </div>
-        </Col>
-      </Row>
-    </Card>
+            </Flex>
+            <Typography.Paragraph
+              style={{ marginTop: 4, paddingRight: 2 }}
+              className="text-primary smaller-text"
+            >
+              {getActivityText(item.activity, item.activity.createdBy.userName)}
+              {renderActivityValue(item.activity)}
+            </Typography.Paragraph>
+            <div style={{ textAlign: "right" }}>
+              <span className="smaller-text text-primary-dark">
+                {dayjs(item.activity.createdBy.time).format(
+                  "hh:mm A - Do MMM YYYY"
+                )}
+              </span>
+            </div>
+          </Col>
+        </Row>
+      </Card>
+    </NavLink>
   );
 };
 

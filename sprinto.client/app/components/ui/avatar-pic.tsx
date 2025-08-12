@@ -31,11 +31,11 @@ const AvatarPic: FC<AvatarPicProps> = ({
       {!isUserType(user) ? (
         <AssigneeAvatar size={size} assignee={user} />
       ) : (
-        <Avatar size={size} src={user.displayPic}>
-          <CustomTooltip title={user.name}>
+        <CustomTooltip title={user.name}>
+          <Avatar size={size} src={user.displayPic}>
             <span>{getInitials(user.name)}</span>
-          </CustomTooltip>
-        </Avatar>
+          </Avatar>
+        </CustomTooltip>
       )}
     </>
   );
@@ -56,11 +56,11 @@ const AssigneeAvatar: FC<AssigneeAvatarProps> = ({
 
   const { data } = usePictureQuery(id);
   return (
-    <Avatar size={size} src={data}>
-      <CustomTooltip title={name}>
+    <CustomTooltip title={name}>
+      <Avatar size={size} src={data}>
         <span>{getInitials(name)}</span>
-      </CustomTooltip>
-    </Avatar>
+      </Avatar>
+    </CustomTooltip>
   );
 };
 

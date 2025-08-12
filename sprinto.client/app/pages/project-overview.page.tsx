@@ -172,7 +172,7 @@ const ProjectOverview = (): ReactNode => {
           </Flex>
         </Flex>
 
-        <Flex align="center" gap={20} style={{ margin: "20px 0"}}>
+        <Flex align="center" gap={20} style={{ margin: "20px 0" }}>
           <Flex align="center" gap={4}>
             <ProjectTiming proj={proj} />
           </Flex>
@@ -195,7 +195,7 @@ const ProjectOverview = (): ReactNode => {
 
         <Spinner isActive={overviewPending} fullscreen>
           {/* Statistics Section */}
-          <div style={{ padding: "30px 10px 10px 0" }}>
+          <div style={{ padding: "20px 10px 10px 0" }}>
             <Flex align="center" gap={200} justify="space-around">
               <Statistic
                 title="Total Tasks"
@@ -235,7 +235,16 @@ const ProjectOverview = (): ReactNode => {
             </Flex>
             <Flex gap={20} justify="space-around" style={{ marginTop: 30 }}>
               <PieChart data={statusData} />
-              <BarChart data={assigneeData} />
+              <div style={{ width: "100%" }}>
+                <BarChart data={assigneeData} />
+                <Typography.Title
+                  level={4}
+                  style={{ margin: 0, textAlign: "center", marginTop: -30, marginRight: -48 }}
+                  className="font-bold"
+                >
+                  Team Breakdown by Tasks
+                </Typography.Title>
+              </div>
               {overview?.result?.lastCompleted.length ? (
                 <TaskContainer
                   text="Last Completed Tasks"

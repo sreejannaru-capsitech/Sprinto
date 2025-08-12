@@ -37,7 +37,6 @@ const AdminSidebar = (): ReactNode => {
     const path = window.location.pathname.split("/");
 
     if (path.length === 2) {
-      console.log(path[1]);
       setSelectedKey([path[1]]);
     }
     // else if (path.length === 3) {
