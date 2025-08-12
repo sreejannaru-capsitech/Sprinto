@@ -151,4 +151,33 @@ namespace Sprinto.Server.Models
         public string Name { get; set; } = null!;
         public int Count { get; set; }
     }
+
+    // Recent Activity Response
+    public class RecentUserActivity
+    {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; } = null!;
+        public string Name { get; set; } = null!;
+        public DateTime LastActive { get; set; }
+        public long Count { get; set; }
+    }
+
+    // Project Assignee Count
+    public class ProjectAssigneeCount
+    {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string UserId { get; set; } = null!;
+
+        public string UserName { get; set; } = null!;
+        public long ProjectsCount { get; set; }
+    }
+
+    // Role based user count
+    public class RoleBasedUserCount
+    {
+        public long EmployeeCount { get; set; }
+        public long TLCount { get; set; }
+        public long AdminCount { get; set; }
+        public long TotalCount { get; set; }
+    }
 }

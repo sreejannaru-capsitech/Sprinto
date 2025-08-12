@@ -764,5 +764,107 @@ namespace Sprinto.Server.Services
             }
         }
 
+
+        // Get Project Assignee Count
+        public async Task<List<ProjectAssigneeCount>>
+            GetProjectAssigneeCountAsync()
+        {
+            try
+            {
+                var pipeline = new List<BsonDocument> {
+                    new("$project", new BsonDocument("users", new BsonDocument("$setUnion", new BsonArray {
+                      new BsonDocument("$map", new BsonDocument {
+                        {
+                          "input",
+                          new BsonDocument("$ifNull", new BsonArray {
+                            "$assignees",
+                            new BsonArray()
+                          })
+                        },
+                        {
+                          "as", "a"
+                        },
+                        {
+                          "in", "$$a._id"
+                        }
+                      }),
+                      new BsonDocument("$cond", new BsonArray {
+                        new BsonDocument("$and", new BsonArray {
+                          new BsonDocument("$ne", new BsonArray {
+                            "$maintainer",
+                            BsonNull.Value
+                          }),
+                          new BsonDocument("$ne", new BsonArray {
+                            "$maintainer._id",
+                            BsonNull.Value
+                          })
+                        }),
+                        new BsonArray {
+                          "$maintainer._id"
+                        },
+                        new BsonArray()
+                      })
+                    }))),
+                    new ("$unwind", "$users"),
+                    new ("$group", new BsonDocument {
+                      {
+                        "_id", "$users"
+                      },
+                      {
+                        "projectsCount", new BsonDocument("$sum", 1)
+                      }
+                    }),
+                    new ("$lookup", new BsonDocument {
+                      {
+                        "from", "users"
+                      },
+                      {
+                        "localField",  "_id"
+                      },
+                      {
+                        "foreignField",  "_id"
+                      },
+                      {
+                        "as",  "user"
+                      }
+                    }),
+                    new ("$unwind", new BsonDocument {
+                      {
+                        "path",  "$user"
+                      },
+                      {
+                        "preserveNullAndEmptyArrays",  true
+                      }
+                    }),
+                    new ("$project", new BsonDocument {
+                      {  "_id",  0},
+                      { "UserId",  "$_id"},
+                      {
+                        "UserName",  "$user.name"
+                      },
+                      {
+                        "ProjectsCount",  "$projectsCount"
+                      }
+                    }),
+                    new ("$sort", new BsonDocument {
+                      {
+                        "ProjectsCount",  -1
+                      },
+                      {
+                        "UserName", 1
+                      }
+                    }),
+                    new ("$limit", 10)
+                };
+
+                var result = await _projects.Aggregate<ProjectAssigneeCount>(pipeline).ToListAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get project assignee count");
+                throw new Exception("Failed to get project assignee count");
+            }
+        }
     }
 }

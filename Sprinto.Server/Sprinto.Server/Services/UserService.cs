@@ -12,6 +12,7 @@ namespace Sprinto.Server.Services
     public class UserService
     {
         private readonly IMongoCollection<User> _users;
+        private readonly IMongoCollection<TaskItem> _tasks;
         private readonly ILogger<UserService> _logger;
         private readonly JwtService _jwtService;
 
@@ -23,6 +24,7 @@ namespace Sprinto.Server.Services
             var mongoDB = mongoCLient.GetDatabase(dbsettings.Value.DatabaseName);
 
             _users = mongoDB.GetCollection<User>(dbsettings.Value.UsersCollection);
+            _tasks = mongoDB.GetCollection<TaskItem>(dbsettings.Value.TasksCollection);
             _jwtService = jwtService;
             _logger = logger;
         }
@@ -411,6 +413,137 @@ namespace Sprinto.Server.Services
             {
                 _logger.LogError(ex, "Failed to get users by their ids");
                 throw new Exception("Failed to get users by their ids");
+            }
+        }
+
+        // Get Recent activity stats
+        internal async Task<List<RecentUserActivity>> GetRecentActivityAsync()
+        {
+            try
+            {
+                var pipeline = new List<BsonDocument> {
+                    new("$project", new BsonDocument("allActivity", new BsonDocument("$concatArrays", new BsonArray {
+                      "$activities",
+                      new BsonDocument("$map", new BsonDocument {
+                        {
+                          "input",
+                          "$comments"
+                        },
+                        {
+                          "as",
+                          "comment"
+                        },
+                        {
+                          "in",
+                          new BsonDocument {
+                            {
+                              "user_id",
+                              "$$comment.created.user_id"
+                            },
+                            {
+                              "name",
+                              "$$comment.created.name"
+                            },
+                            {
+                              "time",
+                              "$$comment.created.time"
+                            }
+                          }
+                        }
+                      })
+                    }))),
+                    new("$unwind", "$allActivity"),
+                    new("$lookup", new BsonDocument {
+                      {
+                        "from",
+                        "users"
+                      },
+                      {
+                        "localField",
+                        "allActivity.created_by.user_id"
+                      },
+                      {
+                        "foreignField",
+                        "_id"
+                      },
+                      {
+                        "as",
+                        "user"
+                      }
+                    }),
+                    new("$unwind", "$user"),
+                    new("$match", new BsonDocument("user.role", new BsonDocument("$ne", "admin"))),
+                    new("$group", new BsonDocument {
+                      {
+                        "_id",
+                        "$user._id"
+                      },
+                      {
+                        "name",
+                        new BsonDocument("$first", "$user.name")
+                      },
+                      {
+                        "lastActive",
+                        new BsonDocument("$max", "$allActivity.created_by.time")
+                      },
+                      {
+                        "count",
+                        new BsonDocument("$sum", 1)
+                      }
+                    }),
+                    new("$sort", new BsonDocument("lastActive", -1)),
+                    new("$limit", 10),
+                    new("$project", new BsonDocument {
+                      {
+                        "Name",
+                        "$name"
+                      },
+                      {
+                        "LastActive",
+                        "$lastActive"
+                      },
+                      {
+                        "Count",
+                        "$count"
+                      }
+                    })
+                };
+                
+                var result = await _tasks.Aggregate<RecentUserActivity>(pipeline).ToListAsync();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get employee statistics");
+                throw new Exception("Failed to get employee statistics");
+            }
+        }
+
+        // Get Role Based Count
+        internal async Task<RoleBasedUserCount> GetRoleBasedCountAsync()
+        {
+            try
+            {
+                var adminFilter = Builders<User>.Filter.Eq(u => u.Role, Constants.Roles.Admin);
+                var empFilter = Builders<User>.Filter.Eq(u => u.Role, Constants.Roles.Employee);
+                var tlFilter = Builders<User>.Filter.Eq(u => u.Role, Constants.Roles.TeamLead);
+
+                long adminCount = await _users.CountDocumentsAsync(adminFilter);
+                long employeeCount = await _users.CountDocumentsAsync(empFilter);
+                long tlCount = await _users.CountDocumentsAsync(tlFilter);
+
+                return new RoleBasedUserCount { 
+                    AdminCount = adminCount,
+                    EmployeeCount = employeeCount,
+                    TLCount = tlCount,
+                    TotalCount = adminCount + employeeCount + tlCount
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get role based user count");
+                throw new Exception("Failed to get role based user count");
             }
         }
     }

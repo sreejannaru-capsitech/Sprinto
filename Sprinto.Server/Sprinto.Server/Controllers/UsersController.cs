@@ -252,7 +252,7 @@ namespace Sprinto.Server.Controllers
         // When user wants to change password
         [Authorize]
         [HttpPost("/api/auth/change-password")]
-        public async Task<ApiResponse<string>> 
+        public async Task<ApiResponse<string>>
             ChangePassword([FromBody] UserPasswordChangeRequest request)
         {
             var response = new ApiResponse<string>();
@@ -291,18 +291,18 @@ namespace Sprinto.Server.Controllers
         // Search users by name
         //[Authorize(Roles = "admin,teamLead")]
         [HttpGet("search")]
-        public async Task<ApiResponse<List<UserResponse>>> 
+        public async Task<ApiResponse<List<UserResponse>>>
             SearchUser([FromQuery] string? name, [FromQuery] string? role)
         {
             var response = new ApiResponse<List<UserResponse>>();
             try
             {
                 // If no query provided, return global list
-                if (string.IsNullOrEmpty(name))  
+                if (string.IsNullOrEmpty(name))
                     name = string.Empty;
-                
 
-                if (string.IsNullOrEmpty(role) || !Constants.userRoles.Contains(role))      
+
+                if (string.IsNullOrEmpty(role) || !Constants.userRoles.Contains(role))
                     role = Constants.Roles.Employee;
 
                 var result = await _userService.SearchAsync(name, role);
@@ -332,6 +332,49 @@ namespace Sprinto.Server.Controllers
 
                 response.Message = Constants.Messages.Success;
                 response.Result = picture;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
+
+        // Get User Recent Activities
+        [HttpGet("recent-activity")]
+        [Authorize(Roles = Constants.Roles.Admin)]
+        public async Task<ApiResponse<List<RecentUserActivity>>>
+            GetRecentActivities()
+        {
+            var response = new ApiResponse<List<RecentUserActivity>>();
+
+            try
+            {
+                var activities = await _userService.GetRecentActivityAsync();
+                response.Message = Constants.Messages.Success;
+                response.Result = activities;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
+        // Get Role Based User Count
+        [HttpGet("role-count")]
+        [Authorize(Roles = Constants.Roles.Admin)]
+        public async Task<ApiResponse<RoleBasedUserCount>>
+            GetRoleBasedCount()
+        {
+            var response = new ApiResponse<RoleBasedUserCount>();
+
+            try
+            {
+                var counts = await _userService.GetRoleBasedCountAsync();
+                response.Message = Constants.Messages.Success;
+                response.Result = counts;
             }
             catch (Exception ex)
             {

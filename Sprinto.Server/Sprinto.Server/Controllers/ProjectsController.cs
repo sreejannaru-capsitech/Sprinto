@@ -396,6 +396,28 @@ namespace Sprinto.Server.Controllers
             return response;
         }
 
+        // Get Project Assignee Count
+        [HttpGet("assignee-count")]
+        [Authorize(Roles = Constants.Roles.Admin)]
+        public async Task<ApiResponse<List<ProjectAssigneeCount>>>
+            GetProjectAssigneeCount()
+        {
+            var response = new ApiResponse<List<ProjectAssigneeCount>>();
+
+            try
+            {
+                var counts = await _projectService.GetProjectAssigneeCountAsync();
+                response.Message = Constants.Messages.Success;
+                response.Result = counts;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
+
         private object? ValidateModelState
         {
             get
