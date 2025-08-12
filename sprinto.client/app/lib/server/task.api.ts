@@ -5,6 +5,19 @@ export const getStatuses = async () => {
   return data;
 };
 
+export const getAllTasks = async (
+  pageNumber: number,
+  pageSize: number,
+  priority?: TaskPriority,
+  status?: string
+) => {
+  const { data } = await axiosApi.get<ApiResponse<PagedResult<Task>>>(
+    "/tasks" +
+      `?pageNumber=${pageNumber}&pageSize=${pageSize}&priority=${priority}&status=${status}`
+  );
+  return data;
+};
+
 export const createTask = async (task: TaskItemRequest) => {
   const { data } = await axiosApi.post<ApiResponse<Task>>("/tasks", task);
   return data;
@@ -55,5 +68,12 @@ export const searchTasks = async (query: string) => {
 
 export const getTopDueTasks = async () => {
   const { data } = await axiosApi.get<ApiResponse<Task[]>>(`/tasks/topdue`);
+  return data;
+};
+
+export const getTaskStatistics = async () => {
+  const { data } = await axiosApi.get<ApiResponse<TaskStatistics>>(
+    `/tasks/stats`
+  );
   return data;
 };

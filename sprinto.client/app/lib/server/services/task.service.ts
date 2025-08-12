@@ -1,12 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { NotificationApi } from "~/hooks/useAntNotification";
 import {
+  ALL_TASKS_KEY,
   INBOX_TASKS_KEY,
   PROJECT_ACTIVITIES_KEY,
   PROJECT_OVERVIEW_KEY,
   PROJECT_TASKS_KEY,
   STALE_TIME,
   TASK_ACTIVITIES_KEY,
+  TASK_STATISTICS_KEY,
   TASKS_SEARCH_KEY,
   TODAY_TASKS_KEY,
   TOP_DUE_TASKS_KEY,
@@ -17,8 +19,10 @@ import { handleApiError } from "~/lib/utils";
 import {
   createTask,
   deleteTask,
+  getAllTasks,
   getInboxTasks,
   getTaskActivities,
+  getTaskStatistics,
   getTodayTasks,
   getTopDueTasks,
   getUpcomingTasks,
@@ -33,6 +37,8 @@ const invalidateKeys = [
   TOP_DUE_TASKS_KEY,
   UPCOMING_TASKS_KEY,
   PROJECT_TASKS_KEY,
+  ALL_TASKS_KEY,
+  TASK_STATISTICS_KEY,
 ];
 
 const ivalidateProjects = [
@@ -116,6 +122,20 @@ export const useDeleteTask = (_api: NotificationApi) => {
   });
 };
 
+export const useAllTasksQuery = (
+  pageNumber: number,
+  pageSize: number,
+  priority?: TaskPriority,
+  status?: string
+) => {
+  return useQuery({
+    queryKey: [ALL_TASKS_KEY, pageNumber, pageSize, priority, status],
+    queryFn: async () =>
+      await getAllTasks(pageNumber, pageSize, priority, status),
+    staleTime: STALE_TIME,
+  });
+};
+
 export const useTodayTaskQuery = () => {
   return useQuery({
     queryKey: [TODAY_TASKS_KEY],
@@ -159,6 +179,14 @@ export const useTopDueTasksQuery = () => {
   return useQuery({
     queryKey: [TOP_DUE_TASKS_KEY],
     queryFn: getTopDueTasks,
+    staleTime: STALE_TIME,
+  });
+};
+
+export const useTaskStatsQuery = () => {
+  return useQuery({
+    queryKey: [TASK_STATISTICS_KEY],
+    queryFn: getTaskStatistics,
     staleTime: STALE_TIME,
   });
 };

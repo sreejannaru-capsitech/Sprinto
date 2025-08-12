@@ -11,6 +11,7 @@ export const USERS_SEARCH_KEY = "usersSearch" as const;
 export const PROFILE_PICTURE_KEY = "profilePicture" as const;
 
 // Tasks
+export const ALL_TASKS_KEY = "allTasks" as const;
 export const TASKS_KEY = "tasks" as const;
 export const TASK_ACTIVITIES_KEY = "taskActivities" as const;
 export const TODAY_TASKS_KEY = "todayTasks" as const;
@@ -18,6 +19,7 @@ export const INBOX_TASKS_KEY = "inboxTasks" as const;
 export const TASKS_SEARCH_KEY = "tasksSearch" as const;
 export const UPCOMING_TASKS_KEY = "upcomingTasks" as const;
 export const TOP_DUE_TASKS_KEY = "topDueTasks" as const;
+export const TASK_STATISTICS_KEY = "taskStatistics" as const;
 export const COMMENTS_KEY = "comments" as const;
 
 // Projects

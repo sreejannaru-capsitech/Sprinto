@@ -35,3 +35,15 @@ interface InboxTasks {
   medium: Task[];
   high: Task[];
 }
+
+interface TaskContributor {
+  name: string;
+  count: number;
+}
+
+interface TaskStatistics {
+  totalTasks: number;
+  statusBreakdown: PieData[];
+  projectInsight: PieData[];
+  topContributors: TaskContributor[];
+}

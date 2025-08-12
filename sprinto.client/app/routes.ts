@@ -27,6 +27,7 @@ export default [
   // Admin Only Routes
   layout("layouts/admin-layout.tsx", [
     route("deadlines", "routes/admin/deadline.tsx"),
+    route("tasks", "routes/admin/tasks.tsx"),
   ]),
 
   // Not Found Route
