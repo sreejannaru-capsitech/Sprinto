@@ -1,5 +1,5 @@
 import { Menu, type MenuProps } from "antd";
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { NavLink } from "react-router";
 import { ADMIN_ROUTES } from "~/lib/const";
 import {
@@ -16,7 +16,7 @@ import {
 import SidebarHeader from "./sidebar-header";
 
 import "~/styles/sidebar.css";
-import { isCurrentPath, menuItemStyle } from ".";
+import { menuItemStyle } from ".";
 import ProjectForm from "../forms/project-form";
 import UserForm from "../forms/user-form";
 import SearchForm from "../forms/search-form";
@@ -31,6 +31,27 @@ import type { RootState } from "~/lib/store";
 const AdminSidebar = (): ReactNode => {
   const proj = useSelector((state: RootState) => state.project.project);
 
+  const [selectedKey, setSelectedKey] = useState<string[]>([]);
+
+  useEffect(() => {
+    const path = window.location.pathname.split("/");
+
+    if (path.length === 2) {
+      console.log(path[1]);
+      setSelectedKey([path[1]]);
+    }
+    // else if (path.length === 3) {
+    //   setSelectedKey([path[1]]);
+    // }
+    else if (path.length > 3) {
+      setSelectedKey([path[3]]);
+    }
+  }, [window.location.pathname]);
+
+  const onKeySelect: MenuProps["onSelect"] = ({ key }) => {
+    setSelectedKey([key]);
+  };
+
   const isInsideProject = useMemo(() => {
     const path = window.location.pathname.split("/");
     return path.length >= 3 && path[1] === "projects";
@@ -41,7 +62,7 @@ const AdminSidebar = (): ReactNode => {
       icon: <SearchIcon size={22} />,
       label: <span style={menuItemStyle}>Search</span>,
       onClick: () => setSearchFormOpen(true),
-      key: "0",
+      key: "search",
     },
     {
       icon: <CalenderIcon size={22} />,
@@ -50,8 +71,7 @@ const AdminSidebar = (): ReactNode => {
           {ADMIN_ROUTES[0]}
         </NavLink>
       ),
-      className: isCurrentPath(ADMIN_ROUTES[0].toLowerCase()),
-      key: "1",
+      key: ADMIN_ROUTES[0].toLowerCase(),
     },
     {
       icon: <PlusIcon size={22} />,
@@ -91,8 +111,8 @@ const AdminSidebar = (): ReactNode => {
             : ADMIN_ROUTES[1]}
         </NavLink>
       ),
-      className: isCurrentPath(ADMIN_ROUTES[1].toLowerCase()),
-      key: "2",
+
+      key: ADMIN_ROUTES[1].toLowerCase(),
     },
     {
       icon: <TaskIcon size={22} />,
@@ -101,8 +121,7 @@ const AdminSidebar = (): ReactNode => {
           {ADMIN_ROUTES[2]}
         </NavLink>
       ),
-      className: isCurrentPath(ADMIN_ROUTES[2].toLowerCase()),
-      key: "3",
+      key: ADMIN_ROUTES[2].toLowerCase(),
     },
     {
       icon: <UsersIcon size={22} />,
@@ -111,8 +130,7 @@ const AdminSidebar = (): ReactNode => {
           {ADMIN_ROUTES[3]}
         </NavLink>
       ),
-      className: isCurrentPath(ADMIN_ROUTES[3].toLowerCase()),
-      key: "4",
+      key: ADMIN_ROUTES[3].toLowerCase(),
     },
     {
       icon: <TeamLeadIcon size={22} />,
@@ -121,8 +139,7 @@ const AdminSidebar = (): ReactNode => {
           Team Leaders
         </NavLink>
       ),
-      className: isCurrentPath(ADMIN_ROUTES[4].toLowerCase()),
-      key: "5",
+      key: ADMIN_ROUTES[4].toLowerCase(),
     },
     {
       icon: <AdminIcon size={22} />,
@@ -131,8 +148,7 @@ const AdminSidebar = (): ReactNode => {
           {ADMIN_ROUTES[5]}
         </NavLink>
       ),
-      className: isCurrentPath(ADMIN_ROUTES[5].toLowerCase()),
-      key: "6",
+      key: ADMIN_ROUTES[5].toLowerCase(),
     },
   ];
 
@@ -152,6 +168,8 @@ const AdminSidebar = (): ReactNode => {
         mode="vertical"
         style={{ marginTop: "80px", background: "none" }}
         items={upperMenuItems}
+        selectedKeys={selectedKey}
+        onSelect={onKeySelect}
       />
 
       <ProjectForm
@@ -171,6 +189,8 @@ const AdminSidebar = (): ReactNode => {
         mode="inline"
         style={{ marginTop: "80px", background: "none" }}
         items={lowerMenuItems}
+        selectedKeys={selectedKey}
+        onSelect={onKeySelect}
       />
     </>
   );
