@@ -32,7 +32,7 @@ namespace Sprinto.Server.Services
         }
 
         // Get paged response of tasks
-        public async Task<PagedResult<TaskResponse>> 
+        public async Task<PagedResult<TaskResponse>>
             GetTasksAsync(int pageSize, int pageNumber, string? priority, string? status)
         {
             try
@@ -382,7 +382,7 @@ namespace Sprinto.Server.Services
                         { "assignees", new BsonDocument("$elemMatch", new BsonDocument("_id", new ObjectId(userId))) },
                         { "status.title", new BsonDocument("$ne", "Done") },
                         { "is_deleted", new BsonDocument("$ne", true) },
-                        { "due_date", new BsonDocument("$gt",  EndOfDay(DateTime.Today)) } // FIXME: Fix the date check
+                        { "due_date", new BsonDocument("$gt", DateTime.UtcNow.EndOfDay() ) }
                     }),
                     new("$lookup", new BsonDocument
                     {
@@ -777,8 +777,8 @@ namespace Sprinto.Server.Services
                                 { "preserveNullAndEmptyArrays", true } // optional based on your data quality
                             }),
                             new BsonDocument("$project", new BsonDocument {
-                               { "_id",  0 }, 
-                               { "ProjectId",  new BsonDocument("$toString", "$_id") }, 
+                               { "_id",  0 },
+                               { "ProjectId",  new BsonDocument("$toString", "$_id") },
                                { "Value",  1 },
                                { "Name", "$project.title" },
                             })
@@ -844,19 +844,5 @@ namespace Sprinto.Server.Services
             }
         }
 
-
-
-        public DateTime EndOfDay(DateTime date)
-        {
-            return new DateTime(date.Year, date.Month, date.Day, 23, 59, 59, 999);
-        }
-
-        //
-        // Summary:
-        //     Returns the Start of the given day (the first millisecond of the given System.DateTime).
-        //public static DateTime BeginningOfDay(this DateTime date)
-        //{
-        //    return new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, 0);
-        //}
     }
 }
