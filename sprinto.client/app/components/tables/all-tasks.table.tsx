@@ -12,8 +12,7 @@ import SprintoTable from "./table";
  * @returns {ReactNode} The AllTasksTable component
  */
 const AllTasksTable = (): ReactNode => {
-  const [status, setStatus] = useState<string | undefined>(undefined);
-  const [priority, setPriority] = useState<TaskPriority | undefined>(undefined);
+  const [filters, setFilters] = useState<Record<string, any>>({});
 
   const [page, setPage] = useState<Page>({
     pageSize: 5,
@@ -23,8 +22,8 @@ const AllTasksTable = (): ReactNode => {
   const { data: allTasks, isFetching: tasksFetching } = useAllTasksQuery(
     page.pageIndex,
     page.pageSize,
-    priority,
-    status
+    filters.priority,
+    filters.status
   );
 
   const columns: TableProps<Task>["columns"] = [
@@ -60,12 +59,6 @@ const AllTasksTable = (): ReactNode => {
         { text: "Medium", value: "medium" },
         { text: "High", value: "high" },
       ],
-      onFilter: (value, record) => {
-        // Reset page index to 1 when priority changes
-        setPage((prev) => ({ ...prev, pageIndex: 1 }));
-        setPriority(value as TaskPriority);
-        return false;
-      },
       render: (status: TaskPriority) => <Tag>{status}</Tag>,
     },
     {
@@ -144,6 +137,7 @@ const AllTasksTable = (): ReactNode => {
       totalCount={allTasks?.result?.totalCount ?? 0}
       urlString="task"
       setPage={setPage}
+      setFilters={setFilters}
       columns={columns}
     />
   );

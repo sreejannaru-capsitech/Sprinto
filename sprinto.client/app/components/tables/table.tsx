@@ -11,10 +11,11 @@ interface SprintoTableProps<T> {
   totalCount: number;
   setPage: Dispatch<SetStateAction<Page>>;
   columns: TableProps<T>["columns"];
+  setFilters?: Dispatch<SetStateAction<Record<string, any>>>;
 }
 
 /**
- * This component renders table section
+ * This component renders a paginated, filterable table
  * @param {SprintoTableProps} props
  * @returns {ReactNode} The SprintoTable component
  */
@@ -27,6 +28,7 @@ const SprintoTable = <T,>({
   totalCount,
   setPage,
   columns,
+  setFilters,
 }: SprintoTableProps<T>): ReactNode => {
   const navigate = useNavigate();
 
@@ -36,6 +38,9 @@ const SprintoTable = <T,>({
       columns={columns}
       rowKey={(record: any) => record.id}
       loading={loading}
+      dataSource={data}
+      style={{ width: "100%" }}
+      tableLayout="fixed"
       onRow={(record: any) => ({
         onClick: () =>
           navigate(
@@ -45,9 +50,25 @@ const SprintoTable = <T,>({
           ),
         style: { cursor: "pointer" },
       })}
-      dataSource={data}
-      style={{ width: "100%" }}
-      tableLayout="fixed"
+      onChange={(pagination, newFilters) => {
+        // Update pagination
+        setPage((prev) => ({
+          ...prev,
+          pageIndex: pagination.current ?? 1,
+        }));
+
+        // Apply filters for server-side querying
+        if (!setFilters) return;
+        setFilters((prev) => ({
+          ...prev,
+          ...Object.fromEntries(
+            Object.entries(newFilters).map(([key, value]) => [
+              key,
+              Array.isArray(value) ? value[0] : value,
+            ])
+          ),
+        }));
+      }}
       pagination={{
         showTotal: (total: number) => (
           <span>
@@ -58,7 +79,6 @@ const SprintoTable = <T,>({
         current: pageIndex,
         total: totalCount,
         onChange: (page) => setPage((prev) => ({ ...prev, pageIndex: page })),
-        // showSizeChanger: true,
         showQuickJumper: true,
       }}
     />
