@@ -19,6 +19,8 @@ const ProjectsContainer: FC<TaskContainerProps> = ({
   text,
   horizontal = false,
 }: TaskContainerProps): ReactNode => {
+  const calculatedWidth = horizontal ? 1400 : 430;
+
   return (
     <div>
       <Typography.Title
@@ -31,6 +33,7 @@ const ProjectsContainer: FC<TaskContainerProps> = ({
       <Space
         direction={horizontal ? "horizontal" : "vertical"}
         size={16}
+        style={{ minWidth: calculatedWidth, maxWidth: calculatedWidth }}
         align="baseline"
         className="project-container"
       >
