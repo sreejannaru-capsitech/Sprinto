@@ -20,6 +20,7 @@ import {
   getTeamLeads,
   getUserProfilePic,
   searchUsers,
+  updateUser,
 } from "../user.api";
 import { handleApiError } from "~/lib/utils";
 import type { NotificationApi } from "~/hooks/useAntNotification";
@@ -33,6 +34,13 @@ export const useProfileQuery = () => {
 };
 
 const invalidateKeys = [PROFILE_KEY, PROJECT_TEAM_KEY, PROFILE_PICTURE_KEY];
+
+const invalidateUserKeys = [
+  PAGED_USERS_KEY,
+  USERS_RECENT_ACTIVITY_KEY,
+  USERS_ROLE_COUNT_KEY,
+  PROFILE_PICTURE_KEY,
+];
 
 export const useProfileUpdate = (_api: NotificationApi) => {
   const query = useQueryClient();
@@ -52,8 +60,34 @@ export const useProfileUpdate = (_api: NotificationApi) => {
   });
 };
 
-export const usePagedUsersQuery = 
-(pageNumber: number, pageSize: number, role?: UserRole) => {
+type UserUpdatePayload = {
+  id: string;
+  user: AdminUpdate;
+};
+
+export const useUserUpdate = (_api: NotificationApi) => {
+  const query = useQueryClient();
+  return useMutation<ApiResponse<User>, Error, UserUpdatePayload>({
+    mutationFn: async ({ id, user }) => {
+      return await updateUser(id, user);
+    },
+    onSuccess: () => {
+      _api({ message: "User updated successfully", type: "success" });
+      invalidateUserKeys.forEach((key) => {
+        query.invalidateQueries({ queryKey: [key] });
+      });
+    },
+    onError: (error) => {
+      handleApiError(error, _api, "Could not update user");
+    },
+  });
+};
+
+export const usePagedUsersQuery = (
+  pageNumber: number,
+  pageSize: number,
+  role?: UserRole
+) => {
   return useQuery({
     queryKey: [PAGED_USERS_KEY, pageNumber, pageSize, role],
     queryFn: async () => {

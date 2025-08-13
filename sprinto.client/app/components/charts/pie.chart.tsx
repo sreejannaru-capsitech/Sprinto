@@ -28,7 +28,7 @@ const PieChart: FC<PieChartProps> = ({ data }: PieChartProps): ReactNode => {
     },
     series: [
       {
-        name: "Access From",
+        name: "Value",
         type: "pie",
         radius: ["40%", "70%"],
         avoidLabelOverlap: true,

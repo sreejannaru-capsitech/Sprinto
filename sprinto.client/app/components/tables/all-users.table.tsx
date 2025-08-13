@@ -1,4 +1,4 @@
-import { Button, Flex, Tag, type TableProps } from "antd";
+import { Button, Col, Flex, Tag, type TableProps } from "antd";
 import dayjs from "dayjs";
 import { useState, type ReactNode } from "react";
 import { USER_TEAM_LEAD } from "~/lib/const";
@@ -7,6 +7,7 @@ import AvatarPic from "../ui/avatar-pic";
 import CustomTooltip from "../ui/tooltip";
 import SprintoTable from "./table";
 import { PencilIcon } from "~/lib/icons";
+import UserUpdateForm from "../forms/user-update.form";
 
 /**
  * This component renders all-users.table section
@@ -14,6 +15,8 @@ import { PencilIcon } from "~/lib/icons";
  */
 const AllUsersTable = (): ReactNode => {
   const [filters, setFilters] = useState<Record<string, any>>({});
+  const [open, setOpen] = useState<boolean>(false);
+  const [user, setUser] = useState<User | null>(null);
 
   const [page, setPage] = useState<Page>({
     pageSize: 5,
@@ -33,6 +36,7 @@ const AllUsersTable = (): ReactNode => {
       key: "name",
       ellipsis: true,
       width: 200,
+      sorter: (a, b) => a.name.localeCompare(b.name),
       render: (text: string, record) => (
         <Flex align="center" gap={18}>
           <AvatarPic user={record} size={24} />
@@ -47,6 +51,7 @@ const AllUsersTable = (): ReactNode => {
       dataIndex: "email",
       key: "email",
       ellipsis: true,
+      sorter: (a, b) => a.email.localeCompare(b.email),
       width: 200,
       render: (text: string) => <span>{text}</span>,
     },
@@ -92,8 +97,15 @@ const AllUsersTable = (): ReactNode => {
       title: "Actions",
       key: "actions",
       width: 50,
-      render: (text: User) => (
-        <Button size="small" icon={<PencilIcon size={18} />}>
+      render: (_, record) => (
+        <Button
+          size="small"
+          icon={<PencilIcon size={18} />}
+          onClick={() => {
+            setUser(record);
+            setOpen(true);
+          }}
+        >
           Edit
         </Button>
       ),
@@ -101,16 +113,27 @@ const AllUsersTable = (): ReactNode => {
   ];
 
   return (
-    <SprintoTable
-      columns={columns}
-      data={data?.items ?? []}
-      loading={isPending}
-      pageSize={page.pageSize}
-      pageIndex={page.pageIndex}
-      setFilters={setFilters}
-      totalCount={data?.totalCount ?? 0}
-      setPage={setPage}
-    />
+    <Col span={24}>
+      <UserUpdateForm
+        open={open}
+        onClose={() => {
+          setOpen(false);
+          setUser(null);
+        }}
+        user={user}
+      />
+      
+      <SprintoTable
+        columns={columns}
+        data={data?.items ?? []}
+        loading={isPending}
+        pageSize={page.pageSize}
+        pageIndex={page.pageIndex}
+        setFilters={setFilters}
+        totalCount={data?.totalCount ?? 0}
+        setPage={setPage}
+      />
+    </Col>
   );
 };
 

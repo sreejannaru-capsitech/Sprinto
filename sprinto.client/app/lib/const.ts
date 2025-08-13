@@ -1,3 +1,5 @@
+import { capitalizeFirst } from "./utils";
+
 export const BASE_URL = "http://localhost:5142/api" as const;
 
 // Keys for storing in tanstack query cache
@@ -51,7 +53,7 @@ export const ADMIN_ROUTES = [
   "Deadlines",
   "Projects",
   "Tasks",
-  "Users"
+  "Users",
 ] as const;
 
 export const USER_EMPLOYEE = "employee" as const;
@@ -63,3 +65,18 @@ export const USER_ROLES: UserRole[] = [
   USER_ADMIN,
   USER_TEAM_LEAD,
 ] as const;
+
+export const roleOptions = [
+  {
+    label: capitalizeFirst(USER_ADMIN),
+    value: USER_ADMIN,
+  },
+  {
+    label: capitalizeFirst(USER_EMPLOYEE),
+    value: USER_EMPLOYEE,
+  },
+  {
+    label: "Team Lead",
+    value: USER_TEAM_LEAD,
+  },
+];

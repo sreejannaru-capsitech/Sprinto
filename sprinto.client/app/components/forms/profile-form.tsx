@@ -1,9 +1,4 @@
-import {
-  Flex,
-  Form,
-  Input,
-  Modal
-} from "antd";
+import { Form, Input, Modal } from "antd";
 import { useEffect, useState, type FC, type ReactNode } from "react";
 import { useSelector } from "react-redux";
 import { useAntNotification } from "~/hooks";
@@ -81,11 +76,11 @@ const ProfileFormModal: FC<ProfileFormProps> = ({
     >
       {contextHolder}
       <Form form={form} requiredMark="optional" layout="vertical">
-        <Flex vertical align="center" justify="center" gap={8}>
-          <ImageUploader user={user} setBase64Image={setBase64Image} />
-
-          <p className="no-margin">Profile Picture</p>
-        </Flex>
+        <ImageUploader
+          user={user}
+          base64Image={base64Image}
+          setBase64Image={setBase64Image}
+        />
         <Form.Item
           label="Name"
           name="name"

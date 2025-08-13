@@ -16,6 +16,14 @@ interface Assignee {
 
 interface UserRequest extends Omit<User, "createdBy", "id", "displayPic"> {}
 
+interface AdminUpdate {
+  name: string;
+  email: string;
+  role: UserRole;
+  displayPic?: string;
+  password?: string;
+}
+
 interface PasswordChangeRequest {
   oldPassword?: string;
   newPassword?: string;

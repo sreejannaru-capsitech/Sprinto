@@ -65,3 +65,11 @@ export const getRoleBasedCount = async () => {
   );
   return data;
 };
+
+export const updateUser = async (id: string, user: AdminUpdate) => {
+  const { data } = await axiosApi.post<ApiResponse<User>>(
+    `/users/${id}/update`,
+    user
+  );
+  return data;
+};

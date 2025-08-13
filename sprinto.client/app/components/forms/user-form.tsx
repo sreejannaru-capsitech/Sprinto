@@ -1,7 +1,7 @@
 import { Col, Form, Input, Modal, Row, Select } from "antd";
 import { useState, type FC, type ReactNode } from "react";
 import { useAntNotification } from "~/hooks";
-import { USER_ADMIN, USER_EMPLOYEE, USER_TEAM_LEAD } from "~/lib/const";
+import { roleOptions, USER_ADMIN, USER_EMPLOYEE, USER_TEAM_LEAD } from "~/lib/const";
 import { createUser } from "~/lib/server";
 import { capitalizeFirst } from "~/lib/utils";
 import {
@@ -15,21 +15,6 @@ interface UserFormProps {
   open: boolean;
   onClose: () => void;
 }
-
-const roleOptions = [
-  {
-    label: capitalizeFirst(USER_ADMIN),
-    value: USER_ADMIN,
-  },
-  {
-    label: capitalizeFirst(USER_EMPLOYEE),
-    value: USER_EMPLOYEE,
-  },
-  {
-    label: "Team Lead",
-    value: USER_TEAM_LEAD,
-  },
-];
 
 /**
  * This component renders user-form section
