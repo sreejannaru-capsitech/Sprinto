@@ -27,11 +27,9 @@ const UpcomingPageComponent = (): ReactNode => {
 
     const filtered = projects.result.filter((project) => !!project.deadline);
 
-    return filtered.sort((a, b) => {
-      const aTime = dayjs(a.deadline).valueOf();
-      const bTime = dayjs(b.deadline).valueOf();
-      return aTime - bTime;
-    });
+    return filtered
+      .sort((a, b) => dayjs(a.deadline).valueOf() - dayjs(b.deadline).valueOf())
+      .slice(0, 3); // keep only the first 3 projects
   }, [data, projects]);
 
   return (
