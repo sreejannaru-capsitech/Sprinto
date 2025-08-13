@@ -14,18 +14,24 @@ interface Assignee {
   name: string;
 }
 
-interface UserRequest {
-  name: string;
-  email: string;
-  role: UserRole;
-}
+interface UserRequest extends Omit<User, "createdBy", "id", "displayPic"> {}
 
 interface PasswordChangeRequest {
   oldPassword?: string;
   newPassword?: string;
 }
 
-interface UserUpdateRequest {
-  name: string;
-  displayPic?: string;
+interface UserUpdateRequest
+  extends Omit<User, "createdBy", "id", "email", "role"> {}
+
+interface RecentUserActivity extends Omit<User, "createdBy"> {
+  lastActive: string;
+  count: number;
+}
+
+interface RoleBasedUserCount {
+  adminCount: number;
+  employeeCount: number;
+  tlCount: number;
+  totalCount: number;
 }

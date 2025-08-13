@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 interface SprintoTableProps<T> {
   data: T[];
   loading?: boolean;
-  urlString: "project" | "task";
+  urlString?: "project" | "task";
   pageSize: number;
   pageIndex: number;
   totalCount: number;
@@ -42,12 +42,14 @@ const SprintoTable = <T,>({
       style={{ width: "100%" }}
       tableLayout="fixed"
       onRow={(record: any) => ({
-        onClick: () =>
+        onClick: () => {
+          if (!urlString) return;
           navigate(
-            urlString === "project"
-              ? `/projects/${record.id}`
-              : `/projects/${record.projectId}/tasks/${record.id}`
-          ),
+            urlString === "task"
+              ? `/projects/${record.projectId}/tasks/${record.id}`
+              : `/projects/${record.id}`
+          );
+        },
         style: { cursor: "pointer" },
       })}
       onChange={(pagination, newFilters) => {

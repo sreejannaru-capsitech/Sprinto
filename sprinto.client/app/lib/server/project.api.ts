@@ -111,3 +111,10 @@ export const getLeastActiveProjects = async () => {
   );
   return data;
 };
+
+export const getProjectAssigneeCount = async () => {
+  const { data } = await axiosApi.get<ApiResponse<ProjectAssigneeCount[]>>(
+    "/projects/assignee-count"
+  );
+  return data;
+};

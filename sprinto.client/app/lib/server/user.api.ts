@@ -40,3 +40,17 @@ export const getUserProfilePic = async (userId: string) => {
   );
   return data;
 };
+
+export const getRecentActivity = async () => {
+  const { data } = await axiosApi.get<ApiResponse<RecentUserActivity[]>>(
+    `/users/recent-activity`
+  );
+  return data;
+};
+
+export const getRoleBasedCount = async () => {
+  const { data } = await axiosApi.get<ApiResponse<RoleBasedUserCount>>(
+    `/users/role-count`
+  );
+  return data;
+};

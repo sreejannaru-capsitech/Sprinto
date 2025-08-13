@@ -9,6 +9,8 @@ export const TEAM_LEADS_KEY = "teamLeads" as const;
 export const ADMINS_KEY = "admins" as const;
 export const USERS_SEARCH_KEY = "usersSearch" as const;
 export const PROFILE_PICTURE_KEY = "profilePicture" as const;
+export const USERS_RECENT_ACTIVITY_KEY = "usersRecentActivity" as const;
+export const USERS_ROLE_COUNT_KEY = "usersRoleCount" as const;
 
 // Tasks
 export const ALL_TASKS_KEY = "allTasks" as const;
@@ -31,6 +33,7 @@ export const PROJECT_ACTIVITIES_KEY = "projectActivities" as const;
 export const PROJECT_TASKS_KEY = "projectTasks" as const;
 export const TOP_PROJECTS_KEY = "topProjects" as const;
 export const LEAST_PROJECTS_KEY = "leastProjects" as const;
+export const PROJECT_ASSIGNEE_COUNT_KEY = "projectAssigneeCount" as const;
 
 // Configuration
 export const STATUSES_KEY = "statuses" as const;

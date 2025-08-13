@@ -7,10 +7,14 @@ import {
   PROJECT_TEAM_KEY,
   STALE_TIME,
   TEAM_LEADS_KEY,
+  USERS_RECENT_ACTIVITY_KEY,
+  USERS_ROLE_COUNT_KEY,
   USERS_SEARCH_KEY,
 } from "~/lib/const";
 import {
   getEmployees,
+  getRecentActivity,
+  getRoleBasedCount,
   getTeamLeads,
   getUserProfilePic,
   searchUsers,
@@ -77,5 +81,27 @@ export const usePictureQuery = (userId: string) => {
       return data.result;
     },
     staleTime: STALE_TIME * 3, // 15 minutes
+  });
+};
+
+export const useRecentActivityQuery = () => {
+  return useQuery({
+    queryKey: [USERS_RECENT_ACTIVITY_KEY],
+    queryFn: async () => {
+      const data = await getRecentActivity();
+      return data.result;
+    },
+    staleTime: STALE_TIME,
+  });
+};
+
+export const useRoleCountQuery = () => {
+  return useQuery({
+    queryKey: [USERS_ROLE_COUNT_KEY],
+    queryFn: async () => {
+      const data = await getRoleBasedCount();
+      return data.result;
+    },
+    staleTime: STALE_TIME,
   });
 };

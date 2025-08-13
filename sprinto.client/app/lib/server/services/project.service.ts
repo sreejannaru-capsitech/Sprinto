@@ -4,6 +4,7 @@ import {
   ALL_PROJECTS_KEY,
   LEAST_PROJECTS_KEY,
   PROJECT_ACTIVITIES_KEY,
+  PROJECT_ASSIGNEE_COUNT_KEY,
   PROJECT_OVERVIEW_KEY,
   PROJECT_TASKS_KEY,
   PROJECT_TEAM_KEY,
@@ -19,6 +20,7 @@ import {
   getAllProjects,
   getLeastActiveProjects,
   getProjectActivities,
+  getProjectAssigneeCount,
   getProjectOverview,
   getProjects,
   getProjectTasks,
@@ -216,6 +218,14 @@ export const useLeastActiveProjectsQuery = () => {
   return useQuery({
     queryKey: [LEAST_PROJECTS_KEY],
     queryFn: getLeastActiveProjects,
+    staleTime: STALE_TIME,
+  });
+};
+
+export const useProjectAssigneeCountQuery = () => {
+  return useQuery({
+    queryKey: [PROJECT_ASSIGNEE_COUNT_KEY],
+    queryFn: getProjectAssigneeCount,
     staleTime: STALE_TIME,
   });
 };

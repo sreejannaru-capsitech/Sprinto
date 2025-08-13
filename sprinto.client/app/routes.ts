@@ -28,6 +28,7 @@ export default [
   layout("layouts/admin-layout.tsx", [
     route("deadlines", "routes/admin/deadline.tsx"),
     route("tasks", "routes/admin/tasks.tsx"),
+    route("employees", "routes/admin/employees.tsx"),
   ]),
 
   // Not Found Route

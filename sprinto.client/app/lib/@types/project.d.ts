@@ -62,3 +62,7 @@ interface TopProjects {
   startDate?: string;
   deadline?: string;
 }
+
+interface ProjectAssigneeCount extends Omit<Creation, "time"> {
+  projectsCount: number;
+}
