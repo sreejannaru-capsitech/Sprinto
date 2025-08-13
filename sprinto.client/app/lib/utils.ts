@@ -1,3 +1,4 @@
+import type { GetProp, UploadProps } from "antd";
 import { AxiosError } from "axios";
 import type { NotificationApi } from "~/hooks/useAntNotification";
 
@@ -123,3 +124,18 @@ export const capitalizeFirst = (word: string): string => {
   if (!word) return "";
   return word.charAt(0).toUpperCase() + word.slice(1);
 };
+
+export type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
+
+/**
+ * This function converts a file to a base64 string.
+ * @param {FileType} file - The file to convert.
+ * @returns {Promise<string>} A promise that resolves to the base64 string.
+ */
+export const convertToBase64 = (file: FileType): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+  });
