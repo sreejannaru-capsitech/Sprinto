@@ -7,6 +7,8 @@ import TaskContainer from "~/components/ui/task-container";
 import { useProjectTasksQuery } from "~/lib/server/services";
 import type { RootState } from "~/lib/store";
 
+import "~/styles/items.css";
+
 interface TaskStatusGroup {
   status: string;
   tasks: Task[];
@@ -53,9 +55,18 @@ const ProjectTasksPage = (): ReactNode => {
       {!data?.result?.length ? (
         <NoData text="Project does not have any task" />
       ) : (
-        <Flex style={{ marginTop: "2rem" }} gap={30}>
+        <Flex
+          style={{ marginTop: "2rem" }}
+          gap={10}
+          className="tasks-page-statuswise-container"
+        >
           {group.map((g) => (
-            <TaskContainer key={g.status} text={g.status} tasks={g.tasks} />
+            <TaskContainer
+              key={g.status}
+              text={g.status}
+              tasks={g.tasks}
+              height={680}
+            />
           ))}
         </Flex>
       )}

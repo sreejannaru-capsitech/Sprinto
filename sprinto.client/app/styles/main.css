@@ -198,6 +198,7 @@ p.no-margin {
 /* width */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 /* Track */
@@ -208,11 +209,12 @@ p.no-margin {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: rgba(20, 27, 52, 0.05);
+  background: rgba(20, 27, 52, 0.1);
   border-radius: 10px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: transparent;
+  background: rgba(20, 27, 52, 0.18);
+  cursor: pointer;
 }

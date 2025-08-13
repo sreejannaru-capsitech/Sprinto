@@ -93,6 +93,16 @@ span.ant-popconfirm-message-icon {
   }
 }
 
+.tasks-page-statuswise-container {
+  max-width: 1544px;
+  padding-bottom: 20px;
+  overflow-x: hidden;
+
+  &:hover {
+    overflow-x: auto;
+  }
+}
+
 .due-tasks-container {
   min-width: 760px;
   max-width: 760px;
