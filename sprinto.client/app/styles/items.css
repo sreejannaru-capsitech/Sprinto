@@ -152,3 +152,35 @@ span.ant-popconfirm-message-icon {
     overflow-y: auto;
   }
 }
+
+/* Status Form styles */
+
+.statuses-container-parent {
+  margin-left: auto;
+  margin-right: auto;
+
+  min-height: 200px;
+  max-height: 200px;
+  min-width: 350px;
+  max-width: 350px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 10px 10px 40px 10px;
+}
+
+.statuses-container {
+  min-width: 260px;
+  max-width: 260px;
+
+  min-height: 200px;
+  max-height: 200px;
+  padding: 10px;
+  overflow-y: hidden;
+
+  &:hover {
+    overflow-y: auto;
+  }
+}

@@ -1,10 +1,5 @@
 import axiosApi from ".";
 
-export const getStatuses = async () => {
-  const { data } = await axiosApi.get<ApiResponse<Status[]>>("/statuses");
-  return data;
-};
-
 export const getAllTasks = async (
   pageNumber: number,
   pageSize: number,

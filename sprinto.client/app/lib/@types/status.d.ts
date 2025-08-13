@@ -6,3 +6,7 @@ interface StatusEntity {
 interface Status extends StatusEntity {
   createdBy: Creation;
 }
+
+interface StatusRequest {
+  title: string;
+}

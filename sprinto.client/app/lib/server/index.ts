@@ -54,3 +54,4 @@ export * from "./user.api";
 export * from "./project.api";
 export * from "./task.api";
 export * from "./comment.api";
+export * from "./task-status.api";

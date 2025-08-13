@@ -59,7 +59,9 @@ const AllTasksTable = (): ReactNode => {
         { text: "Medium", value: "medium" },
         { text: "High", value: "high" },
       ],
-      render: (status: TaskPriority) => <Tag>{status}</Tag>,
+      render: (status: TaskPriority) => (
+        <Tag className="capitalize">{status}</Tag>
+      ),
     },
     {
       title: "Status",

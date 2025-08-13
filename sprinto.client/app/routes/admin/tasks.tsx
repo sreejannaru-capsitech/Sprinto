@@ -1,6 +1,7 @@
 import { Flex, Typography } from "antd";
 import type { ReactNode } from "react";
 import type { MetaArgs } from "react-router";
+import TaskStatusForm from "~/components/forms/status-form";
 import { TaskIcon } from "~/lib/icons";
 import AdminTasksPage from "~/pages/admin/admin-tasks.page";
 
@@ -18,7 +19,7 @@ export function meta({}: MetaArgs) {
 const TasksPage = (): ReactNode => {
   return (
     <>
-      <Flex align="center" justify="space-between" style={{ width: 170 }}>
+      <Flex align="center" justify="space-between" style={{ width: 240 }}>
         <Flex align="center" gap={6}>
           <TaskIcon size={36} />
           <Typography.Title
@@ -29,6 +30,7 @@ const TasksPage = (): ReactNode => {
             Tasks
           </Typography.Title>
         </Flex>
+        <TaskStatusForm />
       </Flex>
 
       <AdminTasksPage />
