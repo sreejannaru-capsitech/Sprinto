@@ -6,6 +6,7 @@ using Sprinto.Server.DTOs;
 using Sprinto.Server.Extensions;
 using Sprinto.Server.Models;
 using System.Data;
+using System.Text.RegularExpressions;
 
 namespace Sprinto.Server.Services
 {
@@ -71,26 +72,38 @@ namespace Sprinto.Server.Services
         /// <exception cref="Exception">
         /// Thrown when user retrieval fails due to a database or internal error.
         /// </exception>
-        public async Task<PagedResult<UserResponse>> GetAsync(int pageNumber, int pageSize, string? role)
+        public async Task<PagedResult<UserResponse>> 
+            GetAsync(int pageNumber, int pageSize, string? role, string? search = null)
         {
             try
             {
-                var filterBuilder = Builders<User>.Filter;
-                FilterDefinition<User> roleFilter;
+                var fb = Builders<User>.Filter;
 
-                if (string.IsNullOrEmpty(role) || !Constants.userRoles.Contains(role))
+                // Role filter
+                FilterDefinition<User> roleFilter =
+                    string.IsNullOrEmpty(role) || !Constants.userRoles.Contains(role)
+                        ? fb.Ne(u => u.Role, "")   // keep your existing behavior
+                        : fb.Eq(u => u.Role, role);
+
+                // Base filter
+                var filter = roleFilter;
+
+                // Optional search filter (case-insensitive) on Name or Email
+                if (!string.IsNullOrWhiteSpace(search))
                 {
-                    roleFilter = filterBuilder.Ne(u => u.Role, "");
-                }
-                else
-                {
-                    roleFilter = filterBuilder.Eq(u => u.Role, role);
+                    var pattern = Regex.Escape(search.Trim());
+                    var searchFilter = fb.Or(
+                        fb.Regex(u => u.Name, new BsonRegularExpression(pattern, "i")),
+                        fb.Regex(u => u.Email, new BsonRegularExpression(pattern, "i"))
+                    );
+
+                    filter = fb.And(filter, searchFilter);
                 }
 
-                var totalCount = await _users.CountDocumentsAsync(roleFilter);
+                var totalCount = await _users.CountDocumentsAsync(filter);
 
                 var users = await _users
-                    .Find(roleFilter)
+                    .Find(filter)
                     .Skip((pageNumber - 1) * pageSize)
                     .Limit(pageSize)
                     .ToListAsync();
@@ -107,7 +120,7 @@ namespace Sprinto.Server.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving users with role {Role}", role);
+                _logger.LogError(ex, "Error retrieving users with role {Role} and search {Search}", role, search);
                 throw new Exception("Could not retrieve users from database");
             }
         }
@@ -152,7 +165,7 @@ namespace Sprinto.Server.Services
 
                 var update = Builders<User>.Update.Combine(updates);
 
-                var res = await _users.FindOneAndUpdateAsync(filter, update) 
+                var res = await _users.FindOneAndUpdateAsync(filter, update)
                     ?? throw new Exception("User not found");
             }
             catch (Exception ex)

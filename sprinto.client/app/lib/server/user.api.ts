@@ -9,11 +9,13 @@ export const createUser = async (user: UserRequest) => {
 export const getPagedUsers = async (
   pageNumber: number,
   pageSize: number,
-  role?: UserRole
+  role?: UserRole,
+  search?: string
 ) => {
-  const { data } = await axiosApi.get<ApiResponse<PagedResult<User>>>(
-    `/users?pageNumber=${pageNumber}&pageSize=${pageSize}&role=${role}`
-  );
+  let url = `/users?pageNumber=${pageNumber}&pageSize=${pageSize}`;
+  if (role) url += `&role=${role}`;
+  if (search) url += `&search=${search}`;
+  const { data } = await axiosApi.get<ApiResponse<PagedResult<User>>>(url);
   return data;
 };
 

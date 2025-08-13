@@ -70,7 +70,7 @@ const EmployeesPageComponent = (): ReactNode => {
         </Col>
       </Row>
 
-      <Row style={{ marginTop: "3rem" }}>
+      <Row style={{ marginTop: "2rem" }}>
         <AllUsersTable />
       </Row>
     </div>

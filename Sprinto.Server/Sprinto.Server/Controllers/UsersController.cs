@@ -56,6 +56,7 @@ namespace Sprinto.Server.Controllers
         [Authorize]
         public async Task<ApiResponse<PagedResult<UserResponse>>> GetAll(
             [FromQuery] string? role,
+            [FromQuery] string? search,
             [FromQuery] int pageNumber = 1,
             [FromQuery] int pageSize = 10)
         {
@@ -68,7 +69,7 @@ namespace Sprinto.Server.Controllers
                     role = null;
                 }
 
-                var users = await _userService.GetAsync(pageNumber, pageSize, role);
+                var users = await _userService.GetAsync(pageNumber, pageSize, role, search);
 
                 response.Message = Constants.Messages.Success;
                 response.Result = users;

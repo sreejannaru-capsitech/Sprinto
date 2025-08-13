@@ -1,4 +1,4 @@
-import { Button, Col, Flex, Tag, type TableProps } from "antd";
+import { Button, Col, Flex, Input, Tag, type TableProps } from "antd";
 import dayjs from "dayjs";
 import { useState, type ReactNode } from "react";
 import { USER_TEAM_LEAD } from "~/lib/const";
@@ -6,7 +6,7 @@ import { usePagedUsersQuery } from "~/lib/server/services";
 import AvatarPic from "../ui/avatar-pic";
 import CustomTooltip from "../ui/tooltip";
 import SprintoTable from "./table";
-import { PencilIcon } from "~/lib/icons";
+import { PencilIcon, SearchIcon } from "~/lib/icons";
 import UserUpdateForm from "../forms/user-update.form";
 
 /**
@@ -17,17 +17,25 @@ const AllUsersTable = (): ReactNode => {
   const [filters, setFilters] = useState<Record<string, any>>({});
   const [open, setOpen] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
+  const [searchInput, setSearchInput] = useState<string>("");
+  const [search, setSearch] = useState<string>("");
 
   const [page, setPage] = useState<Page>({
-    pageSize: 5,
+    pageSize: 4,
     pageIndex: 1,
   });
 
   const { data, isPending } = usePagedUsersQuery(
     page.pageIndex,
     page.pageSize,
-    filters.role
+    filters.role,
+    search.length > 0 ? search : undefined
   );
+
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value.length === 0) setSearch("");
+    setSearchInput(e.target.value);
+  };
 
   const columns: TableProps<User>["columns"] = [
     {
@@ -122,7 +130,22 @@ const AllUsersTable = (): ReactNode => {
         }}
         user={user}
       />
-      
+
+      <Flex align="center" gap={20} style={{ margin: "20px 0", width: 400 }}>
+        <Input
+          placeholder="Name or email"
+          value={searchInput}
+          onChange={onInputChange}
+        />
+        <Button
+          icon={<SearchIcon size={20} />}
+          type="primary"
+          onClick={() => setSearch(searchInput)}
+        >
+          Search
+        </Button>
+      </Flex>
+
       <SprintoTable
         columns={columns}
         data={data?.items ?? []}

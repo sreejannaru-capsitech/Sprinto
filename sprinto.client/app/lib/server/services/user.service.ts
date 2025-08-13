@@ -86,12 +86,13 @@ export const useUserUpdate = (_api: NotificationApi) => {
 export const usePagedUsersQuery = (
   pageNumber: number,
   pageSize: number,
-  role?: UserRole
+  role?: UserRole,
+  search?: string
 ) => {
   return useQuery({
-    queryKey: [PAGED_USERS_KEY, pageNumber, pageSize, role],
+    queryKey: [PAGED_USERS_KEY, pageNumber, pageSize, role, search],
     queryFn: async () => {
-      const data = await getPagedUsers(pageNumber, pageSize, role);
+      const data = await getPagedUsers(pageNumber, pageSize, role, search);
       return data.result;
     },
     staleTime: STALE_TIME,
