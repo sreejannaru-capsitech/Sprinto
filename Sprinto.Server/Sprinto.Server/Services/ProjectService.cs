@@ -781,12 +781,8 @@ namespace Sprinto.Server.Services
                             new BsonArray()
                           })
                         },
-                        {
-                          "as", "a"
-                        },
-                        {
-                          "in", "$$a._id"
-                        }
+                        { "as", "a"},
+                        { "in", "$$a._id" }
                       }),
                       new BsonDocument("$cond", new BsonArray {
                         new BsonDocument("$and", new BsonArray {
@@ -799,60 +795,34 @@ namespace Sprinto.Server.Services
                             BsonNull.Value
                           })
                         }),
-                        new BsonArray {
-                          "$maintainer._id"
-                        },
+                        new BsonArray { "$maintainer._id"},
                         new BsonArray()
                       })
                     }))),
                     new ("$unwind", "$users"),
                     new ("$group", new BsonDocument {
-                      {
-                        "_id", "$users"
-                      },
-                      {
-                        "projectsCount", new BsonDocument("$sum", 1)
-                      }
+                      { "_id", "$users" },
+                      {"projectsCount", new BsonDocument("$sum", 1)}
                     }),
                     new ("$lookup", new BsonDocument {
-                      {
-                        "from", "users"
-                      },
-                      {
-                        "localField",  "_id"
-                      },
-                      {
-                        "foreignField",  "_id"
-                      },
-                      {
-                        "as",  "user"
-                      }
+                      {  "from", "users"  },
+                      {  "localField",  "_id" },
+                      { "foreignField",  "_id" },
+                      { "as",  "user"  }
                     }),
                     new ("$unwind", new BsonDocument {
-                      {
-                        "path",  "$user"
-                      },
-                      {
-                        "preserveNullAndEmptyArrays",  true
-                      }
+                      {  "path",  "$user"  },
+                      {  "preserveNullAndEmptyArrays",  true  }
                     }),
                     new ("$project", new BsonDocument {
                       {  "_id",  0},
                       { "UserId",  "$_id"},
-                      {
-                        "UserName",  "$user.name"
-                      },
-                      {
-                        "ProjectsCount",  "$projectsCount"
-                      }
+                      {  "UserName",  "$user.name"  },
+                      {  "ProjectsCount",  "$projectsCount"  }
                     }),
                     new ("$sort", new BsonDocument {
-                      {
-                        "ProjectsCount",  -1
-                      },
-                      {
-                        "UserName", 1
-                      }
+                      {  "ProjectsCount",  1  },
+                      {  "UserName", 1  }
                     }),
                     new ("$limit", 10)
                 };

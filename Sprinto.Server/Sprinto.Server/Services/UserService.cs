@@ -421,94 +421,122 @@ namespace Sprinto.Server.Services
         {
             try
             {
-                var pipeline = new List<BsonDocument> {
-                    new("$project", new BsonDocument("allActivity", new BsonDocument("$concatArrays", new BsonArray {
-                      "$activities",
-                      new BsonDocument("$map", new BsonDocument {
+                var pipeline = new List<BsonDocument>
+                {
+                    new ("$project", new BsonDocument("allActivity", new BsonDocument("$concatArrays", new BsonArray
                         {
-                          "input",
-                          "$comments"
-                        },
-                        {
-                          "as",
-                          "comment"
-                        },
-                        {
-                          "in",
-                          new BsonDocument {
+                            "$activities",
+                            new BsonDocument("$map", new BsonDocument
                             {
-                              "user_id",
-                              "$$comment.created.user_id"
+                                {
+                                    "input",
+                                    "$comments"
+                                },
+                                {
+                                    "as",
+                                    "comment"
+                                },
+                                {
+                                    "in",
+                                    new BsonDocument
+                                    {
+                                        {
+                                            "id",
+                                            "$$comment._id"
+                                        },
+                                        {
+                                            "created_by",
+                                            "$$comment.created_by"
+                                        }
+                                    }
+                                }
+                            })
+                        }))),
+                        new ("$unwind", "$allActivity"),
+                        new ("$lookup", new BsonDocument
+                        {
+                            {
+                                "from",
+                                "users"
                             },
                             {
-                              "name",
-                              "$$comment.created.name"
+                                "localField",
+                                "allActivity.created_by.user_id"
                             },
                             {
-                              "time",
-                              "$$comment.created.time"
+                                "foreignField",
+                                "_id"
+                            },
+                            {
+                                "as",
+                                "user"
                             }
-                          }
-                        }
-                      })
-                    }))),
-                    new("$unwind", "$allActivity"),
-                    new("$lookup", new BsonDocument {
-                      {
-                        "from",
-                        "users"
-                      },
-                      {
-                        "localField",
-                        "allActivity.created_by.user_id"
-                      },
-                      {
-                        "foreignField",
-                        "_id"
-                      },
-                      {
-                        "as",
-                        "user"
-                      }
-                    }),
-                    new("$unwind", "$user"),
-                    new("$match", new BsonDocument("user.role", new BsonDocument("$ne", "admin"))),
-                    new("$group", new BsonDocument {
-                      {
-                        "_id",
-                        "$user._id"
-                      },
-                      {
-                        "name",
-                        new BsonDocument("$first", "$user.name")
-                      },
-                      {
-                        "lastActive",
-                        new BsonDocument("$max", "$allActivity.created_by.time")
-                      },
-                      {
-                        "count",
-                        new BsonDocument("$sum", 1)
-                      }
-                    }),
-                    new("$sort", new BsonDocument("lastActive", -1)),
-                    new("$limit", 10),
-                    new("$project", new BsonDocument {
-                      {
-                        "Name",
-                        "$name"
-                      },
-                      {
-                        "LastActive",
-                        "$lastActive"
-                      },
-                      {
-                        "Count",
-                        "$count"
-                      }
-                    })
+                        }),
+                        new ("$unwind", "$user"),
+                        new ("$match", new BsonDocument("user.role", new BsonDocument("$ne", "admin"))),
+                        new ("$group", new BsonDocument
+                        {
+                            {
+                                "_id",
+                                "$user._id"
+                            },
+                            {
+                                "name",
+                                new BsonDocument("$first", "$user.name")
+                            },
+                            {
+                                "lastActive",
+                                new BsonDocument("$max", "$allActivity.created_by.time")
+                            },
+                            {
+                                "role",
+                                new BsonDocument("$first", "$user.role")
+                            },
+                            {
+                                "dp",
+                                new BsonDocument("$first", "$user.display_picture")
+                            },
+                            {
+                                "email",
+                                new BsonDocument("$first", "$user.email")
+                            },
+                            {
+                                "count",
+                                new BsonDocument("$sum", 1)
+                            }
+                        }),
+                        new ("$limit", 10),
+                        new ("$sort", new BsonDocument {
+                                {  "lastActive",  -1  } }),
+                        new ("$project", new BsonDocument
+                        {
+                            {
+                                "Name",
+                                "$name"
+                            },
+                            { 
+                                "DisplayPic",
+                                "$dp"
+                            },
+                            {
+                                "Email",
+                                "$email"
+                            },
+                            {
+                                "LastActive",
+                                "$lastActive"
+                            },
+                            {
+                                "Role",
+                                "$role"
+                            },
+                            {
+                                "Count",
+                                "$count"
+                            }
+                        })
                 };
-                
+
                 var result = await _tasks.Aggregate<RecentUserActivity>(pipeline).ToListAsync();
 
                 return result;
@@ -533,7 +561,8 @@ namespace Sprinto.Server.Services
                 long employeeCount = await _users.CountDocumentsAsync(empFilter);
                 long tlCount = await _users.CountDocumentsAsync(tlFilter);
 
-                return new RoleBasedUserCount { 
+                return new RoleBasedUserCount
+                {
                     AdminCount = adminCount,
                     EmployeeCount = employeeCount,
                     TLCount = tlCount,
