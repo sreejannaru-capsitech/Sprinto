@@ -1,7 +1,7 @@
 import { Avatar, Tag, type TableProps } from "antd";
 import dayjs from "dayjs";
-import { useState, type ReactNode } from "react";
-import { useAllTasksQuery } from "~/lib/server/services";
+import { useMemo, useState, type ReactNode } from "react";
+import { useAllTasksQuery, useStatusesQuery } from "~/lib/server/services";
 import { truncateText } from "~/lib/utils";
 import AvatarPic from "../ui/avatar-pic";
 import CustomTooltip from "../ui/tooltip";
@@ -19,12 +19,22 @@ const AllTasksTable = (): ReactNode => {
     pageIndex: 1,
   });
 
+  const { data: statuses } = useStatusesQuery();
+
   const { data: allTasks, isFetching: tasksFetching } = useAllTasksQuery(
     page.pageIndex,
     page.pageSize,
     filters.priority,
     filters.status
   );
+
+  const statusFilter = useMemo(() => {
+    if (!statuses?.result) return [];
+    return statuses?.result?.map((status) => ({
+      text: status.title,
+      value: status.title,
+    }));
+  }, [statuses]);
 
   const columns: TableProps<Task>["columns"] = [
     {
@@ -67,11 +77,7 @@ const AllTasksTable = (): ReactNode => {
       title: "Status",
       dataIndex: "status",
       width: 80,
-      filters: [
-        { text: "Done", value: "Done" },
-        { text: "In Progress", value: "In Progress" },
-        { text: "Todo", value: "Todo" },
-      ],
+      filters: statusFilter,
       render: (status: StatusEntity) => <Tag>{status.title}</Tag>,
     },
     {
