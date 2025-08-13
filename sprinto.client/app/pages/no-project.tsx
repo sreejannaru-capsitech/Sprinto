@@ -39,6 +39,7 @@ const NoProject = (): ReactNode => {
 
   return (
     <CenteredLayout>
+      {contextHolder}
       <div style={{ textAlign: "center" }}>
         <AlertIcon size={64} />
         <p
