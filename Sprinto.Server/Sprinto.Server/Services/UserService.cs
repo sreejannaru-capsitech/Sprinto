@@ -71,13 +71,24 @@ namespace Sprinto.Server.Services
         /// <exception cref="Exception">
         /// Thrown when user retrieval fails due to a database or internal error.
         /// </exception>
-        public async Task<PagedResult<UserResponse>> GetAsync(int pageNumber, int pageSize, string? role = "employee")
+        public async Task<PagedResult<UserResponse>> GetAsync(int pageNumber, int pageSize, string? role)
         {
             try
             {
-                var roleFilter = Builders<User>.Filter.Eq(u => u.Role, role);
+                var filterBuilder = Builders<User>.Filter;
+                FilterDefinition<User> roleFilter;
+
+                if (string.IsNullOrEmpty(role) || !Constants.userRoles.Contains(role))
+                {
+                    roleFilter = filterBuilder.Ne(u => u.Role, "");
+                }
+                else
+                {
+                    roleFilter = filterBuilder.Eq(u => u.Role, role);
+                }
 
                 var totalCount = await _users.CountDocumentsAsync(roleFilter);
+
                 var users = await _users
                     .Find(roleFilter)
                     .Skip((pageNumber - 1) * pageSize)

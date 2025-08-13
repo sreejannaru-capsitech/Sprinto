@@ -53,22 +53,22 @@ namespace Sprinto.Server.Controllers
 
 
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public async Task<ApiResponse<PagedResult<UserResponse>>> GetAll(
-            [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 10,
-            [FromQuery] string? role = Constants.Roles.Employee)
+            [FromQuery] string? role,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
         {
             var response = new ApiResponse<PagedResult<UserResponse>>();
             try
             {
                 // Validate query value
-                if (!Constants.userRoles.Contains(role))
+                if (string.IsNullOrEmpty(role) || !Constants.userRoles.Contains(role))
                 {
-                    throw new Exception("Invalid role specified. Allowed values are: employee, admin, teamLead.");
+                    role = null;
                 }
 
-                var users = await _userService.GetAsync(page, pageSize, role);
+                var users = await _userService.GetAsync(pageNumber, pageSize, role);
 
                 response.Message = Constants.Messages.Success;
                 response.Result = users;
