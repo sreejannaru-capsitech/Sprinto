@@ -70,7 +70,6 @@ const AllTasksTable = (): ReactNode => {
         { text: "In Progress", value: "In Progress" },
         { text: "Todo", value: "Todo" },
       ],
-      onFilter: (value, record) => record.status.title === value,
       render: (status: StatusEntity) => <Tag>{status.title}</Tag>,
     },
     {

@@ -1,13 +1,12 @@
-import { Col, Row, Space, Typography } from "antd";
+import { Col, Row, Typography } from "antd";
 import { useMemo, type CSSProperties, type ReactNode } from "react";
 import BarChart from "~/components/charts/bar.chart";
 import PieChart from "~/components/charts/pie.chart";
+import AllUsersTable from "~/components/tables/all-users.table";
 import RecentActivityTable from "~/components/tables/recent-activity.table";
-import RecentUserActivity from "~/components/ui/user-recent-activity";
 import {
   useProjectAssigneeCountQuery,
-  useRecentActivityQuery,
-  useRoleCountQuery,
+  useRoleCountQuery
 } from "~/lib/server/services";
 
 const headerStyle: CSSProperties = { margin: 0, textAlign: "center" };
@@ -17,8 +16,6 @@ const headerStyle: CSSProperties = { margin: 0, textAlign: "center" };
  * @returns {ReactNode} The EmployeesPage component
  */
 const EmployeesPageComponent = (): ReactNode => {
-  const { data: recentActivity, isPending: recentPending } =
-    useRecentActivityQuery();
   const { data: projectAssigneeCount, isPending: assigneePending } =
     useProjectAssigneeCountQuery();
   const { data: roleBasedCount, isPending: rolesPending } = useRoleCountQuery();
@@ -71,6 +68,10 @@ const EmployeesPageComponent = (): ReactNode => {
           </Typography.Title>
           <RecentActivityTable />
         </Col>
+      </Row>
+
+      <Row style={{ marginTop: "3rem" }}>
+        <AllUsersTable />
       </Row>
     </div>
   );

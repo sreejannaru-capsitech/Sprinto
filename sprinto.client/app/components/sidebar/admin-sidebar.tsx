@@ -131,24 +131,24 @@ const AdminSidebar = (): ReactNode => {
       ),
       key: ADMIN_ROUTES[3].toLowerCase(),
     },
-    {
-      icon: <TeamLeadIcon size={22} />,
-      label: (
-        <NavLink to={"/" + ADMIN_ROUTES[4].toLowerCase()} style={menuItemStyle}>
-          Team Leaders
-        </NavLink>
-      ),
-      key: ADMIN_ROUTES[4].toLowerCase(),
-    },
-    {
-      icon: <AdminIcon size={22} />,
-      label: (
-        <NavLink to={"/" + ADMIN_ROUTES[5].toLowerCase()} style={menuItemStyle}>
-          {ADMIN_ROUTES[5]}
-        </NavLink>
-      ),
-      key: ADMIN_ROUTES[5].toLowerCase(),
-    },
+    // {
+    //   icon: <TeamLeadIcon size={22} />,
+    //   label: (
+    //     <NavLink to={"/" + ADMIN_ROUTES[4].toLowerCase()} style={menuItemStyle}>
+    //       Team Leaders
+    //     </NavLink>
+    //   ),
+    //   key: ADMIN_ROUTES[4].toLowerCase(),
+    // },
+    // {
+    //   icon: <AdminIcon size={22} />,
+    //   label: (
+    //     <NavLink to={"/" + ADMIN_ROUTES[5].toLowerCase()} style={menuItemStyle}>
+    //       {ADMIN_ROUTES[5]}
+    //     </NavLink>
+    //   ),
+    //   key: ADMIN_ROUTES[5].toLowerCase(),
+    // },
   ];
 
   const [userOpen, setUserOpen] = useState<boolean>(false);

@@ -6,6 +6,17 @@ export const createUser = async (user: UserRequest) => {
   return data;
 };
 
+export const getPagedUsers = async (
+  pageNumber: number,
+  pageSize: number,
+  role?: UserRole
+) => {
+  const { data } = await axiosApi.get<ApiResponse<PagedResult<User>>>(
+    `/users?pageNumber=${pageNumber}&pageSize=${pageSize}&role=${role}`
+  );
+  return data;
+};
+
 export const getEmployees = async () => {
   const { data } = await axiosApi.get<ApiResponse<PagedResult<User>>>(
     `/users?role=${USER_EMPLOYEE}`

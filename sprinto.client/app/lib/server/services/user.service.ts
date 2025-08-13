@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getMe, updateMe } from "../auth.api";
 import {
   EMPLOYEES_KEY,
+  PAGED_USERS_KEY,
   PROFILE_KEY,
   PROFILE_PICTURE_KEY,
   PROJECT_TEAM_KEY,
@@ -13,6 +14,7 @@ import {
 } from "~/lib/const";
 import {
   getEmployees,
+  getPagedUsers,
   getRecentActivity,
   getRoleBasedCount,
   getTeamLeads,
@@ -47,6 +49,18 @@ export const useProfileUpdate = (_api: NotificationApi) => {
     onError: (error) => {
       handleApiError(error, _api, "Could not update profile");
     },
+  });
+};
+
+export const usePagedUsersQuery = 
+(pageNumber: number, pageSize: number, role?: UserRole) => {
+  return useQuery({
+    queryKey: [PAGED_USERS_KEY, pageNumber, pageSize, role],
+    queryFn: async () => {
+      const data = await getPagedUsers(pageNumber, pageSize, role);
+      return data.result;
+    },
+    staleTime: STALE_TIME,
   });
 };
 

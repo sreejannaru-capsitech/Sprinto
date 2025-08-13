@@ -4,6 +4,7 @@ export const BASE_URL = "http://localhost:5142/api" as const;
 
 // Users
 export const PROFILE_KEY = "profile" as const;
+export const PAGED_USERS_KEY = "allUsers" as const;
 export const EMPLOYEES_KEY = "employees" as const;
 export const TEAM_LEADS_KEY = "teamLeads" as const;
 export const ADMINS_KEY = "admins" as const;
@@ -50,9 +51,7 @@ export const ADMIN_ROUTES = [
   "Deadlines",
   "Projects",
   "Tasks",
-  "Employees",
-  "TeamLeads",
-  "Admins",
+  "Users"
 ] as const;
 
 export const USER_EMPLOYEE = "employee" as const;
