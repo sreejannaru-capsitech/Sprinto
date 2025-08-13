@@ -30,6 +30,7 @@ import {
   PencilIcon,
   TaskIcon,
   TickRoundedIcon,
+  UsersIcon,
 } from "~/lib/icons";
 import {
   useDeleteProject,
@@ -134,20 +135,7 @@ const ProjectOverview = (): ReactNode => {
                     />
                   </>
                 )}
-                {/* <ProjectTiming proj={proj} /> */}
               </Flex>
-              {/* {user.role === USER_ADMIN && proj.isCompleted === false && (
-                <Popconfirm
-                  icon={<AlertIcon size={20} />}
-                  title="Mark as Completed ?"
-                  onConfirm={async () => await markProjectCompleted(proj.id)}
-                >
-                  <Button type="text" icon={<TickRoundedIcon />} />
-                </Popconfirm>
-              )}
-              <NavLink to={`/projects/${proj.id}/tasks`}>
-                <Button icon={<TaskIcon size={20} />}>Tasks</Button>
-              </NavLink> */}
             </Flex>
           </Flex>
 
@@ -187,6 +175,9 @@ const ProjectOverview = (): ReactNode => {
           )}
           <NavLink to={`/projects/${proj.id}/tasks`}>
             <Button icon={<TaskIcon size={20} />}>Tasks</Button>
+          </NavLink>
+          <NavLink to={`/projects/${proj.id}/team`}>
+            <Button icon={<UsersIcon size={20} />}>Team</Button>
           </NavLink>
         </Flex>
         <div className="project-description">
@@ -239,7 +230,12 @@ const ProjectOverview = (): ReactNode => {
                 <BarChart data={assigneeData} />
                 <Typography.Title
                   level={4}
-                  style={{ margin: 0, textAlign: "center", marginTop: -30, marginRight: -48 }}
+                  style={{
+                    margin: 0,
+                    textAlign: "center",
+                    marginTop: -30,
+                    marginRight: -48,
+                  }}
                   className="font-bold"
                 >
                   Team Breakdown by Tasks
