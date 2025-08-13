@@ -1,7 +1,7 @@
-import { Flex, Typography } from "antd";
 import type { ReactNode } from "react";
 import { useSelector } from "react-redux";
 import type { MetaArgs } from "react-router";
+import PageTitle from "~/components/page-title";
 import { USER_ADMIN } from "~/lib/const";
 import { ProjectIcon } from "~/lib/icons";
 import type { RootState } from "~/lib/store";
@@ -23,16 +23,7 @@ const ProjectsPage = (): ReactNode => {
   const user = useSelector((state: RootState) => state.user.user) as User;
   return (
     <>
-      <Flex align="center" gap={6}>
-        <ProjectIcon size={36} />
-        <Typography.Title
-          level={2}
-          className="text-primary-dark"
-          style={{ margin: 0 }}
-        >
-          Projects
-        </Typography.Title>
-      </Flex>
+      <PageTitle title="Projects" icon={<ProjectIcon size={36} />} />
       {user.role === USER_ADMIN ? (
         <AdminProjectsPage />
       ) : (

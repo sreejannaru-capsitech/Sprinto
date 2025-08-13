@@ -1,6 +1,6 @@
-import { Flex, Typography } from "antd";
 import type { ReactNode } from "react";
 import type { MetaArgs } from "react-router";
+import PageTitle from "~/components/page-title";
 import { InboxIcon } from "~/lib/icons";
 import InboxPageComponent from "~/pages/inbox.page";
 
@@ -18,16 +18,7 @@ export const meta = ({}: MetaArgs) => {
 const InboxPage = (): ReactNode => {
   return (
     <>
-      <Flex align="center" gap={6}>
-        <InboxIcon size={36} />
-        <Typography.Title
-          level={2}
-          className="text-primary-dark"
-          style={{ margin: 0 }}
-        >
-          Inbox
-        </Typography.Title>
-      </Flex>
+      <PageTitle title="Inbox" icon={<InboxIcon size={36} />} />
       <InboxPageComponent />
     </>
   );

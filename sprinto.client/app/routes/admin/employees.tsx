@@ -1,12 +1,12 @@
-import { Flex, Typography } from "antd";
 import type { ReactNode } from "react";
 import type { MetaArgs } from "react-router";
+import PageTitle from "~/components/page-title";
 import { UsersIcon } from "~/lib/icons";
 import EmployeesPageComponent from "~/pages/admin/employees.page";
 
 export const meta = ({}: MetaArgs) => {
   return [
-    { title: "Employees — Sprinto" },
+    { title: "Users — Sprinto" },
     {
       name: "description",
       content: "Manage employees and team leads with Sprinto",
@@ -21,18 +21,7 @@ export const meta = ({}: MetaArgs) => {
 const EmployeesPage = (): ReactNode => {
   return (
     <div>
-      <Flex align="center" justify="space-between">
-        <Flex align="center" gap={6}>
-          <UsersIcon size={36} />
-          <Typography.Title
-            level={2}
-            className="text-primary-dark"
-            style={{ margin: 0 }}
-          >
-            Users
-          </Typography.Title>
-        </Flex>
-      </Flex>
+      <PageTitle title="Users" icon={<UsersIcon size={36} />} />
       <EmployeesPageComponent />
     </div>
   );
