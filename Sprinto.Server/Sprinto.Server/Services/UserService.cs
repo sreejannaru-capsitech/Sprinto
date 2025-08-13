@@ -138,13 +138,59 @@ namespace Sprinto.Server.Services
             try
             {
                 var filter = Builders<User>.Filter.Eq(u => u.Id, id);
-                var update = Builders<User>.Update.Set(u => u.DisplayPic, req.DisplayPic).Set(u => u.Name, req.Name);
 
-                var res = await _users.UpdateOneAsync(filter, update);
-                if (res.ModifiedCount == 0)
+                var updates = new List<UpdateDefinition<User>>
                 {
-                    throw new Exception(Constants.Messages.InvalidToken);
+                    Builders<User>.Update.Set(u => u.Name, req.Name)
+                };
+
+                // Only update DisplayPic if it's not null/empty/whitespace
+                if (!string.IsNullOrWhiteSpace(req.DisplayPic))
+                {
+                    updates.Add(Builders<User>.Update.Set(u => u.DisplayPic, req.DisplayPic));
                 }
+
+                var update = Builders<User>.Update.Combine(updates);
+
+                var res = await _users.FindOneAndUpdateAsync(filter, update) 
+                    ?? throw new Exception("User not found");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Could not update user {id}", id);
+                throw new Exception("Could not update user");
+            }
+        }
+
+        // Update an user's details by admin
+        internal async Task AdminUserUpdate(string id, AdminUserUpdate dto)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(dto.Role) || !Constants.userRoles.Contains(dto.Role))
+                {
+                    throw new InvalidDataException("Invalid User Role");
+                }
+
+                var filter = Builders<User>.Filter.Eq(u => u.Id, id);
+                var update = Builders<User>.Update
+                    .Set(u => u.DisplayPic, dto.DisplayPic)
+                    .Set(u => u.Name, dto.Name)
+                    .Set(u => u.Email, dto.Email)
+                    .Set(u => u.Role, dto.Role);
+
+                var user = await _users.FindOneAndUpdateAsync(filter, update)
+                    ?? throw new InvalidDataException("Invalid User Id");
+
+                // Change password if new provided
+                if (!string.IsNullOrEmpty(dto.Password))
+                {
+                    await ChangePassword(user, dto.Password);
+                }
+            }
+            catch (InvalidDataException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -525,7 +571,7 @@ namespace Sprinto.Server.Services
                                 "Name",
                                 "$name"
                             },
-                            { 
+                            {
                                 "DisplayPic",
                                 "$dp"
                             },

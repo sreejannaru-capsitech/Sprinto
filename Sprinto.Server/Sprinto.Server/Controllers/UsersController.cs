@@ -53,7 +53,7 @@ namespace Sprinto.Server.Controllers
 
 
         [HttpGet]
-        //[Authorize]
+        [Authorize]
         public async Task<ApiResponse<PagedResult<UserResponse>>> GetAll(
             [FromQuery] string? role,
             [FromQuery] int pageNumber = 1,
@@ -128,6 +128,10 @@ namespace Sprinto.Server.Controllers
         public async Task<ApiResponse<object>> UpdateUser([FromBody] UserUpdateReq dto)
         {
             var response = new ApiResponse<object>();
+
+            var _result = ValidateModelState;
+            if (_result != null) return response.HandleValidationError(_result);
+
             try
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -144,6 +148,34 @@ namespace Sprinto.Server.Controllers
             }
             return response;
         }
+
+
+        // Update user on admin request
+        [HttpPost("{id}/update")]
+        [Authorize(Roles = Constants.Roles.Admin)]
+        public async Task<ApiResponse<object>> AdminUserUpdate
+            (string id, [FromBody] AdminUserUpdate dto)
+        {
+            var response = new ApiResponse<object>();
+            var _result = ValidateModelState;
+            if (_result != null) return response.HandleValidationError(_result);
+
+            try
+            {
+                if (!ObjectId.TryParse(id, out _))
+                    throw new Exception("Please provide valid id");
+
+                await _userService.AdminUserUpdate(id, dto);
+
+                response.Message = Constants.Messages.Updated;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
 
         // Access Token Refresh route and used to get profile information
         [HttpGet("/api/auth/me")]
