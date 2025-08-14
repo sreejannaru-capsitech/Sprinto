@@ -19,8 +19,10 @@ export const updateProject = async (
   return data;
 };
 
-export const getProjects = async () => {
-  const { data } = await axiosApi.get<ApiResponse<Project[]>>("/projects");
+export const getProjects = async (active: boolean = true) => {
+  const { data } = await axiosApi.get<ApiResponse<Project[]>>(
+    `/projects?active=${active}`
+  );
   return data;
 };
 

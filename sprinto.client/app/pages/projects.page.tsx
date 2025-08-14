@@ -1,8 +1,8 @@
 import { Flex } from "antd";
-import { useMemo, type ReactNode } from "react";
+import { type ReactNode } from "react";
+import ProjectsContainer from "~/components/projects-container";
 import NoData from "~/components/ui/no-data";
 import ProjectItem from "~/components/ui/project-item";
-import ProjectsContainer from "~/components/projects-container";
 import Spinner from "~/components/ui/spinner";
 import { useProjectsQuery } from "~/lib/server/services";
 
@@ -11,35 +11,26 @@ import { useProjectsQuery } from "~/lib/server/services";
  * @returns {ReactNode} The ProjectsPageComponent component
  */
 const ProjectsPageComponent = (): ReactNode => {
-  const { data, isPending } = useProjectsQuery();
-
-  const [active, inActive] = useMemo(() => {
-    if (!data?.result?.length) {
-      return [[], []];
-    }
-
-    var active = data.result.filter((project) => !project.isCompleted);
-    var inActive = data.result.filter((project) => project.isCompleted);
-
-    return [active, inActive];
-  }, [data]);
+  const { data: active, isPending: activePending } = useProjectsQuery();
+  const { data: inactive, isPending: inactivePending } =
+    useProjectsQuery(false);
 
   return (
-    <Spinner isActive={isPending}>
-      {!data?.result?.length ? (
+    <Spinner isActive={activePending || inactivePending}>
+      {!active?.result?.length && !inactive?.result?.length ? (
         <NoData text="You are not assigned to any project" isProject />
       ) : (
         <Flex style={{ marginTop: "2rem" }} wrap gap={30}>
-          {active.length ? (
+          {active?.result?.length ? (
             <ProjectsContainer text="Active Projects">
-              {active.map((project) => (
+              {active?.result.map((project) => (
                 <ProjectItem key={project.id} project={project} />
               ))}
             </ProjectsContainer>
           ) : null}
-          {inActive.length ? (
+          {inactive?.result?.length ? (
             <ProjectsContainer text="Inactive Projects">
-              {inActive.map((project) => (
+              {inactive?.result?.map((project) => (
                 <ProjectItem key={project.id} project={project} />
               ))}
             </ProjectsContainer>

@@ -194,10 +194,13 @@ namespace Sprinto.Server.Services
         /// <param name="userId">The unique identifier of the user.</param>
         /// <returns>A list of <see cref="Project"/> documents relevant to the specified user.</returns>
         /// <exception cref="Exception">Thrown when an error occurs during the retrieval of projects.</exception>
-        public async Task<List<Project>> GetAssignedAsync(string userId)
+        public async Task<List<Project>> GetAssignedAsync(string userId, bool? active = true)
         {
             try
             {
+                var completionFilter = Builders<Project>.Filter.Ne(
+                    p => p.IsCompleted, active);
+
                 var assigneeFilter = Builders<Project>.Filter.ElemMatch(
                     p => p.Assignees,
                     a => a.Id == userId
@@ -213,11 +216,14 @@ namespace Sprinto.Server.Services
                     maintainerFilter
                 );
 
-                var projects = await _projects.Find(accessFilter).ToListAsync();
+                var finalFilter = Builders<Project>.Filter.And(
+                    accessFilter,
+                    completionFilter
+                );
 
-                var notCompleted = projects.Where(a => a.IsCompleted == false).ToList();
+                var projects = await _projects.Find(finalFilter).ToListAsync();
 
-                return notCompleted;
+                return projects;
             }
             catch (Exception ex)
             {

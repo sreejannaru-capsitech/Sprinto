@@ -100,7 +100,8 @@ namespace Sprinto.Server.Controllers
         // Other users get list of assigned projects
         [HttpGet]
         [Authorize]
-        public async Task<ApiResponse<List<Project>>> GetProjectsAsync()
+        public async Task<ApiResponse<List<Project>>>
+            GetProjectsAsync([FromQuery] bool? active)
         {
             var response = new ApiResponse<List<Project>>();
 
@@ -122,7 +123,7 @@ namespace Sprinto.Server.Controllers
                     if (string.IsNullOrEmpty(userId))
                         throw new Exception(Constants.Messages.InvalidToken);
 
-                    var projects = await _projectService.GetAssignedAsync(userId);
+                    var projects = await _projectService.GetAssignedAsync(userId, active);
                     response.Result = projects;
                 }
 

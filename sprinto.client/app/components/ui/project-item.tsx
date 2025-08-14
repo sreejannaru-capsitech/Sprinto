@@ -28,7 +28,7 @@ const ProjectItem: FC<ProjectItemProps> = ({
   project,
 }: ProjectItemProps): ReactNode => {
   return (
-    <NavLink to={`/projects/${project.id}`}>
+    <NavLink to={project.isCompleted ? "#" : `/projects/${project.id}`}>
       <Card hoverable size="small" className="project-item">
         {/* Project Card Header */}
         <Flex

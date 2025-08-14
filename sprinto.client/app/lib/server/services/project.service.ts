@@ -40,15 +40,18 @@ const invalidateKeys = [
   LEAST_PROJECTS_KEY,
 ];
 
-export const useProjectsQuery = () => {
+export const useProjectsQuery = (active: boolean = true) => {
   return useQuery({
-    queryKey: [PROJECTS_KEY],
-    queryFn: getProjects,
+    queryKey: [PROJECTS_KEY, active],
+    queryFn: async () => await getProjects(active),
     staleTime: STALE_TIME,
   });
 };
 
-export const useProjectsSearchQuery = (query: string, enasble: boolean = true) => {
+export const useProjectsSearchQuery = (
+  query: string,
+  enasble: boolean = true
+) => {
   return useQuery({
     queryKey: [PROJECTS_SEARCH_KEY, query],
     queryFn: () => searchProjects(query),
