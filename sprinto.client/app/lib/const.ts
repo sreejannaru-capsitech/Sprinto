@@ -31,6 +31,7 @@ export const COMMENTS_KEY = "comments" as const;
 export const PROJECTS_KEY = "projects" as const;
 export const ALL_PROJECTS_KEY = "allProjects" as const;
 export const PROJECT_TEAM_KEY = "projectTeam" as const;
+export const PROJECTS_SEARCH_KEY = "projectsSearch" as const;
 export const PROJECT_OVERVIEW_KEY = "projectOverview" as const;
 export const PROJECT_ACTIVITIES_KEY = "projectActivities" as const;
 export const PROJECT_TASKS_KEY = "projectTasks" as const;

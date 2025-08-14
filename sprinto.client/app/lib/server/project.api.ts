@@ -24,6 +24,13 @@ export const getProjects = async () => {
   return data;
 };
 
+export const searchProjects = async (query: string) => {
+  const { data } = await axiosApi.get<ApiResponse<Project[]>>(
+    `/projects/search?query=${query}`
+  );
+  return data;
+};
+
 export const getAllProjects = async () => {
   const { data } = await axiosApi.get<ApiResponse<AllProjects>>(
     "/projects/all"

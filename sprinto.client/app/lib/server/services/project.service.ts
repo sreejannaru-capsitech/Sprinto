@@ -9,6 +9,7 @@ import {
   PROJECT_TASKS_KEY,
   PROJECT_TEAM_KEY,
   PROJECTS_KEY,
+  PROJECTS_SEARCH_KEY,
   STALE_TIME,
   TOP_PROJECTS_KEY,
 } from "~/lib/const";
@@ -28,6 +29,7 @@ import {
   getTopActiveProjects,
   markProjectCompleted,
   removeMember,
+  searchProjects,
   updateProject,
 } from "../project.api";
 
@@ -43,6 +45,14 @@ export const useProjectsQuery = () => {
     queryKey: [PROJECTS_KEY],
     queryFn: getProjects,
     staleTime: STALE_TIME,
+  });
+};
+
+export const useProjectsSearchQuery = (query: string, enasble: boolean = true) => {
+  return useQuery({
+    queryKey: [PROJECTS_SEARCH_KEY, query],
+    queryFn: () => searchProjects(query),
+    enabled: enasble,
   });
 };
 

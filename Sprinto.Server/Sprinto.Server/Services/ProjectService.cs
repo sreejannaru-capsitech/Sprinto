@@ -166,6 +166,27 @@ namespace Sprinto.Server.Services
             }
         }
 
+
+        // Search Project by Name
+        public async Task<List<Project>> SearchAsync(string query)
+        {
+            try
+            {
+                var regexFilter = Builders<Project>.Filter.Or(
+                        Builders<Project>.Filter.Regex(t => t.Title, new BsonRegularExpression(query, "i")),
+                        Builders<Project>.Filter.Regex(t => t.Description, new BsonRegularExpression(query, "i"))
+                );
+
+                var projects = await _projects.Find(regexFilter).Limit(10).ToListAsync();
+                return projects;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to search for projects");
+                throw new Exception("Failed to search for projects");
+            }
+        }
+
         /// <summary>
         /// Retrieves all projects assigned to or maintained by the specified user,
         /// excluding those marked as completed.
@@ -617,7 +638,7 @@ namespace Sprinto.Server.Services
                     options
                 );
 
-                return updatedProject 
+                return updatedProject
                     ?? throw new InvalidOperationException(Constants.Messages.NotFound);
             }
             catch (InvalidOperationException)

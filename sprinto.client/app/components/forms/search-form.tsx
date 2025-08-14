@@ -1,11 +1,18 @@
 import { Flex, Input, Modal, Select, Space } from "antd";
 import { useState, type FC, type ReactNode } from "react";
 import CenteredLayout from "~/layouts/centered-layout";
-import { useTasksSearchQuery } from "~/lib/server/services";
+import {
+  useProjectsSearchQuery,
+  useTasksSearchQuery,
+} from "~/lib/server/services";
 
 import "~/styles/items.css";
 import SearchedTask from "../ui/searched-task";
 import Spinner from "../ui/spinner";
+import SearchedProject from "../ui/searched-project";
+import { useSelector } from "react-redux";
+import type { RootState } from "~/lib/store";
+import { USER_ADMIN } from "~/lib/const";
 
 interface SearchFormProps {
   open: boolean;
@@ -19,10 +26,10 @@ const options = [
     label: "Task",
     value: "task",
   },
-  // {
-  //   label: "Project",
-  //   value: "project",
-  // },
+  {
+    label: "Project",
+    value: "project",
+  },
   // {
   //   label: "User",
   //   value: "user",
@@ -37,10 +44,15 @@ const SearchForm: FC<SearchFormProps> = ({
   open,
   onClose,
 }: SearchFormProps): ReactNode => {
+  const user = useSelector((state: RootState) => state.user.user) as User;
+
   const [queryInput, setQueryInput] = useState<string>("");
   const [query, setQuery] = useState<string>("");
   const [selected, setSelected] = useState<OptionValueType>("task");
   const { data, isFetching } = useTasksSearchQuery(query);
+
+  const { data: projects, isFetching: projectsFetching } =
+    useProjectsSearchQuery(query, user.role === USER_ADMIN);
 
   return (
     <Modal
@@ -65,22 +77,42 @@ const SearchForm: FC<SearchFormProps> = ({
           placeholder="Search By"
           defaultValue={selected}
           onChange={(value) => setSelected(value)}
-          options={options}
+          options={user.role === USER_ADMIN ? options : options.slice(0, 1)}
           style={{ marginBottom: 80, width: 200 }}
         />
       </Flex>
 
       <CenteredLayout>
         {isFetching ? (
-          <Spinner isActive={isFetching}>
-            <div>Loading...</div>
-          </Spinner>
+          <Spinner isActive={isFetching || projectsFetching}>{null}</Spinner>
         ) : (
-          <Space direction="vertical" size={16} className="search-container">
-            {data?.result?.map((task) => (
-              <SearchedTask task={task} key={task.id} onClose={onClose} />
-            ))}
-          </Space>
+          <>
+            {selected === "task" ? (
+              <Space
+                direction="vertical"
+                size={16}
+                className="search-container"
+              >
+                {data?.result?.map((task) => (
+                  <SearchedTask task={task} key={task.id} onClose={onClose} />
+                ))}
+              </Space>
+            ) : (
+              <Space
+                direction="vertical"
+                size={16}
+                className="search-container"
+              >
+                {projects?.result?.map((project) => (
+                  <SearchedProject
+                    project={project}
+                    key={project.id}
+                    onClose={onClose}
+                  />
+                ))}
+              </Space>
+            )}
+          </>
         )}
       </CenteredLayout>
     </Modal>

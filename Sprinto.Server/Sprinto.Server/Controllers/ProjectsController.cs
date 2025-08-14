@@ -163,6 +163,35 @@ namespace Sprinto.Server.Controllers
             return response;
         }
 
+        // Search Project by Name
+        [HttpGet("search")]
+        [Authorize(Roles = Constants.Roles.Admin)]
+        public async Task<ApiResponse<List<Project>>>
+            SearchProjects([FromQuery] string? query)
+        {
+            var response = new ApiResponse<List<Project>>();
+
+            try
+            {
+                if (string.IsNullOrEmpty(query))
+                {
+                    var projects = await _projectService.GetAsync();
+                    response.Result = projects.Projects;
+                }
+                else
+                {
+                    response.Result = await _projectService.SearchAsync(query);
+                }
+
+                response.Message = Constants.Messages.Success;
+            }
+            catch (Exception ex)
+            {
+                response.HandleException(ex);
+            }
+            return response;
+        }
+
         [HttpGet("{id}/tasks")]
         [Authorize]
         public async Task<ApiResponse<List<TaskResponse>>>
