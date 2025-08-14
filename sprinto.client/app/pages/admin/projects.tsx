@@ -29,7 +29,7 @@ const AdminProjectsPage = (): ReactNode => {
       >
         <Col flex="130px">
           <Typography.Title level={4} className="font-bold">
-            Projects
+            Statistics
           </Typography.Title>
           <Statistic
             title="Total Projects"
