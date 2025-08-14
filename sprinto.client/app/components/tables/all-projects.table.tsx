@@ -1,6 +1,6 @@
 import { Col, type TableProps } from "antd";
 import dayjs from "dayjs";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useAllProjectsQuery } from "~/lib/server/services";
 import { truncateText } from "~/lib/utils";
 import CustomTag from "../ui/custom-tag";
@@ -13,13 +13,20 @@ import SprintoTable from "./table";
  * @returns {ReactNode} The AllProjectsTable component
  */
 const AllProjectsTable = (): ReactNode => {
+  const [filters, setFilters] = useState<Record<string, any>>({});
+
+  useEffect(() => {
+    console.log(filters);
+  }, [filters]);
+
   const [page, setPage] = useState<Page>({
     pageSize: 6,
     pageIndex: 1,
   });
-  
-  const { data: allProjects, isPending: allProjPending } =
-    useAllProjectsQuery();
+
+  const { data: projects, isPending: projPending } = useAllProjectsQuery(
+    filters.isCompleted
+  );
 
   const columns: TableProps<Project>["columns"] = [
     {
@@ -66,7 +73,6 @@ const AllProjectsTable = (): ReactNode => {
         { text: "Active", value: false },
         { text: "Complete", value: true },
       ],
-      onFilter: (value, record) => record.isCompleted === value,
       render: (isCompleted: boolean) => (isCompleted ? "Complete" : "Active"),
     },
     {
@@ -138,12 +144,13 @@ const AllProjectsTable = (): ReactNode => {
     <Col span={24}>
       <SprintoTable<Project>
         columns={columns}
-        data={allProjects?.result?.projects ?? []}
-        loading={allProjPending}
+        data={projects?.result?.projects ?? []}
+        loading={projPending}
         urlString="project"
         pageIndex={page.pageIndex}
         pageSize={page.pageSize}
-        totalCount={allProjects?.result?.total ?? 0}
+        totalCount={projects?.result?.projects.length ?? 0}
+        setFilters={setFilters}
         setPage={setPage}
       />
     </Col>

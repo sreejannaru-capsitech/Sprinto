@@ -33,9 +33,9 @@ export const searchProjects = async (query: string) => {
   return data;
 };
 
-export const getAllProjects = async () => {
+export const getAllProjects = async (active: boolean | null = null) => {
   const { data } = await axiosApi.get<ApiResponse<AllProjects>>(
-    "/projects/all"
+    `/projects/all?active=${active}`
   );
   return data;
 };

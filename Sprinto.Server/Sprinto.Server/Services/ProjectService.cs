@@ -126,22 +126,27 @@ namespace Sprinto.Server.Services
         /// </summary>
         /// <returns> A list of <see cref="Project"/> documents.</returns>
         /// <exception cref="Exception">Thrown when an error occurs during the retrieval of projects.</exception>
-        public async Task<AllProjects> GetAsync()
+        public async Task<AllProjects> GetAsync(bool? active = null)
         {
             try
             {
                 var projects = await _projects.Find(_ => true).ToListAsync();
 
+                var activeProjects = projects.Where(a => a.IsCompleted != true).ToList();
+                var inactiveProjects = projects.Where(a => a.IsCompleted == true).ToList();
+
                 long totalCount = projects.Count;
-                long activeCount = projects.Where(a => a.IsCompleted != true).Count();
-                long inActiveCount = totalCount - activeCount;
+                long activeCount = activeProjects.Count;
+                long inactiveCount = inactiveProjects.Count;
 
                 return new AllProjects
                 {
                     Active = activeCount,
-                    InActive = inActiveCount,
-                    Projects = projects,
-                    Total = totalCount,
+                    InActive = inactiveCount,
+                    Projects = active == true ? activeProjects
+                             : active == false ? inactiveProjects
+                             : projects,
+                    Total = totalCount
                 };
             }
             catch (Exception ex)

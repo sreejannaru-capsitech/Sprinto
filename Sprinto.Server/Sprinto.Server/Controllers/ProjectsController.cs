@@ -74,15 +74,15 @@ namespace Sprinto.Server.Controllers
 
         // Get all projects and status count ( admin only )
         [HttpGet("all")]
-        [Authorize(Roles = Constants.Roles.Admin)]
+        //[Authorize(Roles = Constants.Roles.Admin)]
         public async Task<ApiResponse<AllProjects>>
-            GetAllProjects()
+            GetAllProjects([FromQuery] bool? active)
         {
             var response = new ApiResponse<AllProjects>();
 
             try
             {
-                var res = await _projectService.GetAsync();
+                var res = await _projectService.GetAsync(active);
                 response.Message = Constants.Messages.Success;
                 response.Result = res;
             }
@@ -115,7 +115,7 @@ namespace Sprinto.Server.Controllers
 
                 if (userRole == "admin")
                 {
-                    var projects = await _projectService.GetAsync();
+                    var projects = await _projectService.GetAsync(active);
                     response.Result = projects.Projects;
                 }
                 else
