@@ -2,7 +2,7 @@ import { Flex } from "antd";
 import { type ReactNode } from "react";
 import NoData from "~/components/ui/no-data";
 import Spinner from "~/components/ui/spinner";
-import TaskContainer from "~/components/ui/task-container";
+import TaskContainer from "~/components/task-container";
 import { useInboxTasksQuery } from "~/lib/server/services";
 
 /**

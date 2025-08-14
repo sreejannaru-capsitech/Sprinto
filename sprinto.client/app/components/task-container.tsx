@@ -2,7 +2,7 @@ import { Space, Typography } from "antd";
 import type { FC, ReactNode } from "react";
 
 import "~/styles/items.css";
-import TaskItem from "./task-item";
+import TaskItem from "./ui/task-item";
 
 interface TaskContainerProps {
   tasks: Task[] | undefined;

@@ -3,7 +3,7 @@ import { useMemo, type ReactNode } from "react";
 import { useSelector } from "react-redux";
 import NoData from "~/components/ui/no-data";
 import Spinner from "~/components/ui/spinner";
-import TaskContainer from "~/components/ui/task-container";
+import TaskContainer from "~/components/task-container";
 import { useProjectTasksQuery } from "~/lib/server/services";
 import type { RootState } from "~/lib/store";
 

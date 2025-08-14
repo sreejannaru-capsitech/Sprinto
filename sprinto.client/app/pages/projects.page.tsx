@@ -2,7 +2,7 @@ import { Flex } from "antd";
 import { useMemo, type ReactNode } from "react";
 import NoData from "~/components/ui/no-data";
 import ProjectItem from "~/components/ui/project-item";
-import ProjectsContainer from "~/components/ui/projects-container";
+import ProjectsContainer from "~/components/projects-container";
 import Spinner from "~/components/ui/spinner";
 import { useProjectsQuery } from "~/lib/server/services";
 

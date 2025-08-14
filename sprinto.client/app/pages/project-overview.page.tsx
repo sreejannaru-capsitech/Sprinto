@@ -21,7 +21,7 @@ import TimeLineSection from "~/components/timeline-section";
 import AvatarPic from "~/components/ui/avatar-pic";
 import ProjectTiming from "~/components/ui/project-timing";
 import Spinner from "~/components/ui/spinner";
-import TaskContainer from "~/components/ui/task-container";
+import TaskContainer from "~/components/task-container";
 import { useAntNotification } from "~/hooks";
 import { USER_ADMIN } from "~/lib/const";
 import {

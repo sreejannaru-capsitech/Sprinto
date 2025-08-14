@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import { useMemo, type ReactNode } from "react";
 import type { MetaArgs } from "react-router";
 import ProjectItem from "~/components/ui/project-item";
-import ProjectsContainer from "~/components/ui/projects-container";
+import ProjectsContainer from "~/components/projects-container";
 import Spinner from "~/components/ui/spinner";
 import TaskItem from "~/components/ui/task-item";
 import { useProjectsQuery, useTopDueTasksQuery } from "~/lib/server/services";
