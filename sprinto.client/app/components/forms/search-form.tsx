@@ -54,6 +54,11 @@ const SearchForm: FC<SearchFormProps> = ({
   const { data: projects, isFetching: projectsFetching } =
     useProjectsSearchQuery(query, user.role === USER_ADMIN);
 
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value.length === 0) setQuery("");
+    setQueryInput(e.target.value);
+  };
+
   return (
     <Modal
       title={`SEARCH IN SPRINTO`}
@@ -70,7 +75,8 @@ const SearchForm: FC<SearchFormProps> = ({
         <Input
           placeholder={`Search for ${selected}s`}
           value={queryInput}
-          onChange={(e) => setQueryInput(e.target.value)}
+          allowClear
+          onChange={onInputChange}
           style={{ marginBottom: 80 }}
         />
         <Select
@@ -82,11 +88,16 @@ const SearchForm: FC<SearchFormProps> = ({
         />
       </Flex>
 
-      <CenteredLayout>
-        {isFetching ? (
-          <Spinner isActive={isFetching || projectsFetching}>{null}</Spinner>
-        ) : (
-          <>
+      <div style={{ minHeight: 240, maxHeight: 240 }}>
+        <CenteredLayout>
+          <Spinner
+            // Loading when user is admin and projects are fetching
+            isActive={
+              user.role === USER_ADMIN
+                ? isFetching || projectsFetching
+                : isFetching
+            }
+          >
             {selected === "task" ? (
               <Space
                 direction="vertical"
@@ -112,9 +123,9 @@ const SearchForm: FC<SearchFormProps> = ({
                 ))}
               </Space>
             )}
-          </>
-        )}
-      </CenteredLayout>
+          </Spinner>
+        </CenteredLayout>
+      </div>
     </Modal>
   );
 };

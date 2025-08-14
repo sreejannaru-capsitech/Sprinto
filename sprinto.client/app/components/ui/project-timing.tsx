@@ -1,9 +1,15 @@
+import { Flex } from "antd";
 import dayjs from "dayjs";
 import type { FC, ReactNode } from "react";
 import { CalenderIcon } from "~/lib/icons";
 
+import "~/styles/items.css";
+import CustomTooltip from "./tooltip";
+
 interface ProjectTimingProps {
   proj: Project;
+  gap?: number;
+  small?: boolean;
 }
 
 /**
@@ -13,36 +19,49 @@ interface ProjectTimingProps {
  */
 const ProjectTiming: FC<ProjectTimingProps> = ({
   proj,
+  gap = 2,
+  small = false,
 }: ProjectTimingProps): ReactNode => {
+  const biggerFormat = "Do MMM YYYY";
+  const format = small ? "DD-MM-YY" : biggerFormat;
+
   return (
-    <>
+    <Flex align="center" gap={gap}>
       <CalenderIcon size={15} />
       {proj.startDate || proj.deadline ? (
-        <>
+        <span className={small ? "smaller-text" : ""}>
           {proj.startDate ? (
-            <span>{dayjs.utc(proj.startDate).format("Do MMM YYYY")}</span>
+            <CustomTooltip
+              title={dayjs.utc(proj.startDate).format(biggerFormat)}
+            >
+              <span>{dayjs.utc(proj.startDate).format(format)}</span>
+            </CustomTooltip>
           ) : (
-            "Not Started"
+            small ? "Not Set" : "Not Started"
           )}
           <span style={{ margin: "0 4px" }}>—</span>
           {proj.deadline ? (
-            <span
-              style={{
-                color: dayjs.utc(proj.deadline).isBefore(dayjs.utc(), "day")
-                  ? "var(--color-red)"
-                  : "",
-              }}
+            <CustomTooltip
+              title={dayjs.utc(proj.deadline).format(biggerFormat)}
             >
-              {dayjs.utc(proj.deadline).format("Do MMM YYYY")}
-            </span>
+              <span
+                style={{
+                  color: dayjs.utc(proj.deadline).isBefore(dayjs.utc(), "day")
+                    ? "var(--color-red)"
+                    : "",
+                }}
+              >
+                {dayjs.utc(proj.deadline).format(format)}
+              </span>
+            </CustomTooltip>
           ) : (
-            "Not Decided"
+            small ? "Not Set" : "Not Decided"
           )}
-        </>
+        </span>
       ) : (
         <span>Not Started Yet</span>
       )}
-    </>
+    </Flex>
   );
 };
 

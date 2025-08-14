@@ -7,7 +7,7 @@ import {
   Popconfirm,
   Row,
   Statistic,
-  Typography
+  Typography,
 } from "antd";
 import dayjs from "dayjs";
 import { useMemo, useState, type ReactNode } from "react";
@@ -154,14 +154,12 @@ const ProjectOverview = (): ReactNode => {
                 <AvatarPic user={proj.teamLead} />
               </Avatar.Group>
             </Flex>
-           <CustomTag large text={`Team Lead - ${proj.teamLead.name}`} />
+            <CustomTag large text={`Team Lead - ${proj.teamLead.name}`} />
           </Flex>
         </Flex>
 
         <Flex align="center" gap={20} style={{ margin: "20px 0" }}>
-          <Flex align="center" gap={4}>
-            <ProjectTiming proj={proj} />
-          </Flex>
+          <ProjectTiming proj={proj} gap={4} />
           {user.role === USER_ADMIN && proj.isCompleted === false && (
             <Popconfirm
               icon={<AlertIcon size={20} />}

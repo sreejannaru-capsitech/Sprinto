@@ -122,7 +122,7 @@ const UserUpdateForm: FC<UserUpdateFormProps> = ({
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
-              label="Password"
+              label="New Password"
               name="password"
               rules={[getNonWhitespaceValidator("password")]}
             >

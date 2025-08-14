@@ -62,7 +62,7 @@ const ProjectItem: FC<ProjectItemProps> = ({
               {project.description ? truncateText(project.description, 95) : ""}
             </Typography.Paragraph>
             <Flex align="center" justify="space-between">
-              <Tag style={{ display: "flex", alignItems: "center", gap: 2 }}>
+              <Tag>
                 <ProjectTiming proj={project} />
               </Tag>
               <Flex align="center">
