@@ -5,6 +5,7 @@ import AvatarPic from "./avatar-pic";
 
 import "~/styles/items.css";
 import { useNavigate } from "react-router";
+import CustomTag from "./custom-tag";
 
 interface SearchedTaskProps {
   task: Task;
@@ -52,7 +53,7 @@ const SearchedTask: FC<SearchedTaskProps> = ({
               <AvatarPic size={22} user={assignee} key={assignee.id} />
             ))}
           </Avatar.Group>
-          <Tag>{task.status.title}</Tag>
+          <CustomTag text={task.status.title} />
         </Flex>
       </Flex>
     </Card>

@@ -1,8 +1,9 @@
-import { Col, Tag, type TableProps } from "antd";
+import { Col, type TableProps } from "antd";
 import dayjs from "dayjs";
 import { useState, type ReactNode } from "react";
 import { useAllProjectsQuery } from "~/lib/server/services";
 import { truncateText } from "~/lib/utils";
+import CustomTag from "../ui/custom-tag";
 import CustomTooltip from "../ui/tooltip";
 import SprintoTable from "./table";
 
@@ -49,7 +50,7 @@ const AllProjectsTable = (): ReactNode => {
       dataIndex: "alias",
       width: 90,
       sorter: (a, b) => a.alias.localeCompare(b.alias),
-      render: (alias: string) => <Tag>{alias}</Tag>,
+      render: (alias: string) => <CustomTag text={alias} />,
     },
     {
       title: "Maintainer",

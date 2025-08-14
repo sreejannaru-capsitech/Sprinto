@@ -18,6 +18,7 @@ import TaskForm from "~/components/forms/task-form";
 import TimeLineSection from "~/components/timeline-section";
 import AvatarPic from "~/components/ui/avatar-pic";
 import CommentItem from "~/components/ui/comment-item";
+import CustomTag from "~/components/ui/custom-tag";
 import Spinner from "~/components/ui/spinner";
 import { useAntNotification } from "~/hooks";
 import {
@@ -159,8 +160,8 @@ const TaskDetailsPage: FC<TaskDetailsPageProps> = ({
                 <CalenderIcon size={16} />
                 <span>{dueDate}</span>
               </Tag>
-              <Tag className="capitalize">Priority — {task.priority}</Tag>
-              <Tag className="capitalize">Status — {task.status.title}</Tag>
+              <CustomTag text={`Priority — ${task.priority}`} />
+              <CustomTag text={`Status — ${task.status.title}`} />
             </Flex>
           </Flex>
 

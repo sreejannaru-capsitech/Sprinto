@@ -1,13 +1,13 @@
-import { Button, Col, Flex, Input, Tag, type TableProps } from "antd";
+import { Button, Col, Flex, Input, type TableProps } from "antd";
 import dayjs from "dayjs";
 import { useState, type ReactNode } from "react";
-import { USER_TEAM_LEAD } from "~/lib/const";
+import { PencilIcon, SearchIcon } from "~/lib/icons";
 import { usePagedUsersQuery } from "~/lib/server/services";
+import UserUpdateForm from "../forms/user-update.form";
 import AvatarPic from "../ui/avatar-pic";
+import CustomTag from "../ui/custom-tag";
 import CustomTooltip from "../ui/tooltip";
 import SprintoTable from "./table";
-import { PencilIcon, SearchIcon } from "~/lib/icons";
-import UserUpdateForm from "../forms/user-update.form";
 
 /**
  * This component renders all-users.table section
@@ -73,11 +73,7 @@ const AllUsersTable = (): ReactNode => {
         { text: "Employee", value: "employee" },
         { text: "Team Lead", value: "teamLead" },
       ],
-      render: (text: UserRole) => (
-        <Tag className="capitalize">
-          {text === USER_TEAM_LEAD ? "Team Lead" : text}
-        </Tag>
-      ),
+      render: (text: UserRole) => <CustomTag role={text} />,
     },
     {
       title: "Joined On",
@@ -136,6 +132,7 @@ const AllUsersTable = (): ReactNode => {
           placeholder="Name or email"
           value={searchInput}
           onChange={onInputChange}
+          allowClear
         />
         <Button
           icon={<SearchIcon fill="white" size={20} />}

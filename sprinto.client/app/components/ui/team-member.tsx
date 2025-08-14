@@ -1,10 +1,10 @@
-import { Card, Flex, Tag } from "antd";
+import { Card, Flex } from "antd";
 import dayjs from "dayjs";
 import type { CSSProperties, FC, ReactNode } from "react";
 
 import "~/styles/items.css";
 import AvatarPic from "./avatar-pic";
-import { USER_TEAM_LEAD } from "~/lib/const";
+import CustomTag from "./custom-tag";
 
 interface TeamMemberProps {
   member: User;
@@ -35,10 +35,7 @@ const TeamMember: FC<TeamMemberProps> = ({
             </p>
           </div>
         </Flex>
-
-        <Tag className="capitalize">
-          {member.role === USER_TEAM_LEAD ? "Team Lead" : member.role}
-        </Tag>
+        <CustomTag role={member.role} />
 
         <p style={p_style} className="smaller-text">
           <span className="text-primary-dark ">Joined on — </span>

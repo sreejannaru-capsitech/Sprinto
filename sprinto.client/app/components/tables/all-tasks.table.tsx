@@ -1,9 +1,10 @@
-import { Avatar, Tag, type TableProps } from "antd";
+import { Avatar, type TableProps } from "antd";
 import dayjs from "dayjs";
 import { useMemo, useState, type ReactNode } from "react";
 import { useAllTasksQuery, useStatusesQuery } from "~/lib/server/services";
 import { truncateText } from "~/lib/utils";
 import AvatarPic from "../ui/avatar-pic";
+import CustomTag from "../ui/custom-tag";
 import CustomTooltip from "../ui/tooltip";
 import SprintoTable from "./table";
 
@@ -70,7 +71,7 @@ const AllTasksTable = (): ReactNode => {
         { text: "High", value: "high" },
       ],
       render: (status: TaskPriority) => (
-        <Tag className="capitalize">{status}</Tag>
+        <CustomTag text={status} />
       ),
     },
     {
@@ -78,7 +79,7 @@ const AllTasksTable = (): ReactNode => {
       dataIndex: "status",
       width: 80,
       filters: statusFilter,
-      render: (status: StatusEntity) => <Tag>{status.title}</Tag>,
+      render: (status: StatusEntity) => <CustomTag text={status.title} />,
     },
     {
       title: "Assignees",

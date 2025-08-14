@@ -1,8 +1,9 @@
-import { Card, Flex, Tag } from "antd";
+import { Card, Flex } from "antd";
+import dayjs from "dayjs";
 import type { FC, ReactNode } from "react";
 import AvatarPic from "./avatar-pic";
+import CustomTag from "./custom-tag";
 import CustomTooltip from "./tooltip";
-import dayjs from "dayjs";
 
 interface RecentUserActivityProps {
   item: RecentUserActivity;
@@ -24,7 +25,7 @@ const RecentUserActivity: FC<RecentUserActivityProps> = ({
         <CustomTooltip title={item.email}>
           <span className="text-primary-dark">email</span>
         </CustomTooltip>
-        <Tag>{item.role}</Tag>
+        <CustomTag role={item.role} />
 
         <div>
           <span className="text-primary-dark">Last :</span>

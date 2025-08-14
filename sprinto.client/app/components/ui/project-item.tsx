@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import { NavLink } from "react-router";
 import "~/styles/items.css";
 import AvatarPic from "./avatar-pic";
+import CustomTag from "./custom-tag";
 import ProjectTiming from "./project-timing";
 
 dayjs.extend(utc);
@@ -38,7 +39,7 @@ const ProjectItem: FC<ProjectItemProps> = ({
           <Typography.Text className="text-primary font-bolder smaller-text">
             {project.alias}
           </Typography.Text>
-          <Tag>Managed By — {project.teamLead.name}</Tag>
+          <CustomTag text={`Managed By — ${project.teamLead.name}`} />
         </Flex>
 
         {/* Project Card Body */}

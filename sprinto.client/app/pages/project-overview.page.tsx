@@ -7,8 +7,7 @@ import {
   Popconfirm,
   Row,
   Statistic,
-  Tag,
-  Typography,
+  Typography
 } from "antd";
 import dayjs from "dayjs";
 import { useMemo, useState, type ReactNode } from "react";
@@ -17,11 +16,11 @@ import { NavLink, useNavigate } from "react-router";
 import BarChart from "~/components/charts/bar.chart";
 import PieChart from "~/components/charts/pie.chart";
 import ProjectForm from "~/components/forms/project-form";
+import TaskContainer from "~/components/task-container";
 import TimeLineSection from "~/components/timeline-section";
 import AvatarPic from "~/components/ui/avatar-pic";
 import ProjectTiming from "~/components/ui/project-timing";
 import Spinner from "~/components/ui/spinner";
-import TaskContainer from "~/components/task-container";
 import { useAntNotification } from "~/hooks";
 import { USER_ADMIN } from "~/lib/const";
 import {
@@ -40,6 +39,7 @@ import {
 } from "~/lib/server/services";
 import type { RootState } from "~/lib/store";
 
+import CustomTag from "~/components/ui/custom-tag";
 import "~/styles/project-overview.css";
 
 /**
@@ -154,9 +154,7 @@ const ProjectOverview = (): ReactNode => {
                 <AvatarPic user={proj.teamLead} />
               </Avatar.Group>
             </Flex>
-            <Tag style={{ padding: "4px 8px", fontSize: 14, borderRadius: 8 }}>
-              Team Lead - {proj.teamLead.name}
-            </Tag>
+           <CustomTag large text={`Team Lead - ${proj.teamLead.name}`} />
           </Flex>
         </Flex>
 

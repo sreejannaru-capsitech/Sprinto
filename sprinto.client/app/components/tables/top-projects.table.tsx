@@ -1,8 +1,9 @@
-import { Tag, type TableProps } from "antd";
+import { type TableProps } from "antd";
 import dayjs from "dayjs";
 import { useState, type FC, type ReactNode } from "react";
 import CustomTooltip from "~/components/ui/tooltip";
 import { truncateText } from "~/lib/utils";
+import CustomTag from "../ui/custom-tag";
 import SprintoTable from "./table";
 
 interface TopProjectTableProps {
@@ -38,7 +39,7 @@ const TopProjectTable: FC<TopProjectTableProps> = ({
       title: "Alias",
       dataIndex: "alias",
       width: 80,
-      render: (alias: string) => <Tag>{alias}</Tag>,
+      render: (alias: string) => <CustomTag text={alias} />,
     },
     {
       title: "Activities",

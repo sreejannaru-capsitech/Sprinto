@@ -1,10 +1,11 @@
-import { Avatar, Card, Flex, Tag } from "antd";
+import { Avatar, Card, Flex } from "antd";
 import type { FC, ReactNode } from "react";
 import { truncateText } from "~/lib/utils";
 import AvatarPic from "./avatar-pic";
 
-import "~/styles/items.css";
 import { useNavigate } from "react-router";
+import "~/styles/items.css";
+import CustomTag from "./custom-tag";
 
 interface SearchedProjectProps {
   project: Project;
@@ -50,7 +51,7 @@ const SearchedProject: FC<SearchedProjectProps> = ({
               <AvatarPic size={22} user={assignee} key={assignee.id} />
             ))}
           </Avatar.Group>
-          <Tag>{project.isCompleted ? "Completed" : "Active"}</Tag>
+          <CustomTag text={project.isCompleted ? "Completed" : "Active"} />
         </Flex>
       </Flex>
     </Card>

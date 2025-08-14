@@ -1,9 +1,9 @@
-import { Flex, Tag, type TableProps } from "antd";
+import { Flex, type TableProps } from "antd";
 import dayjs from "dayjs";
 import { useState, type ReactNode } from "react";
-import { USER_TEAM_LEAD } from "~/lib/const";
 import { useRecentActivityQuery } from "~/lib/server/services";
 import AvatarPic from "../ui/avatar-pic";
+import CustomTag from "../ui/custom-tag";
 import CustomTooltip from "../ui/tooltip";
 import SprintoTable from "./table";
 
@@ -42,9 +42,7 @@ const RecentActivityTable = (): ReactNode => {
       key: "role",
       width: 100,
       render: (text: UserRole) => (
-        <Tag className="capitalize">
-          {text === USER_TEAM_LEAD ? "Team Lead" : text}
-        </Tag>
+        <CustomTag role={text} />
       ),
     },
     {

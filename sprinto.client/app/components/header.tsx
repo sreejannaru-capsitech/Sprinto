@@ -1,13 +1,13 @@
-import { Breadcrumb, Button, Flex, Layout, Space, Tag } from "antd";
+import { Breadcrumb, Button, Flex, Layout, Space } from "antd";
 import { useMemo, type ReactNode } from "react";
 import { useSelector } from "react-redux";
 import { NavLink } from "react-router";
-import { USER_TEAM_LEAD } from "~/lib/const";
 import LeftArrow from "~/lib/icons/left-arrow.icon";
 import type { RootState } from "~/lib/store";
 import { capitalizeFirst } from "~/lib/utils";
 
 import "~/styles/sidebar.css";
+import CustomTag from "./ui/custom-tag";
 
 interface Crumb {
   Title: string;
@@ -97,16 +97,7 @@ const Header = (): ReactNode => {
             }))}
           />
         </Flex>
-        <Tag
-          className="capitalize"
-          style={{
-            padding: "4px 8px",
-            fontSize: 14,
-            borderRadius: 8,
-          }}
-        >
-          {user.role === USER_TEAM_LEAD ? "Team Lead" : user.role}
-        </Tag>
+        <CustomTag large role={user.role} />
       </Space>
     </Layout.Header>
   );
