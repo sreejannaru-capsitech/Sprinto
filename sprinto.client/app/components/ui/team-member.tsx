@@ -1,4 +1,4 @@
-import { Card, Flex } from "antd";
+import { Card, Col, Flex, Row } from "antd";
 import dayjs from "dayjs";
 import type { CSSProperties, FC, ReactNode } from "react";
 
@@ -25,23 +25,26 @@ const TeamMember: FC<TeamMemberProps> = ({
 }: TeamMemberProps): ReactNode => {
   return (
     <Card size="small" hoverable className="member-item">
-      <Flex align="center" justify="space-between">
-        <Flex align="center" gap={10}>
-          <AvatarPic user={member} size={36} />
-          <div>
-            <p style={p_style}>{member.name}</p>
-            <p style={p_style} className="text-primary-dark smaller-text">
-              {member.email}
-            </p>
-          </div>
-        </Flex>
+      <Row align="middle" justify="space-between">
+        <Col span={12}>
+          <Flex align="center" gap={10}>
+            <AvatarPic user={member} size={36} />
+            <div>
+              <p style={p_style}>{member.name}</p>
+              <p style={p_style} className="text-primary-dark smaller-text">
+                {member.email}
+              </p>
+            </div>
+          </Flex>
+        </Col>
+
         <CustomTag role={member.role} />
 
         <p style={p_style} className="smaller-text">
           <span className="text-primary-dark ">Joined on — </span>
           {dayjs(member.createdBy.time).format("Do MMM YYYY")}
         </p>
-      </Flex>
+      </Row>
     </Card>
   );
 };
