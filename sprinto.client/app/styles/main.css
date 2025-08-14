@@ -130,6 +130,10 @@ button.ant-btn span.ant-btn-icon {
   color: white !important;
 }
 
+.ant-dropdown-menu-item-selected span {
+  color: white !important;
+}
+
 /* Notification */
 
 .ant-notification-notice {

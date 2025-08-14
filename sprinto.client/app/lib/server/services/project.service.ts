@@ -60,10 +60,9 @@ export const useProjectsSearchQuery = (
 };
 
 export const useAllProjectsQuery = (active: boolean | null = null) => {
-  const modifiedActive = active === null ? null : !active;
   return useQuery({
     queryKey: [ALL_PROJECTS_KEY, active],
-    queryFn: async () => await getAllProjects(modifiedActive),
+    queryFn: async () => await getAllProjects(active),
     staleTime: STALE_TIME,
   });
 };

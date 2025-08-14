@@ -70,8 +70,8 @@ const AllProjectsTable = (): ReactNode => {
       dataIndex: "isCompleted",
       width: 100,
       filters: [
-        { text: "Active", value: false },
-        { text: "Complete", value: true },
+        { text: "Active", value: true },
+        { text: "Complete", value: false },
       ],
       render: (isCompleted: boolean) => (isCompleted ? "Complete" : "Active"),
     },
