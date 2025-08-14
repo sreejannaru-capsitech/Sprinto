@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getMe, updateMe } from "../auth.api";
+import { changePassword, getMe, updateMe } from "../auth.api";
 import {
   EMPLOYEES_KEY,
   PAGED_USERS_KEY,
@@ -13,6 +13,7 @@ import {
   USERS_SEARCH_KEY,
 } from "~/lib/const";
 import {
+  createUser,
   getEmployees,
   getPagedUsers,
   getRecentActivity,
@@ -41,6 +42,42 @@ const invalidateUserKeys = [
   USERS_ROLE_COUNT_KEY,
   PROFILE_PICTURE_KEY,
 ];
+
+export const useCreateUser = (_api: NotificationApi) => {
+  const query = useQueryClient();
+  return useMutation({
+    mutationFn: async (user: UserRequest) => {
+      return await createUser(user);
+    },
+    onSuccess: () => {
+      _api({ message: "User created successfully", type: "success" });
+      invalidateUserKeys.forEach((key) => {
+        query.invalidateQueries({ queryKey: [key] });
+      });
+    },
+    onError: (error) => {
+      _api({ message: error.message, type: "error" });
+    },
+  });
+};
+
+export const useChangePassword = (_api: NotificationApi) => {
+  const query = useQueryClient();
+  return useMutation({
+    mutationFn: async (password: PasswordChangeRequest) => {
+      return await changePassword(password);
+    },
+    onSuccess: () => {
+      _api({ message: "Password changed successfully", type: "success" });
+      invalidateUserKeys.forEach((key) => {
+        query.invalidateQueries({ queryKey: [key] });
+      });
+    },
+    onError: (error) => {
+      _api({ message: error.message, type: "error" });
+    },
+  });
+};
 
 export const useProfileUpdate = (_api: NotificationApi) => {
   const query = useQueryClient();

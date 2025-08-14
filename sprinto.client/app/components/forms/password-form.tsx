@@ -1,11 +1,8 @@
 import { Form, Input, Modal } from "antd";
 import { useState, type FC, type ReactNode } from "react";
 import { useAntNotification } from "~/hooks";
-import { changePassword } from "~/lib/server";
-import {
-  getRequiredEmailRule,
-  getRequiredPasswordRule,
-} from "~/lib/validators";
+import { useChangePassword } from "~/lib/server/services";
+import { getRequiredPasswordRule } from "~/lib/validators";
 
 interface PasswordFormProps {
   open: boolean;
@@ -24,6 +21,8 @@ const PasswordForm: FC<PasswordFormProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const { _api, contextHolder } = useAntNotification();
 
+  const { mutateAsync: changePassword } = useChangePassword(_api);
+
   const handleSubmit = async () => {
     let values;
     try {
@@ -32,20 +31,10 @@ const PasswordForm: FC<PasswordFormProps> = ({
       return error;
     }
     setLoading(true);
+
     try {
-      const res = await changePassword(values);
-      if (res.status) {
-        _api({
-          message: "Password changed successfully",
-          type: "success",
-        });
-        form.resetFields();
-        onClose();
-      } else {
-        _api({ message: res.message, type: "error" });
-      }
+      await changePassword(values);
     } catch (error) {
-      _api({ message: "Could not change password", type: "error" });
     } finally {
       setLoading(false);
     }

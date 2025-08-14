@@ -1,9 +1,8 @@
 import { Col, Form, Input, Modal, Row, Select } from "antd";
 import { useState, type FC, type ReactNode } from "react";
 import { useAntNotification } from "~/hooks";
-import { roleOptions, USER_ADMIN, USER_EMPLOYEE, USER_TEAM_LEAD } from "~/lib/const";
-import { createUser } from "~/lib/server";
-import { capitalizeFirst } from "~/lib/utils";
+import { roleOptions } from "~/lib/const";
+import { useCreateUser } from "~/lib/server/services";
 import {
   getNonWhitespaceValidator,
   getRequiredEmailRule,
@@ -30,6 +29,8 @@ const UserForm: FC<UserFormProps> = ({
 
   const { _api, contextHolder } = useAntNotification();
 
+  const { mutateAsync: createUser } = useCreateUser(_api);
+
   const handleSubmit = async () => {
     let values;
     try {
@@ -40,19 +41,8 @@ const UserForm: FC<UserFormProps> = ({
 
     setLoading(true);
     try {
-      const res = await createUser(values);
-      if (res.status) {
-        _api({
-          message: "User created successfully",
-          type: "success",
-        });
-        form.resetFields();
-        onClose();
-      } else {
-        _api({ message: res.message, type: "error" });
-      }
+      await createUser(values);
     } catch (error) {
-      _api({ message: "Could not create user", type: "error" });
     } finally {
       setLoading(false);
     }
