@@ -138,7 +138,7 @@ const AllUsersTable = (): ReactNode => {
           onChange={onInputChange}
         />
         <Button
-          icon={<SearchIcon size={20} />}
+          icon={<SearchIcon fill="white" size={20} />}
           type="primary"
           onClick={() => setSearch(searchInput)}
         >
